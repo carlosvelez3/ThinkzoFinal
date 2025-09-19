@@ -68,7 +68,7 @@ export function HeroSection() {
           <div className="text-center lg:text-left text-white lg:col-span-1">
             <h1 
               id="hero-heading"
-              className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-6 leading-tight cursor-default font-retro-mono"
+              className="text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-tight cursor-default font-retro-mono"
               aria-describedby="hero-description"
             >
               Next-Generation AI Web Development Solutions
