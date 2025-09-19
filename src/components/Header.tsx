@@ -25,17 +25,6 @@ export function Header() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
-      {/* Breadcrumbs */}
-      <div className="max-w-site mx-auto px-6 mb-4">
-        <Breadcrumbs 
-          items={[
-            { label: 'Home', href: 'hero' },
-            { label: 'AI Solutions', current: true }
-          ]}
-          className="text-white/80"
-        />
-      </div>
-      
       <div className="relative z-20 max-w-site mx-auto flex justify-between items-center px-6 border border-white/30 rounded-2xl py-4 bg-white/5 backdrop-blur-sm shadow-2xl hover:border-white/30 transition-all duration-300">
         <div className="flex flex-col">
           <motion.div 
