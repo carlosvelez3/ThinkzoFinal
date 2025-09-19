@@ -152,33 +152,6 @@ export function ServicesSection() {
             <span className="animate-pulse">|</span>
           </motion.h2>
           
-          {/* Related Links Section */}
-          <motion.div
-            className="mt-16"
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-            viewport={{ once: true }}
-          >
-            <RelatedLinks
-              title="Explore Our Process"
-              links={[
-                {
-                  title: "Our Development Process",
-                  description: "Learn how we transform your ideas into powerful digital solutions through our proven methodology.",
-                  targetSection: "process"
-                },
-                {
-                  title: "Start Your Project",
-                  description: "Ready to begin? Contact our team to discuss your requirements and get a custom quote.",
-                  targetSection: "contact"
-                }
-              ]}
-              layout="horizontal"
-              className="max-w-4xl mx-auto"
-            />
-          </motion.div>
-          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
             {services.map((service, index) => {
               const IconComponent = service.icon;
