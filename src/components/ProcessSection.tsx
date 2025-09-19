@@ -81,24 +81,24 @@ export function ProcessSection() {
         <div className="text-center mb-16">
           <motion.h2 
             id="process-heading"
-            ref={titleRef}
             className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 font-retro-mono"
+            aria-describedby="process-description"
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
           >
-            {displayedTitle}
-            <span className="animate-pulse">|</span>
+            Our AI Development Process
           </motion.h2>
           <motion.p 
+            id="process-description"
            className="text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed font-retro-mono"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
             viewport={{ once: true }}
           >
-            Our systematic approach, honed through years of building robust web applications, ensures we deliver cutting-edge digital solutions that drive measurable business results for our clients.
+            Our systematic approach to AI-powered web development, ensuring cutting-edge digital solutions that drive measurable business results.
           </motion.p>
         </div>
 

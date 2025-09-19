@@ -47,17 +47,17 @@ export function ContactSection() {
       <div className="max-w-site mx-auto">
         <motion.h2 
           id="contact-heading"
-          ref={titleRef}
           className="text-3xl md:text-4xl lg:text-4xl font-bold text-center text-white mb-3 md:mb-4 font-retro-mono"
+          aria-describedby="contact-description"
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           viewport={{ once: true }}
         >
-          {displayedTitle}
-          <span className="animate-pulse">|</span>
+          Start Your AI Project
         </motion.h2>
         <motion.p 
+          id="contact-description"
           className="text-base md:text-lg text-center text-gray-300 max-w-3xl mx-auto mb-6 md:mb-8 leading-relaxed"
           role="text"
           aria-describedby="contact-heading"

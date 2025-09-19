@@ -32,6 +32,7 @@ export function Footer() {
       viewport={{ once: true, amount: 0.3 }}
     >
       <div className="max-w-site mx-auto">
+        <h2 className="sr-only">Footer Information</h2>
         <motion.div 
           className="flex flex-wrap gap-8 justify-between mb-8"
           initial={{ opacity: 0, y: 50 }}
@@ -46,7 +47,7 @@ export function Footer() {
             transition={{ duration: 0.6, delay: 0.4 }}
             viewport={{ once: true }}
           >
-            <h4 className="text-white font-semibold mb-3" role="heading" aria-level={4}>About Thinkzo.ai</h4>
+            <h3 className="text-white font-semibold mb-3">About Thinkzo.ai</h3>
             <p className="text-sm leading-relaxed">
               At Thinkzo.ai, we design and deliver AI-ready web solutions that empower businesses to grow, adapt, and innovate.
             </p>
@@ -58,7 +59,7 @@ export function Footer() {
             transition={{ duration: 0.6, delay: 0.6 }}
             viewport={{ once: true }}
           >
-            <h4 className="text-white font-semibold mb-3" role="heading" aria-level={4}>Links</h4>
+            <h3 className="text-white font-semibold mb-3">Navigation Links</h3>
             <nav role="navigation" aria-label="Footer navigation">
               <ul className="space-y-2" role="list">
                 <li role="listitem">
@@ -91,7 +92,7 @@ export function Footer() {
             transition={{ duration: 0.6, delay: 0.8 }}
             viewport={{ once: true }}
           >
-            <h4 className="text-white font-semibold mb-3" role="heading" aria-level={4}>Contact</h4>
+            <h3 className="text-white font-semibold mb-3">Contact Information</h3>
             <ul className="space-y-2" role="list">
               <li className="text-sm" role="listitem">
                 Email: <a href="mailto:Team@thinkzo.ai" className="text-gray-300 hover:text-white focus:text-white transition-colors focus:outline-none focus:underline" aria-label="Send email to Team@thinkzo.ai">Team@thinkzo.ai</a>

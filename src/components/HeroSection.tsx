@@ -69,17 +69,19 @@ export function HeroSection() {
             <h1 
               id="hero-heading"
               className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-6 leading-tight cursor-default font-retro-mono"
+              aria-describedby="hero-description"
             >
-              {displayedNextGen}
+              Next-Generation AI Web Development Solutions
               <br />
               <span 
                 className="bg-gradient-to-r from-primary-accent via-secondary-purple to-secondary-blue bg-clip-text text-transparent font-retro-mono"
               >
-                {displayedAISolutions}
+                by Thinkzo.ai
               </span>
             </h1>
             
             <motion.p 
+              id="hero-description"
               className="text-lg md:text-xl lg:text-2xl mb-8 leading-relaxed opacity-90 font-light cursor-default"
               role="text"
               aria-describedby="hero-heading"
