@@ -142,38 +142,6 @@ export function ProcessSection() {
             Start Your Project Today
           </motion.button>
           
-          {/* Related Links Section */}
-          <motion.div
-            className="mt-12"
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.0 }}
-            viewport={{ once: true }}
-          >
-            <RelatedLinks
-              title="Learn More About Our Services"
-              links={[
-                {
-                  title: "Custom Web Development",
-                  description: "Discover our comprehensive web development services and technologies.",
-                  targetSection: "services"
-                },
-                {
-                  title: "AI & Automation Solutions",
-                  description: "Explore how we integrate AI to enhance your business processes.",
-                  targetSection: "services"
-                },
-                {
-                  title: "Get Started Today",
-                  description: "Ready to begin your project? Contact us for a consultation.",
-                  targetSection: "contact"
-                }
-              ]}
-              layout="horizontal"
-              className="max-w-5xl mx-auto"
-            />
-          </motion.div>
-        </motion.div>
       </div>
     </motion.section>
   );
