@@ -220,7 +220,6 @@ export function PricingSection() {
           viewport={{ once: true }}
         >
           <div className="bg-gray-800 rounded-2xl p-8 max-w-4xl mx-auto border border-gray-700">
-            <h3 className="text-2xl font-bold text-dark-primary mb-4">
             <h3 className="text-2xl font-bold text-white mb-4">
               Need Something Custom?
             </h3>
