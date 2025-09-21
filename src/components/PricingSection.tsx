@@ -4,68 +4,66 @@ import { Check, Star, Zap, Crown } from 'lucide-react';
 
 const pricingTiers = [
   {
-    id: 'starter',
-    name: 'Starter',
+    id: 'basic',
+    name: 'Basic',
     icon: Zap,
-    price: '$2,500',
+    price: '$800 – $1,500',
     period: 'one-time',
-    description: 'Perfect for small businesses getting started with professional web presence',
+    description: 'Perfect for small businesses needing a simple, professional web presence',
     features: [
-      'Custom responsive website (up to 5 pages)',
-      'Mobile-optimized design',
+      '3-5 pages (Home, About, Contact, Services)',
+      'Template theme or lightly customized',
+      'Mobile responsive design',
       'Basic SEO optimization',
+      'Basic site speed optimization',
       'Contact form integration',
-      'Social media integration',
-      '3 months of support',
-      'Basic analytics setup'
+      'Image gallery functionality'
     ],
     popular: false,
     ctaText: 'Get Started',
     color: 'from-blue-500 to-blue-600'
   },
   {
-    id: 'professional',
-    name: 'Professional',
+    id: 'standard',
+    name: 'Standard',
     icon: Star,
-    price: '$5,500',
+    price: '$1,500 – $3,500',
     period: 'one-time',
-    description: 'Ideal for growing businesses needing advanced features and AI integration',
+    description: 'Ideal for growing businesses needing more customization and functionality',
     features: [
-      'Everything in Starter plan',
-      'Advanced custom website (up to 10 pages)',
-      'AI-powered search functionality',
-      'CRM/ERP system integration',
-      'E-commerce capabilities',
-      'Advanced SEO & performance optimization',
-      '6 months of support & maintenance',
-      'Custom automation workflows',
-      'Analytics & reporting dashboard'
+      '6-10 pages with more content',
+      'More customization of design (branding, custom graphics)',
+      'Basic dynamic content (blog, simple CMS)',
+      'Enhanced SEO & performance optimization',
+      'Google Analytics integration',
+      'Social media integration',
+      'Basic payment gateway (if needed)',
+      'More design revisions included'
     ],
     popular: true,
     ctaText: 'Most Popular',
     color: 'from-primary-accent to-secondary-purple'
   },
   {
-    id: 'enterprise',
-    name: 'Enterprise',
+    id: 'enhanced',
+    name: 'Enhanced',
     icon: Crown,
-    price: 'Custom',
-    period: 'quote',
-    description: 'Comprehensive AI-powered solutions for large organizations and complex requirements',
+    price: '$3,500 – $6,000',
+    period: 'one-time',
+    description: 'Comprehensive solution for businesses needing advanced functionality and custom design',
     features: [
-      'Everything in Professional plan',
-      'Unlimited pages & custom features',
-      'Advanced AI & machine learning integration',
-      'Multi-system integration (ERP, CRM, inventory)',
-      'Custom API development',
-      'Advanced security & compliance',
-      '12 months of premium support',
-      'Dedicated project manager',
-      'Custom training & documentation',
-      'Priority support & updates'
+      '10-20+ pages or more',
+      'Custom design from scratch',
+      'Advanced functionality (e-commerce, user accounts, booking)',
+      'Comprehensive SEO & speed optimization',
+      'Content creation assistance',
+      'CRM and email marketing integrations',
+      'Payment processing integration',
+      'Post-launch support & training',
+      'Advanced analytics and reporting'
     ],
     popular: false,
-    ctaText: 'Contact Us',
+    ctaText: 'Get Enhanced',
     color: 'from-purple-600 to-indigo-600'
   }
 ];
@@ -108,14 +106,14 @@ export function PricingSection() {
             className="text-3xl md:text-4xl lg:text-5xl font-bold text-dark-primary mb-6 font-retro-mono"
             aria-describedby="pricing-description"
           >
-            AI-Powered Web Solutions Pricing
+            Web Development Service Tiers
           </h2>
           <p 
             id="pricing-description"
             className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed"
           >
-            Choose the perfect plan for your business needs. All plans include our cutting-edge AI technology 
-            and expert development services.
+            Choose the perfect tier for your business needs. These are approximate ranges for professional 
+            web development services, with costs varying based on specific requirements and scope.
           </p>
         </motion.div>
 
@@ -220,8 +218,9 @@ export function PricingSection() {
               Need Something Custom?
             </h3>
             <p className="text-gray-600 mb-6 leading-relaxed">
-              Every business is unique. If our standard plans don't fit your specific needs, 
-              we'll create a custom solution tailored to your requirements and budget.
+              Every business is unique. If our standard tiers don't fit your specific needs, 
+              we'll create a custom solution tailored to your requirements and budget. 
+              Costs may vary based on location, complexity, and additional integrations.
             </p>
             <button
               onClick={scrollToContact}
