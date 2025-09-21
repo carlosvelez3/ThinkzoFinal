@@ -5,6 +5,7 @@
 @layer base {
   body {
     font-family: Arial, Helvetica, sans-serif;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpolygon points='4,2 28,16 16,18 20,28 14,26 10,16' fill='%2300d4ff' stroke='%2300ffff' stroke-width='1.5'/%3E%3C/svg%3E") 16 16, auto;
   }
 
   /* Screen reader only utility class */
