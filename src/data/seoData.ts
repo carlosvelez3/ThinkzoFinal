@@ -28,7 +28,6 @@ export const seoData = {
       'discuss your project',
       'get started',
       'reach out'
-    ]
     ],
     pricing: [
       'our pricing',
@@ -38,6 +37,7 @@ export const seoData = {
       'AI solution pricing',
       'project pricing',
       'service packages'
+    ]
   },
 
   // Page metadata for SEO
@@ -65,7 +65,6 @@ export const seoData = {
       description: 'Ready to transform your business? Contact our AI and web development experts for a consultation. Get started with your digital transformation today.',
       keywords: 'contact, consultation, project quote, web development inquiry',
       canonicalUrl: 'https://thinkzo.ai#contact'
-    }
     },
     pricing: {
       title: 'AI Web Development Pricing - Thinkzo.ai',
@@ -127,7 +126,7 @@ export const urlStructure = {
     services: '#services',
     process: '#process',
     contact: '#contact',
-    pricing: '#pricing',
+    pricing: '#pricing'
     // Future pages could follow: '/services/web-development', '/services/ai-automation'
   },
   
