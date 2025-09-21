@@ -86,7 +86,7 @@ export function PricingSection() {
   return (
     <motion.section 
       id="pricing" 
-      className="relative py-20 px-4 overflow-hidden bg-gradient-to-br from-gray-50 to-white"
+      className="relative py-20 px-4 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100"
       role="region"
       aria-labelledby="pricing-heading"
       initial={{ opacity: 0 }}
