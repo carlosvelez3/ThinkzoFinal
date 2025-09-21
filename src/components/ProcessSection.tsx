@@ -67,11 +67,14 @@ export function ProcessSection() {
   });
 
   return (
-    <section 
+    <motion.section 
       id="process" 
       className="relative py-20 px-4 overflow-hidden bg-gray-900"
       role="region"
       aria-labelledby="process-heading"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
     >
       <div className="relative z-10 max-w-6xl mx-auto">
         <div className="text-center mb-16">
