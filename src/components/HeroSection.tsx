@@ -72,12 +72,6 @@ export function HeroSection() {
               aria-describedby="hero-description"
             >
               Next-Generation AI Web Development Solutions
-              <br />
-              <span 
-                className="bg-gradient-to-r from-primary-accent via-secondary-purple to-secondary-blue bg-clip-text text-transparent font-montserrat"
-              >
-                by Thinkzo.ai
-              </span>
             </h1>
             
             <motion.p 
