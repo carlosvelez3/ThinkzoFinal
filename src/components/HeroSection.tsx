@@ -71,7 +71,7 @@ export function HeroSection() {
               className="text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-tight cursor-default font-montserrat"
               aria-describedby="hero-description"
             >
-              Next-Generation AI Web Development Solutions
+              AI Web Development Solutions
             </h1>
             
             <motion.p 
