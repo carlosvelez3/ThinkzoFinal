@@ -3,6 +3,7 @@ import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { useTypingEffect } from '../hooks/useTypingEffect';
 import { InternalLink } from './InternalLinkingHelper';
+import { AnimatedI } from './AnimatedI';
 
 export function ContactSection() {
   const [formData, setFormData] = useState({
@@ -54,7 +55,7 @@ export function ContactSection() {
           transition={{ duration: 0.6, delay: 0.2 }}
           viewport={{ once: true }}
         >
-          Start Your AI Project
+          Start Your A<AnimatedI /> Project
         </motion.h2>
         <motion.p 
           id="contact-description"

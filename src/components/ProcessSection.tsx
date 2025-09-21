@@ -5,6 +5,7 @@ import { Search, PenTool, Cog, Rocket, ArrowRight } from 'lucide-react';
 import { ProcessPhaseItem } from './ProcessPhaseItem';
 import { useTypingEffect } from '../hooks/useTypingEffect';
 import { RelatedLinks } from './RelatedLinks';
+import { AnimatedI } from './AnimatedI';
 
 const processPhases = [
   {
@@ -87,7 +88,7 @@ export function ProcessSection() {
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
           >
-            Our AI Development Process
+            Our A<AnimatedI /> Development Process
           </motion.h2>
           <motion.p 
             id="process-description"
@@ -97,7 +98,7 @@ export function ProcessSection() {
             transition={{ duration: 0.6, delay: 0.4 }}
             viewport={{ once: true }}
           >
-            Our systematic approach to AI-powered web development, ensuring cutting-edge digital solutions that drive measurable business results.
+            Our systematic approach to A<AnimatedI />-powered web development, ensuring cutting-edge digital solutions that drive measurable business results.
           </motion.p>
         </div>
 

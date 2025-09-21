@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Terminal, Play, Cpu, Zap } from 'lucide-react';
+import { AnimatedI } from './AnimatedI';
 
 const codeSnippets = [
   {
     language: 'Python',
-    code: `# AI Model Training
+    code: `# Ai Model Training
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
 
-class AIModel:
+class AiModel:
     def __init__(self, layers=3):
         self.model = tf.keras.Sequential([
             tf.keras.layers.Dense(128, activation='relu'),
@@ -26,15 +27,15 @@ class AIModel:
         )
         return self.model.fit(X, y, epochs=100)
 
-# Initialize and train model
-ai_model = AIModel()
+# Initialize and train model  
+ai_model = AiModel()
 history = ai_model.train(X_train, y_train)
 print(f"Training accuracy: {history.history['accuracy'][-1]:.4f}")`,
      color: 'from-secondary-blue to-secondary-purple'
   },
   {
     language: 'JavaScript',
-    code: `// AI-Powered Web Application
+    code: `// Ai-Powered Web Application
 class IntelligentSystem {
     constructor() {
         this.neuralNetwork = new NeuralNetwork({
@@ -65,17 +66,17 @@ class IntelligentSystem {
     }
 }
 
-const aiSystem = new IntelligentSystem();
-console.log("AI System initialized and ready for deployment");`,
+const aiSystem = new IntelligentSystem(); 
+console.log("Ai System initialized and ready for deployment");`,
      color: 'from-primary-accent to-secondary-blue'
   },
   {
     language: 'React',
-    code: `// AI-Enhanced React Component
-import { useAI, useMachineLearning } from '@thinkzo/ai-hooks';
+    code: `// Ai-Enhanced React Component
+import { useAi, useMachineLearning } from '@thinkzo/ai-hooks';
 
 const SmartComponent = () => {
-    const { predict, isProcessing } = useAI({
+    const { predict, isProcessing } = useAi({
         model: 'gpt-4-turbo',
         temperature: 0.7
     });
@@ -169,7 +170,7 @@ export function AICodeScreen() {
               transition={{ duration: 2, repeat: Infinity }}
             >
               <Cpu className="w-3 h-3" />
-              <span>AI Processing</span>
+              <span>A<AnimatedI /> Processing</span>
             </motion.div>
             <div className={`px-2 py-1 rounded text-xs font-mono bg-gradient-to-r ${currentSnippetData.color} text-white`}>
               {currentSnippetData.language}
@@ -183,7 +184,7 @@ export function AICodeScreen() {
           <div className="px-2 pt-6 pb-4">
             <div className="flex items-center space-x-2 text-gray-400">
               <Play className="w-4 h-4 text-secondary-blue" />
-              <span>Executing AI algorithms...</span>
+              <span>Executing A<AnimatedI /> algorithms...</span>
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
@@ -215,7 +216,7 @@ export function AICodeScreen() {
         <div className="bg-terminal-bg-end px-2 py-2 flex items-center justify-between text-xs text-gray-400 border-t border-gray-700">
           <div className="flex items-center space-x-4">
             <span>Lines: {displayedCode.split('\n').length}</span>
-            <span>AI Model: GPT-4 Turbo</span>
+            <span>A<AnimatedI /> Model: GPT-4 Turbo</span>
             <motion.span
               className="flex items-center space-x-1"
               animate={{ opacity: [0.5, 1, 0.5] }}
@@ -235,7 +236,7 @@ export function AICodeScreen() {
 
       {/* Floating Elements */}
       <div className="absolute -top-4 -right-4 bg-gradient-to-r from-secondary-blue to-secondary-purple text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-        AI Powered
+        A<AnimatedI /> Powered
       </div>
     </div>
   );

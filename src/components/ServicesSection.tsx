@@ -5,6 +5,7 @@ import { useInView } from 'framer-motion';
 import { X, Code, Brain, Settings, Shield } from 'lucide-react';
 import { useTypingEffect } from '../hooks/useTypingEffect';
 import { RelatedLinks } from './RelatedLinks';
+import { AnimatedI } from './AnimatedI';
 
 const services = [
   {
@@ -28,13 +29,13 @@ const services = [
   },
   {
     id: 'ai-automation',
-    title: 'AI & Automation',
+    title: <>A<AnimatedI /> & Automation</>,
     description: 'Integrate AI‑powered search, recommendation engines and automation tools to enhance user experience and efficiency.',
     icon: Brain,
     detailedContent: {
-      overview: 'Transform your business processes with cutting-edge AI technology and intelligent automation solutions.',
+      overview: 'Transform your business processes with cutting-edge A<AnimatedI /> technology and intelligent automation solutions.',
       features: [
-        'AI-powered search and recommendations',
+        'A<AnimatedI />-powered search and recommendations',
         'Chatbots and virtual assistants',
         'Process automation workflows',
         'Machine learning integration',
@@ -148,7 +149,7 @@ export function ServicesSection() {
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
           >
-            AI-Powered Web Development Services
+            A<AnimatedI />-Powered Web Development Services
           </motion.h2>
           
           <motion.p
@@ -159,7 +160,7 @@ export function ServicesSection() {
             transition={{ duration: 0.6, delay: 0.4 }}
             viewport={{ once: true }}
           >
-            Comprehensive AI solutions for modern web development and business automation
+            Comprehensive A<AnimatedI /> solutions for modern web development and business automation
           </motion.p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8">

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { AnimatedI } from './AnimatedI';
 
 export function Footer() {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
@@ -49,7 +50,7 @@ export function Footer() {
           >
             <h3 className="text-white font-semibold mb-3">About Thinkzo.ai</h3>
             <p className="text-sm leading-relaxed">
-              At Thinkzo.ai, we design and deliver AI-ready web solutions that empower businesses to grow, adapt, and innovate.
+              At Thinkzo.ai, we design and deliver A<AnimatedI />-ready web solutions that empower businesses to grow, adapt, and innovate.
             </p>
           </motion.div>
           
