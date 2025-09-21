@@ -86,13 +86,19 @@ export function PricingSection() {
   return (
     <motion.section 
       id="pricing" 
-      className="relative py-20 px-4 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100"
+      className="relative py-20 px-4 overflow-hidden bg-gray-900"
       role="region"
       aria-labelledby="pricing-heading"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
+      {/* Animated Code Background */}
+      <div 
+        className="absolute inset-0 z-0 bg-code-pattern bg-repeat animate-code-scroll opacity-5 pointer-events-none"
+        aria-hidden="true"
+      />
+      
       <div className="max-w-7xl mx-auto">
         <motion.div
           className="text-center mb-16"
@@ -103,14 +109,14 @@ export function PricingSection() {
         >
           <h2 
             id="pricing-heading"
-            className="text-3xl md:text-4xl lg:text-5xl font-bold text-dark-primary mb-6 font-retro-mono"
+            className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 font-retro-mono"
             aria-describedby="pricing-description"
           >
             Web Development Service Tiers
           </h2>
           <p 
             id="pricing-description"
-            className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed"
+            className="text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed"
           >
             Choose the perfect tier for your business needs. These are approximate ranges for professional 
             web development services, with costs varying based on specific requirements and scope.
@@ -213,11 +219,12 @@ export function PricingSection() {
           transition={{ duration: 0.6, delay: 0.8 }}
           viewport={{ once: true }}
         >
-          <div className="bg-blue-50 rounded-2xl p-8 max-w-4xl mx-auto">
+          <div className="bg-gray-800 rounded-2xl p-8 max-w-4xl mx-auto border border-gray-700">
             <h3 className="text-2xl font-bold text-dark-primary mb-4">
+            <h3 className="text-2xl font-bold text-white mb-4">
               Need Something Custom?
             </h3>
-            <p className="text-gray-600 mb-6 leading-relaxed">
+            <p className="text-gray-300 mb-6 leading-relaxed">
               Every business is unique. If our standard tiers don't fit your specific needs, 
               we'll create a custom solution tailored to your requirements and budget. 
               Costs may vary based on location, complexity, and additional integrations.

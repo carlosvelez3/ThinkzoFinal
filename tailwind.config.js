@@ -26,9 +26,17 @@ export default {
           '0%': { transform: 'translate(-50%, -50%) rotate(0deg)' },
           '100%': { transform: 'translate(-30%, -70%) rotate(360deg)' },
         },
+        'code-scroll': {
+          '0%': { backgroundPosition: '0% 0%' },
+          '100%': { backgroundPosition: '100% 100%' },
+        },
       },
       animation: {
         'gradient-shift': 'gradient-shift 20s ease-in-out infinite alternate',
+        'code-scroll': 'code-scroll 60s linear infinite',
+      },
+      backgroundImage: {
+        'code-pattern': `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ctext x='10' y='20' font-family='monospace' font-size='12' fill='white' fill-opacity='0.05'%3E%3C/%3E%3C/text%3E%3Ctext x='60' y='35' font-family='monospace' font-size='10' fill='white' fill-opacity='0.03'%3E%7B%7D%3C/text%3E%3Ctext x='20' y='50' font-family='monospace' font-size='8' fill='white' fill-opacity='0.04'%3E//%3C/text%3E%3Ctext x='70' y='65' font-family='monospace' font-size='14' fill='white' fill-opacity='0.06'%3E%3E%3C/text%3E%3Ctext x='5' y='80' font-family='monospace' font-size='11' fill='white' fill-opacity='0.03'%3E()%3C/text%3E%3Ctext x='45' y='15' font-family='monospace' font-size='9' fill='white' fill-opacity='0.05'%3E%3D%3E%3C/text%3E%3Ctext x='80' y='45' font-family='monospace' font-size='13' fill='white' fill-opacity='0.04'%3E%5B%5D%3C/text%3E%3Ctext x='30' y='90' font-family='monospace' font-size='10' fill='white' fill-opacity='0.06'%3E%26%26%3C/text%3E%3C/svg%3E")`,
       },
     },
   },
