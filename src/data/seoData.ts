@@ -29,6 +29,15 @@ export const seoData = {
       'get started',
       'reach out'
     ]
+    ],
+    pricing: [
+      'our pricing',
+      'service costs',
+      'pricing plans',
+      'web development costs',
+      'AI solution pricing',
+      'project pricing',
+      'service packages'
   },
 
   // Page metadata for SEO
@@ -56,6 +65,13 @@ export const seoData = {
       description: 'Ready to transform your business? Contact our AI and web development experts for a consultation. Get started with your digital transformation today.',
       keywords: 'contact, consultation, project quote, web development inquiry',
       canonicalUrl: 'https://thinkzo.ai#contact'
+    }
+    },
+    pricing: {
+      title: 'AI Web Development Pricing - Thinkzo.ai',
+      description: 'Transparent pricing for AI-powered web development services. Choose from Starter, Professional, or Enterprise plans tailored to your business needs.',
+      keywords: 'web development pricing, AI solution costs, website pricing, development packages',
+      canonicalUrl: 'https://thinkzo.ai#pricing'
     }
   },
 
@@ -111,6 +127,7 @@ export const urlStructure = {
     services: '#services',
     process: '#process',
     contact: '#contact',
+    pricing: '#pricing',
     // Future pages could follow: '/services/web-development', '/services/ai-automation'
   },
   

@@ -74,6 +74,16 @@ export function Footer() {
               </li>
                 <li role="listitem">
                 <button
+                  onClick={() => scrollToSection('pricing')}
+                  onKeyDown={(e) => handleKeyDown(e, 'pricing')}
+                  className="text-gray-300 hover:text-white focus:text-white text-sm transition-colors focus:outline-none focus:underline"
+                  aria-label="Navigate to Pricing section"
+                >
+                  Pricing
+                </button>
+              </li>
+                <li role="listitem">
+                <button
                   onClick={() => scrollToSection('contact')}
                   onKeyDown={(e) => handleKeyDown(e, 'contact')}
                   className="text-gray-300 hover:text-white focus:text-white text-sm transition-colors focus:outline-none focus:underline"

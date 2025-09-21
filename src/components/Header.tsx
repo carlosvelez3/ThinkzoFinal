@@ -106,6 +106,20 @@ export function Header() {
             Process
           </motion.button>
           <motion.button
+            onClick={() => scrollToSection('pricing')}
+            onKeyDown={(e) => handleKeyDown(e, 'pricing')}
+            className="hidden lg:block bg-gradient-to-r from-primary-accent to-secondary-purple hover:from-primary-accent hover:to-purple-600 focus:from-primary-accent focus:to-purple-600 text-white px-4 py-2 rounded-lg font-semibold font-poppins text-sm uppercase tracking-wide transition-all duration-300 shadow-lg hover:shadow-xl focus:shadow-xl transform hover:scale-105 focus:scale-105 border border-white/20 hover:border-white/40 focus:border-white/60 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent"
+            aria-label="Navigate to Pricing section"
+            whileHover={{ 
+              scale: 1.05,
+              boxShadow: "0 10px 25px rgba(224, 58, 138, 0.3)",
+              transition: { duration: 0.2 }
+            }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Pricing
+          </motion.button>
+          <motion.button
             onClick={() => scrollToSection('contact')}
             onKeyDown={(e) => handleKeyDown(e, 'contact')}
             className="bg-gradient-to-r from-primary-accent to-secondary-purple hover:from-primary-accent-hover hover:to-purple-600 focus:from-primary-accent-hover focus:to-purple-600 text-white px-4 py-2 rounded-lg font-semibold font-poppins text-sm uppercase tracking-wide transition-all duration-300 shadow-lg hover:shadow-xl focus:shadow-xl transform hover:scale-105 focus:scale-105 border border-white/20 hover:border-white/40 focus:border-white/60 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent"
