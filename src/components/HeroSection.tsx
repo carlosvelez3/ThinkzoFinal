@@ -68,13 +68,13 @@ export function HeroSection() {
           <div className="text-center lg:text-left text-white lg:col-span-1">
             <h1 
               id="hero-heading"
-              className="text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-tight cursor-default font-retro-mono"
+              className="text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-tight cursor-default font-montserrat"
               aria-describedby="hero-description"
             >
               Next-Generation AI Web Development Solutions
               <br />
               <span 
-                className="bg-gradient-to-r from-primary-accent via-secondary-purple to-secondary-blue bg-clip-text text-transparent font-retro-mono"
+                className="bg-gradient-to-r from-primary-accent via-secondary-purple to-secondary-blue bg-clip-text text-transparent font-montserrat"
               >
                 by Thinkzo.ai
               </span>
