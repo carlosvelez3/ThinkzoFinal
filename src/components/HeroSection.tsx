@@ -71,7 +71,24 @@ export function HeroSection() {
               className="text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-tight cursor-default font-montserrat"
               aria-describedby="hero-description"
             >
-              AI Web Development Solutions
+              A<motion.span
+                className="inline-block text-primary-accent"
+                animate={{
+                  scale: [1, 1.1, 1],
+                  textShadow: [
+                    "0 0 0px rgba(224, 58, 138, 0)",
+                    "0 0 20px rgba(224, 58, 138, 0.8)",
+                    "0 0 0px rgba(224, 58, 138, 0)"
+                  ]
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                i
+              </motion.span> Web Development Solutions
             </h1>
             
             <motion.p 
