@@ -166,10 +166,10 @@ export function PricingSection() {
             return (
               <motion.div
                 key={tier.id}
-                className={`relative bg-white rounded-2xl shadow-xl border-2 flex flex-col h-full ${
+                className={`relative bg-gray-800 rounded-2xl shadow-xl border-2 flex flex-col h-full ${
                   tier.popular 
                     ? 'border-primary-accent shadow-2xl transform scale-105' 
-                    : 'border-gray-200 hover:border-primary-accent/50'
+                    : 'border-gray-700 hover:border-primary-accent/50'
                 } transition-all duration-300 hover:shadow-2xl hover:-translate-y-2`}
                 initial={{ opacity: 0, y: 100 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -196,9 +196,10 @@ export function PricingSection() {
                       <IconComponent className="w-8 h-8 text-white" aria-hidden="true" />
                     </div>
                     <h3 className="text-2xl font-bold text-dark-primary mb-2 font-montserrat">
+                    <h3 className="text-2xl font-bold text-white mb-2 font-montserrat">
                       {tier.name}
                     </h3>
-                    <p className="text-gray-600 text-sm leading-relaxed font-poppins">
+                    <p className="text-gray-300 text-sm leading-relaxed font-poppins">
                       {tier.description}
                     </p>
                   </div>
@@ -208,35 +209,35 @@ export function PricingSection() {
                     {tier.monthlyPrice ? (
                       <div className="space-y-3">
                         {/* One-time Payment Option */}
-                        <div className="p-3 bg-gray-50 rounded-lg border">
+                        <div className="p-3 bg-gray-700 rounded-lg border border-gray-600">
                           <div className="flex items-baseline justify-center">
-                            <span className="text-2xl font-bold text-dark-primary">
+                            <span className="text-2xl font-bold text-white">
                               {tier.price}
                             </span>
-                            <span className="text-gray-500 ml-2 text-sm">
+                            <span className="text-gray-400 ml-2 text-sm">
                               {tier.period}
                             </span>
                           </div>
-                          <p className="text-xs text-gray-600 mt-1">Full payment upfront</p>
+                          <p className="text-xs text-gray-300 mt-1">Full payment upfront</p>
                         </div>
                         
                         {/* Monthly Payment Option */}
-                        <div className="p-3 bg-blue-50 rounded-lg border-2 border-blue-200">
+                        <div className="p-3 bg-blue-900/20 rounded-lg border-2 border-blue-700/50">
                           <div className="text-center">
-                            <span className="text-lg font-semibold text-blue-700">
+                            <span className="text-lg font-semibold text-blue-400">
                               {tier.monthlyPeriod}
                             </span>
                           </div>
-                          <p className="text-xs text-blue-600 mt-2">Contact us for flexible payment plans</p>
+                          <p className="text-xs text-blue-300 mt-2">Contact us for flexible payment plans</p>
                         </div>
                       </div>
                     ) : (
                       <div className="flex items-baseline justify-center">
-                        <span className="text-4xl font-bold text-dark-primary">
+                        <span className="text-4xl font-bold text-white">
                           {tier.price}
                         </span>
                         {tier.period !== 'quote' && (
-                          <span className="text-gray-500 ml-2">
+                          <span className="text-gray-400 ml-2">
                             {tier.period}
                           </span>
                         )}
@@ -250,7 +251,7 @@ export function PricingSection() {
                       {tier.features.map((feature, featureIndex) => (
                         <li key={featureIndex} className="flex items-start" role="listitem">
                           <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5 mr-3" aria-hidden="true" />
-                          <span className="text-gray-700 text-sm font-poppins">{feature}</span>
+                          <span className="text-gray-300 text-sm font-poppins">{feature}</span>
                         </li>
                       ))}
                     </ul>
