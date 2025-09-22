@@ -15,13 +15,7 @@ const navigationItems: NavigationItem[] = [
     id: 'services',
     label: 'Services',
     href: 'services',
-    description: 'AI-powered web development solutions',
-    subItems: [
-      { id: 'web-dev', label: 'Web Development', href: 'services', description: 'Custom websites & applications' },
-      { id: 'ai-automation', label: 'AI & Automation', href: 'services', description: 'Smart business solutions' },
-      { id: 'integration', label: 'System Integration', href: 'services', description: 'Connect your tools' },
-      { id: 'maintenance', label: 'Maintenance', href: 'services', description: 'Ongoing support' }
-    ]
+    description: 'AI-powered web development solutions'
   },
   {
     id: 'process',
