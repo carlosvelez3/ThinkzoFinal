@@ -145,6 +145,11 @@ export function ServicesSection() {
             id="services-heading"
             className="text-3xl md:text-4xl lg:text-5xl font-bold text-center text-white mb-8 md:mb-12 font-montserrat"
             aria-describedby="services-description"
+            style={{
+              lineHeight: '1.2',
+              letterSpacing: '0.02em',
+              marginBottom: '2rem'
+            }}
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -155,7 +160,11 @@ export function ServicesSection() {
           
           <motion.p
             id="services-description"
-            className="text-lg text-gray-300 text-center mb-8 max-w-3xl mx-auto font-poppins"
+            className="text-lg text-gray-200 text-center mb-12 max-w-3xl mx-auto font-poppins"
+            style={{
+              lineHeight: '1.6',
+              letterSpacing: '0.01em'
+            }}
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
@@ -193,9 +202,24 @@ export function ServicesSection() {
                       <IconComponent className="w-6 h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 text-white group-hover:text-white group-focus:text-white transition-colors duration-300" aria-hidden="true" />
                     </div>
                     <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-white mb-3 md:mb-4 group-hover:text-primary-accent transition-colors duration-300 font-montserrat">
+                    <h3 
+                      className="text-lg md:text-xl lg:text-2xl font-bold text-white mb-3 md:mb-4 group-hover:text-primary-accent transition-colors duration-300 font-montserrat"
+                      style={{
+                        lineHeight: '1.3',
+                        letterSpacing: '0.015em'
+                      }}
+                    >
                       {service.title}
                     </h3>
-                    <p id={`service-${index}-description`} className="text-gray-300 text-sm md:text-base leading-relaxed mb-4 md:mb-6 font-poppins">
+                    <p 
+                      id={`service-${index}-description`} 
+                      className="text-gray-200 text-sm md:text-base leading-relaxed mb-4 md:mb-6 font-poppins"
+                      style={{
+                        lineHeight: '1.6',
+                        letterSpacing: '0.01em',
+                        maxWidth: '45ch'
+                      }}
+                    >
                       {service.description}
                     </p>
                   </div>

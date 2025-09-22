@@ -77,20 +77,51 @@ export function ProcessPhaseItem({ phase, index, circleGradient }: ProcessPhaseI
       {/* Content */}
       <div className="flex-1 text-center lg:text-left bg-cool-dark-1 p-8 rounded-xl shadow-xl border border-cool-dark-3">
         <h3 className="text-2xl lg:text-3xl font-bold text-white mb-4 font-montserrat">
+        <h3 
+          className="text-2xl lg:text-3xl font-bold text-white mb-4 font-montserrat"
+          style={{
+            lineHeight: '1.3',
+            letterSpacing: '0.015em'
+          }}
+        >
           Phase {index + 1}: {phase.title}
         </h3>
         
-        <p className="text-gray-300 mb-6 leading-relaxed text-base lg:text-lg font-poppins">
+        <p 
+          className="text-gray-200 mb-6 leading-relaxed text-base lg:text-lg font-poppins"
+          style={{
+            lineHeight: '1.6',
+            letterSpacing: '0.01em',
+            maxWidth: '60ch'
+          }}
+        >
           {phase.description}
         </p>
 
         <div className="mb-6">
           <h4 className="text-lg font-semibold text-white mb-3 font-poppins">Key Activities</h4>
+          <h4 
+            className="text-lg font-semibold text-white mb-3 font-poppins"
+            style={{
+              lineHeight: '1.4',
+              letterSpacing: '0.01em'
+            }}
+          >
+            Key Activities
+          </h4>
           <ul className="space-y-2" role="list">
             {phase.keyActivities.map((activity, activityIndex) => (
               <li key={activityIndex} className="flex items-start" role="listitem">
                 <div className="w-2 h-2 bg-primary-accent rounded-full mt-2 mr-3 flex-shrink-0" aria-hidden="true"></div>
-                <span className="text-gray-300 font-poppins">{activity}</span>
+                <span 
+                  className="text-gray-200 font-poppins"
+                  style={{
+                    lineHeight: '1.5',
+                    letterSpacing: '0.01em'
+                  }}
+                >
+                  {activity}
+                </span>
               </li>
             ))}
           </ul>
@@ -98,7 +129,25 @@ export function ProcessPhaseItem({ phase, index, circleGradient }: ProcessPhaseI
 
         <div className="bg-gray-800 p-6 rounded-lg border-l-4 border-primary-accent mb-6">
           <h4 className="text-lg font-semibold text-white mb-2 font-poppins">Deliverable</h4>
-          <p className="text-gray-200 leading-relaxed font-poppins">{phase.outcome}</p>
+          <h4 
+            className="text-lg font-semibold text-white mb-2 font-poppins"
+            style={{
+              lineHeight: '1.4',
+              letterSpacing: '0.01em'
+            }}
+          >
+            Deliverable
+          </h4>
+          <p 
+            className="text-gray-200 leading-relaxed font-poppins"
+            style={{
+              lineHeight: '1.6',
+              letterSpacing: '0.01em',
+              maxWidth: '55ch'
+            }}
+          >
+            {phase.outcome}
+          </p>
         </div>
       </div>
     </motion.div>

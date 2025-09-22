@@ -68,8 +68,13 @@ export function HeroSection() {
           <div className="text-center lg:text-left text-white lg:col-span-1">
             <h1 
               id="hero-heading"
-              className="text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-tight cursor-default font-montserrat"
+              className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-8 leading-tight cursor-default font-montserrat text-white"
               aria-describedby="hero-description"
+              style={{
+                lineHeight: '1.1',
+                letterSpacing: '0.025em',
+                textShadow: '0 2px 4px rgba(0,0,0,0.3)'
+              }}
             >
               A<motion.span
                 className="inline-block text-primary-accent"
@@ -93,9 +98,14 @@ export function HeroSection() {
             
             <motion.p 
               id="hero-description"
-              className="text-lg md:text-xl lg:text-2xl mb-8 leading-relaxed opacity-90 font-light cursor-default"
+              className="text-lg md:text-xl lg:text-2xl mb-8 leading-relaxed opacity-95 font-normal cursor-default text-white max-w-4xl mx-auto"
               role="text"
               aria-describedby="hero-heading"
+              style={{
+                lineHeight: '1.6',
+                letterSpacing: '0.01em',
+                textShadow: '0 1px 2px rgba(0,0,0,0.2)'
+              }}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 2.2 }}

@@ -265,8 +265,12 @@ export function ContactSection() {
       <div className="max-w-site mx-auto">
         <motion.h2 
           id="contact-heading"
-          className="text-3xl md:text-4xl lg:text-4xl font-bold text-center text-white mb-3 md:mb-4 font-montserrat"
+          className="text-3xl md:text-4xl lg:text-4xl font-bold text-center text-white mb-4 md:mb-6 font-montserrat"
           aria-describedby="contact-description"
+          style={{
+            lineHeight: '1.2',
+            letterSpacing: '0.02em'
+          }}
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
@@ -277,9 +281,13 @@ export function ContactSection() {
         
         <motion.p 
           id="contact-description"
-          className="text-base md:text-lg text-center text-gray-300 max-w-3xl mx-auto mb-6 md:mb-8 leading-relaxed font-poppins"
+          className="text-base md:text-lg text-center text-gray-200 max-w-3xl mx-auto mb-8 md:mb-10 leading-relaxed font-poppins"
           role="text"
           aria-describedby="contact-heading"
+          style={{
+            lineHeight: '1.6',
+            letterSpacing: '0.01em'
+          }}
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
@@ -335,6 +343,13 @@ export function ContactSection() {
                   className="mb-6"
                 >
                   <label htmlFor="email" className="block text-sm font-bold text-white mb-2 font-poppins">
+                  <label 
+                    htmlFor="email" 
+                    className="block text-sm font-bold text-white mb-2 font-poppins"
+                    style={{
+                      letterSpacing: '0.01em'
+                    }}
+                  >
                     What's your email? <span className="text-primary-accent">*</span>
                   </label>
                   <input

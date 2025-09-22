@@ -148,14 +148,22 @@ export function PricingSection() {
         >
           <h2 
             id="pricing-heading"
-            className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 font-montserrat"
+            className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8 font-montserrat"
             aria-describedby="pricing-description"
+            style={{
+              lineHeight: '1.2',
+              letterSpacing: '0.02em'
+            }}
           >
             Web Development Service Tiers
           </h2>
           <p 
             id="pricing-description"
-            className="text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed font-poppins"
+            className="text-lg text-gray-200 max-w-3xl mx-auto leading-relaxed font-poppins"
+            style={{
+              lineHeight: '1.6',
+              letterSpacing: '0.01em'
+            }}
           >
             Choose the right plan for your business. Prices may vary based on your specific needs and project complexity.
           </p>

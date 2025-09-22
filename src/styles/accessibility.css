@@ -1,0 +1,326 @@
+/* Accessibility and Readability Improvements */
+
+/* Base Typography Settings */
+:root {
+  /* Spacing System (8px base) */
+  --spacing-xs: 0.25rem;    /* 4px */
+  --spacing-sm: 0.5rem;     /* 8px */
+  --spacing-md: 1rem;       /* 16px */
+  --spacing-lg: 1.5rem;     /* 24px */
+  --spacing-xl: 2rem;       /* 32px */
+  --spacing-2xl: 3rem;      /* 48px */
+  --spacing-3xl: 4rem;      /* 64px */
+
+  /* Typography Scale */
+  --text-xs: 0.75rem;       /* 12px */
+  --text-sm: 0.875rem;      /* 14px */
+  --text-base: 1rem;        /* 16px */
+  --text-lg: 1.125rem;      /* 18px */
+  --text-xl: 1.25rem;       /* 20px */
+  --text-2xl: 1.5rem;       /* 24px */
+  --text-3xl: 1.875rem;     /* 30px */
+  --text-4xl: 2.25rem;      /* 36px */
+  --text-5xl: 3rem;         /* 48px */
+  --text-6xl: 3.75rem;      /* 60px */
+
+  /* Line Heights */
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose: 2;
+
+  /* Letter Spacing (for dyslexia support) */
+  --tracking-normal: 0;
+  --tracking-wide: 0.025em;
+  --tracking-wider: 0.05em;
+  --tracking-widest: 0.1em;
+  --tracking-dyslexia: 0.12em;
+
+  /* Word Spacing (for dyslexia support) */
+  --word-spacing-normal: 0;
+  --word-spacing-wide: 0.16em;
+
+  /* High Contrast Colors */
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #4a4a4a;
+  --color-text-muted: #6b7280;
+  --color-text-inverse: #ffffff;
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f9fafb;
+  --color-accent: #2563eb;
+  --color-accent-hover: #1d4ed8;
+  --color-success: #059669;
+  --color-warning: #d97706;
+  --color-error: #dc2626;
+
+  /* Focus Indicators */
+  --focus-ring: 0 0 0 2px var(--color-accent);
+  --focus-ring-offset: 2px;
+}
+
+/* Base Typography */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-primary);
+  letter-spacing: var(--tracking-normal);
+  word-spacing: var(--word-spacing-normal);
+}
+
+/* Dyslexia-Friendly Typography */
+.dyslexia-friendly {
+  font-family: 'OpenDyslexic', Arial, Verdana, sans-serif;
+  letter-spacing: var(--tracking-dyslexia);
+  word-spacing: var(--word-spacing-wide);
+  line-height: var(--leading-relaxed);
+}
+
+/* Heading Hierarchy with Proper Contrast */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-text-primary);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  margin-bottom: var(--spacing-md);
+  letter-spacing: var(--tracking-wide);
+}
+
+h1 {
+  font-size: var(--text-6xl);
+  line-height: var(--leading-tight);
+  margin-bottom: var(--spacing-xl);
+}
+
+h2 {
+  font-size: var(--text-5xl);
+  line-height: var(--leading-tight);
+  margin-bottom: var(--spacing-lg);
+}
+
+h3 {
+  font-size: var(--text-4xl);
+  line-height: var(--leading-tight);
+  margin-bottom: var(--spacing-lg);
+}
+
+h4 {
+  font-size: var(--text-3xl);
+  line-height: var(--leading-normal);
+  margin-bottom: var(--spacing-md);
+}
+
+h5 {
+  font-size: var(--text-2xl);
+  line-height: var(--leading-normal);
+  margin-bottom: var(--spacing-md);
+}
+
+h6 {
+  font-size: var(--text-xl);
+  line-height: var(--leading-normal);
+  margin-bottom: var(--spacing-sm);
+}
+
+/* Responsive Typography */
+@media (max-width: 768px) {
+  h1 { font-size: var(--text-4xl); }
+  h2 { font-size: var(--text-3xl); }
+  h3 { font-size: var(--text-2xl); }
+  h4 { font-size: var(--text-xl); }
+  h5 { font-size: var(--text-lg); }
+  h6 { font-size: var(--text-base); }
+}
+
+/* Body Text with Optimal Readability */
+p {
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-md);
+  max-width: 65ch; /* Optimal reading width */
+}
+
+.text-large {
+  font-size: var(--text-lg);
+  line-height: var(--leading-relaxed);
+}
+
+.text-small {
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+}
+
+/* Lists with Proper Spacing */
+ul, ol {
+  margin-bottom: var(--spacing-md);
+  padding-left: var(--spacing-lg);
+}
+
+li {
+  margin-bottom: var(--spacing-xs);
+  line-height: var(--leading-relaxed);
+}
+
+/* Links with High Contrast */
+a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--color-accent-hover);
+  text-decoration-thickness: 3px;
+}
+
+a:focus {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: 2px;
+}
+
+/* Button Text Accessibility */
+button {
+  font-size: var(--text-base);
+  font-weight: 600;
+  line-height: var(--leading-normal);
+  letter-spacing: var(--tracking-wide);
+}
+
+/* Focus Indicators for All Interactive Elements */
+button:focus,
+input:focus,
+textarea:focus,
+select:focus,
+[tabindex]:focus {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  :root {
+    --color-text-primary: #000000;
+    --color-text-secondary: #000000;
+    --color-bg-primary: #ffffff;
+    --color-accent: #0000ff;
+    --color-accent-hover: #000080;
+  }
+  
+  a {
+    text-decoration-thickness: 3px;
+  }
+  
+  button {
+    border: 2px solid currentColor;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Print Styles */
+@media print {
+  body {
+    font-size: 12pt;
+    line-height: 1.5;
+    color: #000000;
+    background: #ffffff;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    color: #000000;
+    page-break-after: avoid;
+  }
+  
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+}
+
+/* Screen Reader Only Content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Skip Links */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: var(--color-text-primary);
+  color: var(--color-text-inverse);
+  padding: var(--spacing-sm) var(--spacing-md);
+  text-decoration: none;
+  border-radius: 4px;
+  z-index: 1000;
+  font-weight: 600;
+  transition: top 0.3s;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
+/* Text Selection */
+::selection {
+  background-color: var(--color-accent);
+  color: var(--color-text-inverse);
+}
+
+/* Improved Form Labels */
+label {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-xs);
+  display: block;
+}
+
+/* Error and Success Messages */
+.error-message {
+  color: var(--color-error);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  margin-top: var(--spacing-xs);
+}
+
+.success-message {
+  color: var(--color-success);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  margin-top: var(--spacing-xs);
+}
+
+/* Utility Classes for Spacing */
+.text-spacing-normal { letter-spacing: var(--tracking-normal); }
+.text-spacing-wide { letter-spacing: var(--tracking-wide); }
+.text-spacing-wider { letter-spacing: var(--tracking-wider); }
+.text-spacing-widest { letter-spacing: var(--tracking-widest); }
+.text-spacing-dyslexia { letter-spacing: var(--tracking-dyslexia); }
+
+.word-spacing-normal { word-spacing: var(--word-spacing-normal); }
+.word-spacing-wide { word-spacing: var(--word-spacing-wide); }
+
+.line-height-tight { line-height: var(--leading-tight); }
+.line-height-normal { line-height: var(--leading-normal); }
+.line-height-relaxed { line-height: var(--leading-relaxed); }
+.line-height-loose { line-height: var(--leading-loose); }

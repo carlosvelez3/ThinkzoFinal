@@ -7,6 +7,7 @@ import { PricingSection } from './components/PricingSection';
 import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/Footer';
 import { ThreeDScene } from './components/ThreeDScene';
+import { AccessibilityPanel } from './components/AccessibilitySettings';
 
 function App() {
   const skipToMain = () => {
@@ -47,6 +48,9 @@ function App() {
         <ContactSection />
         <Footer />
       </div>
+      
+      {/* Accessibility Panel */}
+      <AccessibilityPanel />
     </div>
   );
 }

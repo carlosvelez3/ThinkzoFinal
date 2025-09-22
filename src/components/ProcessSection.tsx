@@ -91,8 +91,12 @@ export function ProcessSection() {
         <div className="text-center mb-16">
           <motion.h2 
             id="process-heading"
-            className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 font-montserrat"
+            className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8 font-montserrat"
             aria-describedby="process-description"
+            style={{
+              lineHeight: '1.2',
+              letterSpacing: '0.02em'
+            }}
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -102,7 +106,11 @@ export function ProcessSection() {
           </motion.h2>
           <motion.p 
             id="process-description"
-           className="text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed font-poppins"
+            className="text-lg text-gray-200 max-w-3xl mx-auto leading-relaxed font-poppins mb-12"
+            style={{
+              lineHeight: '1.6',
+              letterSpacing: '0.01em'
+            }}
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
@@ -132,6 +140,13 @@ export function ProcessSection() {
           viewport={{ once: true }}
         >
          <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto font-poppins">
+         <p 
+            className="text-lg text-gray-200 mb-8 max-w-2xl mx-auto font-poppins"
+            style={{
+              lineHeight: '1.6',
+              letterSpacing: '0.01em'
+            }}
+          >
             Ready to transform your digital presence with a proven methodology? 
             Let's discuss how our systematic approach can deliver measurable results for your business.
           </p>

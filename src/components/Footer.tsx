@@ -74,7 +74,23 @@ export function Footer() {
             viewport={{ once: true }}
           >
             <h3 className="text-white font-semibold mb-3 font-montserrat">About Thinkzo.ai</h3>
-            <p className="text-sm leading-relaxed font-poppins">
+            <h3 
+              className="text-white font-semibold mb-3 font-montserrat"
+              style={{
+                lineHeight: '1.4',
+                letterSpacing: '0.015em'
+              }}
+            >
+              About Thinkzo.ai
+            </h3>
+            <p 
+              className="text-sm leading-relaxed font-poppins text-gray-300"
+              style={{
+                lineHeight: '1.6',
+                letterSpacing: '0.01em',
+                maxWidth: '45ch'
+              }}
+            >
               At Thinkzo.ai, we design and deliver A<AnimatedI />-ready web solutions that empower businesses to grow, adapt, and innovate.
             </p>
           </motion.div>
