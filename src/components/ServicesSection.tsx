@@ -132,7 +132,7 @@ export function ServicesSection() {
     <>
       <motion.section 
         id="services" 
-        className="relative py-20 px-4 overflow-hidden bg-dark-primary"
+        className="relative py-20 px-4 overflow-hidden bg-gray-800"
         role="region"
         aria-labelledby="services-heading"
         initial={{ opacity: 0, y: 100 }}

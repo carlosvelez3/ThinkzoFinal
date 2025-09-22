@@ -70,7 +70,7 @@ export function ProcessSection() {
   return (
     <motion.section 
       id="process" 
-      className="relative py-20 px-4 overflow-hidden bg-gray-900"
+      className="relative py-20 px-4 overflow-hidden bg-gray-800"
       role="region"
       aria-labelledby="process-heading"
       initial={{ opacity: 0 }}

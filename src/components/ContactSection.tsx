@@ -254,7 +254,7 @@ export function ContactSection() {
   return (
     <motion.section 
       id="contact" 
-      className="relative bg-gradient-to-br from-dark-primary to-gray-800 py-8 md:py-12 px-4 overflow-hidden"
+      className="relative bg-gradient-to-br from-gray-800 to-gray-700 py-8 md:py-12 px-4 overflow-hidden"
       role="region"
       aria-labelledby="contact-heading"
       initial={{ opacity: 0, y: 100 }}
@@ -316,7 +316,7 @@ export function ContactSection() {
         </motion.div>
         
         <motion.div 
-          className="max-w-2xl mx-auto bg-gray-800 border border-gray-700 rounded-lg shadow-sm p-4 md:p-6 lg:p-8"
+          className="max-w-2xl mx-auto bg-gray-700 border border-gray-600 rounded-lg shadow-sm p-4 md:p-6 lg:p-8"
           initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.6 }}

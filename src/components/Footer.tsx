@@ -30,7 +30,7 @@ export function Footer() {
 
   return (
     <motion.footer 
-      className="bg-gray-900 text-gray-300 py-8 px-4"
+      className="bg-gray-800 text-gray-300 py-8 px-4"
       role="contentinfo"
       aria-label="Site footer"
       initial={{ opacity: 0 }}

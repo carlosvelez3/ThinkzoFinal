@@ -123,7 +123,7 @@ export function PricingSection() {
     <motion.section 
       ref={sectionRef}
       id="pricing" 
-      className="relative py-20 px-4 overflow-hidden bg-gray-900"
+      className="relative py-20 px-4 overflow-hidden bg-gray-800"
       role="region"
       aria-labelledby="pricing-heading"
       initial={{ opacity: 0 }}
@@ -166,7 +166,7 @@ export function PricingSection() {
             return (
               <motion.div
                 key={tier.id}
-                className={`relative bg-gray-800 rounded-2xl shadow-xl border-2 flex flex-col h-full ${
+                className={`relative bg-gray-700 rounded-2xl shadow-xl border-2 flex flex-col h-full ${
                   tier.popular 
                     ? 'border-primary-accent shadow-2xl transform scale-105' 
                     : 'border-gray-700 hover:border-primary-accent/50'
@@ -283,7 +283,7 @@ export function PricingSection() {
           transition={{ duration: 0.6, delay: 0.8 }}
           viewport={{ once: true }}
         >
-          <div className="bg-gray-800 rounded-2xl p-8 max-w-4xl mx-auto border border-gray-700">
+          <div className="bg-gray-700 rounded-2xl p-8 max-w-4xl mx-auto border border-gray-600">
             <h3 className="text-2xl font-bold text-white mb-4 font-montserrat">
               Need Something Custom?
             </h3>
