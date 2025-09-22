@@ -138,11 +138,11 @@ export function ProcessSection() {
                 element.scrollIntoView({ behavior: 'smooth' });
               }
             }}
-            className="bg-gradient-to-r from-button-gradient-start to-button-gradient-end hover:from-button-gradient-start-hover hover:to-button-gradient-end-hover focus:from-button-gradient-start-hover focus:to-button-gradient-end-hover text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 focus:scale-105 shadow-2xl hover:shadow-blue-500/50 focus:shadow-blue-500/50 focus:outline-none focus:ring-4 focus:ring-blue-500/30 focus:ring-offset-2"
+            className="bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 focus:scale-105 shadow-2xl hover:shadow-amber-500/50 focus:shadow-amber-500/50 focus:outline-none focus:ring-4 focus:ring-amber-500/30 focus:ring-offset-2"
             aria-label="Start your project - Navigate to contact form"
             whileHover={{ 
               scale: 1.05,
-              boxShadow: "0 20px 40px rgba(224, 58, 138, 0.4)"
+              boxShadow: "0 20px 40px rgba(217, 119, 6, 0.4)"
             }}
             whileTap={{ scale: 0.95 }}
           >

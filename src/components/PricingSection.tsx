@@ -263,8 +263,8 @@ export function PricingSection() {
                     onKeyDown={handleKeyDown}
                     className={`w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 focus:scale-105 shadow-lg hover:shadow-xl focus:shadow-xl focus:outline-none focus:ring-4 focus:ring-offset-2 ${
                       tier.popular
-                        ? 'bg-gradient-to-r from-button-gradient-start to-button-gradient-end hover:from-button-gradient-start-hover hover:to-button-gradient-end-hover focus:from-button-gradient-start-hover focus:to-button-gradient-end-hover text-white focus:ring-blue-500/30'
-                        : 'bg-gradient-to-r from-cool-dark-1 to-cool-dark-2 hover:from-cool-dark-2 hover:to-cool-dark-3 focus:from-cool-dark-2 focus:to-cool-dark-3 text-white focus:ring-cool-teal-2/30'
+                        ? 'bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white focus:ring-amber-500/30'
+                        : 'bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white focus:ring-amber-500/30'
                     }`}
                     aria-label={`Choose ${tier.name} plan - Navigate to contact form`}
                   >
@@ -295,7 +295,7 @@ export function PricingSection() {
             <button
               onClick={scrollToContact}
               onKeyDown={handleKeyDown}
-              className="bg-gradient-to-r from-button-gradient-start to-button-gradient-end hover:from-button-gradient-start-hover hover:to-button-gradient-end-hover focus:from-button-gradient-start-hover focus:to-button-gradient-end-hover text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 focus:scale-105 shadow-lg hover:shadow-xl focus:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-500/30 focus:ring-offset-2"
+              className="bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 focus:scale-105 shadow-lg hover:shadow-xl focus:shadow-xl focus:outline-none focus:ring-4 focus:ring-amber-500/30 focus:ring-offset-2"
               aria-label="Discuss custom pricing - Navigate to contact form"
             >
               Discuss Custom Pricing

@@ -422,7 +422,7 @@ export function Header() {
                     <div className="font-semibold text-white mb-2">Ready to start?</div>
                     <button
                       onClick={() => scrollToSection('contact')}
-                      className="w-full bg-gradient-to-r from-primary-accent to-secondary-purple text-white py-3 px-6 rounded-lg font-semibold transition-all duration-300 hover:shadow-lg"
+                      className="w-full bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-amber-500/30 focus:ring-offset-2"
                     >
                       Get Started Today
                     </button>

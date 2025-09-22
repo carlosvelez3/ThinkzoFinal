@@ -51,7 +51,7 @@ export function Footer() {
         >
           <button
             onClick={scrollToTop}
-            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary-accent to-secondary-purple text-white rounded-lg font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-105 focus:scale-105 focus:outline-none focus:ring-4 focus:ring-primary-accent/30"
+            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white rounded-lg font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-105 focus:scale-105 focus:outline-none focus:ring-4 focus:ring-amber-500/30"
             aria-label="Back to top"
           >
             <ArrowUp className="w-4 h-4 mr-2" aria-hidden="true" />

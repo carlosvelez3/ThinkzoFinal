@@ -298,7 +298,7 @@ export function ServicesSection() {
                       }
                     }}
                     onKeyDown={handleGetStartedKeyDown}
-                    className="bg-gradient-to-r from-button-gradient-start to-button-gradient-end hover:from-button-gradient-start-hover hover:to-button-gradient-end-hover focus:from-button-gradient-start-hover focus:to-button-gradient-end-hover text-white px-6 py-3 rounded-lg font-semibold transition-colors w-full focus:outline-none focus:ring-4 focus:ring-blue-500/30 focus:ring-offset-2"
+                    className="bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors w-full focus:outline-none focus:ring-4 focus:ring-amber-500/30 focus:ring-offset-2"
                     aria-label="Get started with this service - Navigate to contact form"
                   >
                     Get Started with This Service
