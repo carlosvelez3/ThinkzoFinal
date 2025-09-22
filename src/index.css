@@ -41,7 +41,7 @@
 
   /* Enhanced focus styles for better visibility */
   *:focus {
-    outline: 2px solid #E03A8A;
+    outline: 2px solid #00BCD4;
     outline-offset: 2px;
   }
 
@@ -52,7 +52,7 @@
   textarea:focus,
   select:focus,
   [tabindex]:focus {
-    outline: 2px solid #E03A8A;
+    outline: 2px solid #00BCD4;
     outline-offset: 2px;
   }
 
@@ -63,7 +63,7 @@
   textarea:focus-visible,
   select:focus-visible,
   [tabindex]:focus-visible {
-    outline: 2px solid #E03A8A;
+    outline: 2px solid #00BCD4;
     outline-offset: 2px;
   }
 

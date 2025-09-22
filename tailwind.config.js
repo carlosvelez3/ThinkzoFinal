@@ -9,8 +9,8 @@ export default {
         'retro-mono': ['Courier New', 'Monaco', 'Menlo', 'Consolas', 'monospace'],
       },
       colors: {
-        'primary-accent': '#E03A8A',
-        'primary-accent-hover': '#C02A7A',
+        'primary-accent': '#00BCD4',
+        'primary-accent-hover': '#0097A7',
         'secondary-blue': '#3B82F6',
         'secondary-purple': '#8B5CF6',
         'button-gradient-start': '#3B82F6',
