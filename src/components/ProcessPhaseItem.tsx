@@ -16,6 +16,8 @@ interface ProcessPhaseItemProps {
 }
 
 export function ProcessPhaseItem({ phase, index }: ProcessPhaseItemProps) {
+}
+export function ProcessPhaseItem({ phase, index, circleGradient }: ProcessPhaseItemProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { 
     once: false,
