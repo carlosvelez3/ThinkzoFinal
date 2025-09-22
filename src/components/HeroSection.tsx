@@ -62,6 +62,12 @@ export function HeroSection({ onOpenContactModal }: HeroSectionProps) {
         aria-hidden="true"
       />
       
+      {/* Animated Cool Pattern Overlay */}
+      <div 
+        className="absolute inset-0 z-0 bg-cool-pattern animate-cool-wave opacity-10 pointer-events-none"
+        aria-hidden="true"
+      />
+      
       {/* Main Content Grid */}
       <div className="relative z-10 flex items-start pt-24 px-4">
         <div className="max-w-7xl mx-auto w-full lg:grid lg:grid-cols-2 lg:gap-12 lg:items-center">

@@ -122,17 +122,6 @@ export function Header({ onOpenContactModal }: HeaderProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        {/* Video Background */}
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover -z-10 transform scale-x-[-1] rotate-45"
-        >
-          <source src="/hero_animation_1080p_10s.mp4" type="video/mp4" />
-        </video>
-
         <div className="relative z-20 max-w-site mx-auto flex justify-between items-center px-4 md:px-6 border border-white/30 rounded-2xl py-3 md:py-4 bg-white/5 backdrop-blur-sm shadow-2xl hover:border-white/30 transition-all duration-300">
           
           {/* Logo Section */}
