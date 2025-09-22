@@ -224,7 +224,6 @@ export function ContactSection() {
         id="contact" 
        className="relative py-8 md:py-12 px-4 overflow-hidden bg-cool-gradient-animated animate-background-pan"
        style={{ backgroundSize: '400% 400%' }}
-       style={{ backgroundSize: '400% 400%' }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
@@ -234,16 +233,9 @@ export function ContactSection() {
          className="absolute inset-0 z-0 bg-cool-pattern animate-cool-wave opacity-10 pointer-events-none"
          aria-hidden="true"
        />
-       
-       {/* Animated Cool Pattern Overlay */}
-       <div 
-         className="absolute inset-0 z-0 bg-cool-pattern animate-cool-wave opacity-10 pointer-events-none"
-         aria-hidden="true"
-       />
-       
         <div className="max-w-site mx-auto text-center">
           <motion.div
-            className="bg-gray-800 border border-green-500/30 rounded-lg p-8 max-w-2xl mx-auto"
+            className="bg-gray-800/70 border border-green-500/30 rounded-lg p-8 max-w-2xl mx-auto"
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5 }}
@@ -296,7 +288,8 @@ export function ContactSection() {
   return (
     <motion.section 
       id="contact" 
-      className="relative bg-gradient-to-br from-gray-800 to-gray-700 py-8 md:py-12 px-4 overflow-hidden"
+      className="relative py-8 md:py-12 px-4 overflow-hidden bg-cool-gradient-animated animate-background-pan"
+      style={{ backgroundSize: '400% 400%' }}
       role="region"
       aria-labelledby="contact-heading"
       initial={{ opacity: 0, y: 100 }}
@@ -304,6 +297,11 @@ export function ContactSection() {
       transition={{ duration: 0.8, ease: "easeOut" }}
       viewport={{ once: true, amount: 0.3 }}
     >
+      {/* Animated Cool Pattern Overlay */}
+      <div 
+        className="absolute inset-0 z-0 bg-cool-pattern animate-cool-wave opacity-10 pointer-events-none"
+        aria-hidden="true"
+      />
       <div className="max-w-site mx-auto">
         <motion.h2 
           id="contact-heading"
