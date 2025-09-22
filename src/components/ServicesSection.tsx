@@ -190,7 +190,7 @@ export function ServicesSection() {
                 >
                   <div>
                     <div className="flex items-center justify-center w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 bg-gradient-to-br from-primary-accent/20 to-secondary-purple/20 rounded-lg mb-4 md:mb-5 lg:mb-6 group-hover:bg-gradient-to-br group-hover:from-primary-accent group-hover:to-secondary-purple transition-all duration-300">
-                      <IconComponent className="w-6 h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 text-white group-hover:text-white group-focus:text-white transition-colors duration-300" aria-hidden="true" />
+                      <IconComponent className="w-6 h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 text-cool-blue-1 group-hover:text-white group-focus:text-white transition-colors duration-300" aria-hidden="true" />
                     </div>
                     <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-white mb-3 md:mb-4 group-hover:text-primary-accent transition-colors duration-300 font-montserrat">
                       {service.title}
