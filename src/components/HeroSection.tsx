@@ -56,11 +56,11 @@ export function HeroSection({ onOpenContactModal }: HeroSectionProps) {
       aria-labelledby="hero-heading"
     >
       {/* Main Content Grid */}
-      <div className="relative z-10 flex items-start pt-24 px-4">
-        <div className="max-w-7xl mx-auto w-full">
+      <div className="relative z-10 pt-24 px-4">
+        <div className="max-w-7xl mx-auto w-full lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
           
           {/* Main Text Content */}
-          <div className="text-center lg:text-left text-white lg:max-w-2xl">
+          <div className="text-center lg:text-left text-white">
             <h1 
               id="hero-heading"
               className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-8 leading-tight cursor-default font-montserrat text-white"
@@ -143,11 +143,11 @@ export function HeroSection({ onOpenContactModal }: HeroSectionProps) {
               />
             </motion.button>
           </div>
-        </div>
         
-        {/* AI Terminal - Positioned to extend towards right border, enlarged */}
-        <div className="absolute top-24 right-8 w-[50vw] max-w-6xl hidden lg:block z-0">
-          <AICodeScreen />
+          {/* AI Terminal - Grid Column */}
+          <div className="hidden lg:block mt-8 lg:mt-0">
+            <AICodeScreen />
+          </div>
         </div>
       </div>
 
