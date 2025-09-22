@@ -12,10 +12,14 @@ import { ThreeDScene } from './components/ThreeDScene';
 import { AccessibilityPanel } from './components/AccessibilitySettings';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { OfflineIndicator } from './components/OfflineIndicator';
+import { useRecaptchaV3 } from './hooks/useRecaptchaV3';
 import { useState } from 'react';
 
 function App() {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  
+  // Initialize reCAPTCHA v3 globally
+  const { isReady: recaptchaReady, error: recaptchaError } = useRecaptchaV3();
 
   const openContactModal = () => setIsContactModalOpen(true);
   const closeContactModal = () => setIsContactModalOpen(false);

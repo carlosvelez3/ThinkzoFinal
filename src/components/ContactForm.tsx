@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import ReCAPTCHA from 'react-google-recaptcha';
 import { useTypingEffect } from '../hooks/useTypingEffect';
 import { AnimatedI } from './AnimatedI';
 import { Check, AlertCircle, ChevronDown, ChevronUp, Zap, Clock, DollarSign } from 'lucide-react';
 import { useErrorHandler } from '../hooks/useErrorHandler';
 import { useOfflineStatus } from '../hooks/useOfflineStatus';
+import { useRecaptchaV3 } from '../hooks/useRecaptchaV3';
 
 // Smart defaults and project types
 const PROJECT_TYPES = [
@@ -79,12 +79,10 @@ export function ContactForm({ onCloseModal }: ContactFormProps) {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  const [captchaError, setCaptchaError] = useState<string | null>(null);
-  const captchaRef = useRef<ReCAPTCHA>(null);
 
   const { handleAsyncError, createValidationError } = useErrorHandler();
   const { isOnline, addToOfflineQueue } = useOfflineStatus();
+  const { executeRecaptcha, isReady: recaptchaReady, error: recaptchaError } = useRecaptchaV3();
 
   // Smart validation with real-time feedback
   const validateField = (name: string, value: string): string => {
@@ -98,9 +96,6 @@ export function ContactForm({ onCloseModal }: ContactFormProps) {
         return '';
       case 'name':
         if (currentStep > 1 && !value) return 'We\'d love to know what to call you';
-        return '';
-      case 'captcha':
-        if (!captchaToken) return 'Please complete the reCAPTCHA verification';
         return '';
       default:
         return '';
@@ -145,31 +140,6 @@ export function ContactForm({ onCloseModal }: ContactFormProps) {
     setCurrentStep(3);
   };
 
-  // reCAPTCHA handlers
-  const handleCaptchaChange = (token: string | null) => {
-    setCaptchaToken(token);
-    setCaptchaError(null);
-    
-    // Clear captcha error from validation errors
-    if (token && errors.captcha) {
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors.captcha;
-        return newErrors;
-      });
-    }
-  };
-
-  const handleCaptchaExpired = () => {
-    setCaptchaToken(null);
-    setCaptchaError('reCAPTCHA has expired. Please verify again.');
-  };
-
-  const handleCaptchaError = () => {
-    setCaptchaToken(null);
-    setCaptchaError('reCAPTCHA error occurred. Please try again.');
-  };
-
   const canProceedToStep = (step: number): boolean => {
     switch (step) {
       case 2:
@@ -182,12 +152,19 @@ export function ContactForm({ onCloseModal }: ContactFormProps) {
   };
 
   const submitForm = async () => {
-    // Simulate API call
+    // Get reCAPTCHA token
+    const recaptchaToken = await executeRecaptcha('contact_form_submit');
+    
+    if (!recaptchaToken) {
+      throw new Error('reCAPTCHA verification failed. Please try again.');
+    }
+    
+    // Simulate API call with reCAPTCHA token
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     console.log('Enhanced form submitted:', {
       ...formData,
-      captchaToken,
+      recaptchaToken,
       submittedAt: new Date().toISOString(),
       userAgent: navigator.userAgent,
       referrer: document.referrer
@@ -196,13 +173,6 @@ export function ContactForm({ onCloseModal }: ContactFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Check reCAPTCHA first
-    if (!captchaToken) {
-      setCaptchaError('Please complete the reCAPTCHA verification');
-      setErrors(prev => ({ ...prev, captcha: 'Please complete the reCAPTCHA verification' }));
-      return;
-    }
     
     // Final validation
     const requiredFields = ['email', 'projectType'];
@@ -259,11 +229,6 @@ export function ContactForm({ onCloseModal }: ContactFormProps) {
         });
         setCurrentStep(1);
         setSubmitSuccess(false);
-        if (captchaRef.current) {
-          captchaRef.current.reset();
-        }
-        setCaptchaToken(null);
-        setCaptchaError(null);
       }, 2000);
     }, { formData, action: 'contact_form_submit' });
     
@@ -737,60 +702,41 @@ export function ContactForm({ onCloseModal }: ContactFormProps) {
                 <p className="text-xs text-gray-400 mt-1">The more details you provide, the better we can help you</p>
               </div>
 
-              {/* reCAPTCHA */}
-              <div className="space-y-2">
-                <div className="flex justify-center">
-                  <div className="bg-white p-2 rounded-lg">
-                    <ReCAPTCHA
-                      ref={captchaRef}
-                      sitekey="6Lebn9ErAAAAAAJ8eIte2bUmwKThvN7jN926S8-V"
-                      onChange={handleCaptchaChange}
-                      onExpired={handleCaptchaExpired}
-                      onErrored={handleCaptchaError}
-                      theme="light"
-                    />
-                  </div>
-                </div>
-                
-                {/* reCAPTCHA Error Display */}
-                <AnimatePresence>
-                  {(captchaError || errors.captcha) && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="flex items-center justify-center text-red-400 text-sm"
-                    >
-                      <AlertCircle className="w-4 h-4 mr-2" />
-                      <span>{captchaError || errors.captcha}</span>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-                
-                {/* reCAPTCHA Success Display */}
-                {captchaToken && !captchaError && !errors.captcha && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center justify-center text-green-400 text-sm"
-                  >
-                    <Check className="w-4 h-4 mr-2" />
-                    <span>reCAPTCHA verified successfully</span>
-                  </motion.div>
-                )}
+              {/* reCAPTCHA v3 Status */}
+              {recaptchaError && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center justify-center text-red-400 text-sm bg-red-500/10 border border-red-500/20 rounded-lg p-3"
+                >
+                  <AlertCircle className="w-4 h-4 mr-2" />
+                  <span>Security verification unavailable. Please refresh the page.</span>
+                </motion.div>
+              )}
+              
+              {recaptchaReady && !recaptchaError && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center justify-center text-green-400 text-sm bg-green-500/10 border border-green-500/20 rounded-lg p-3"
+                >
+                  <Check className="w-4 h-4 mr-2" />
+                  <span>🛡️ Protected by reCAPTCHA v3 - No interaction required</span>
+                </motion.div>
+              )}
               </div>
 
               {/* Submit Button */}
               <motion.button
                 type="submit"
-                disabled={isSubmitting || !canProceedToStep(3) || !captchaToken}
+                disabled={isSubmitting || !canProceedToStep(3) || !recaptchaReady}
                 className={`w-full py-4 px-6 rounded-lg font-bold text-lg transition-all duration-300 transform focus:outline-none focus:ring-4 focus:ring-offset-2 ${
-                  isSubmitting || !canProceedToStep(3) || !captchaToken
+                  isSubmitting || !canProceedToStep(3) || !recaptchaReady
                     ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
                     : 'bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white hover:scale-105 focus:scale-105 shadow-lg hover:shadow-xl focus:shadow-xl focus:ring-amber-500/30'
                 }`}
-                whileHover={!isSubmitting && canProceedToStep(3) && captchaToken ? { scale: 1.02 } : {}}
-                whileTap={!isSubmitting && canProceedToStep(3) && captchaToken ? { scale: 0.98 } : {}}
+                whileHover={!isSubmitting && canProceedToStep(3) && recaptchaReady ? { scale: 1.02 } : {}}
+                whileTap={!isSubmitting && canProceedToStep(3) && recaptchaReady ? { scale: 0.98 } : {}}
               >
                 {isSubmitting ? (
                   <div className="flex items-center justify-center">
@@ -801,8 +747,10 @@ export function ContactForm({ onCloseModal }: ContactFormProps) {
                     />
                     Sending...
                   </div>
-                ) : !captchaToken ? (
-                  'Complete reCAPTCHA to continue'
+                ) : !recaptchaReady ? (
+                  'Loading security verification...'
+                ) : recaptchaError ? (
+                  'Security verification failed - Please refresh'
                 ) : (
                   <div className="flex items-center justify-center">
                     <Zap className="w-5 h-5 mr-2" />
@@ -813,21 +761,13 @@ export function ContactForm({ onCloseModal }: ContactFormProps) {
               
               <div className="text-center space-y-2">
                 <p className="text-xs text-gray-400">
-                  {!captchaToken 
-                    ? "Please complete the security verification above"
+                  {!recaptchaReady 
+                    ? "Initializing security verification..."
                     : "We'll respond within 24 hours with next steps"
                   }
                 </p>
                 <p className="text-xs text-gray-500 text-center">
-                  This site is protected by reCAPTCHA and the Google{' '}
-                  <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-primary-accent hover:underline">
-                    Privacy Policy
-                  </a>{' '}
-                  and{' '}
-                  <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" className="text-primary-accent hover:underline">
-                    Terms of Service
-                  </a>{' '}
-                  apply.
+                  This site is protected by reCAPTCHA v3 for enhanced security without interruption.
                 </p>
               </div>
             </motion.div>
