@@ -491,37 +491,153 @@ export function ContactSection() {
                   <label className="block text-sm font-bold text-white mb-4 font-poppins">
                     What type of project do you have in mind? <span className="text-primary-accent">*</span>
                   </label>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  
+                  {/* Enhanced Project Type Cards */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
                     {PROJECT_TYPES.map((project) => (
                       <motion.button
                         key={project.id}
                         type="button"
                         onClick={() => handleProjectTypeSelect(project.id)}
-                        className={`p-4 rounded-lg border-2 text-left transition-all duration-200 ${
+                        className={`group relative p-6 rounded-xl border-2 text-left transition-all duration-300 transform hover:scale-105 focus:scale-105 overflow-hidden ${
                           formData.projectType === project.id
-                            ? 'border-primary-accent bg-primary-accent/10'
-                            : 'border-gray-600 hover:border-gray-500 bg-gray-700/50'
-                        }`}
-                        whileHover={{ scale: 1.02 }}
+                            ? 'border-primary-accent bg-gradient-to-br from-primary-accent/20 to-secondary-purple/20 shadow-lg shadow-primary-accent/25'
+                            : 'border-gray-600 hover:border-primary-accent/50 bg-gradient-to-br from-gray-700/50 to-gray-800/50 hover:from-gray-600/50 hover:to-gray-700/50'
+                        } focus:outline-none focus:ring-2 focus:ring-primary-accent/50 focus:ring-offset-2 focus:ring-offset-transparent`}
+                        whileHover={{ 
+                          scale: 1.05,
+                          boxShadow: formData.projectType === project.id 
+                            ? "0 20px 40px rgba(6, 182, 212, 0.3)" 
+                            : "0 10px 30px rgba(0, 0, 0, 0.3)"
+                        }}
                         whileTap={{ scale: 0.98 }}
+                        layout
                       >
-                        <div className="flex items-center mb-2">
-                          <span className="text-2xl mr-3">{project.icon}</span>
-                          <span className="font-semibold text-white">{project.name}</span>
-                        </div>
-                        <div className="flex items-center text-sm text-gray-300 space-x-4">
-                          <div className="flex items-center">
-                            <Clock className="w-3 h-3 mr-1" />
-                            {project.timeline}
+                        {/* Background Gradient Overlay */}
+                        <div className={`absolute inset-0 bg-gradient-to-br transition-opacity duration-300 ${
+                          formData.projectType === project.id
+                            ? 'from-primary-accent/10 to-secondary-purple/10 opacity-100'
+                            : 'from-primary-accent/5 to-secondary-purple/5 opacity-0 group-hover:opacity-100'
+                        }`} />
+                        
+                        {/* Selection Indicator */}
+                        <AnimatePresence>
+                          {formData.projectType === project.id && (
+                            <motion.div
+                              className="absolute top-3 right-3 w-6 h-6 bg-primary-accent rounded-full flex items-center justify-center"
+                              initial={{ scale: 0, rotate: -180 }}
+                              animate={{ scale: 1, rotate: 0 }}
+                              exit={{ scale: 0, rotate: 180 }}
+                              transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                            >
+                              <Check className="w-4 h-4 text-white" />
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                        
+                        {/* Content */}
+                        <div className="relative z-10">
+                          {/* Icon and Title */}
+                          <div className="flex items-center mb-3">
+                            <motion.div 
+                              className={`text-3xl mr-3 transition-all duration-300 ${
+                                formData.projectType === project.id 
+                                  ? 'scale-110 drop-shadow-lg' 
+                                  : 'group-hover:scale-110'
+                              }`}
+                              whileHover={{ rotate: [0, -10, 10, 0] }}
+                              transition={{ duration: 0.5 }}
+                            >
+                              {project.icon}
+                            </motion.div>
+                            <div>
+                              <span className={`font-bold text-lg transition-colors duration-300 ${
+                                formData.projectType === project.id 
+                                  ? 'text-white' 
+                                  : 'text-white group-hover:text-primary-accent'
+                              }`}>
+                                {project.name}
+                              </span>
+                            </div>
                           </div>
-                          <div className="flex items-center">
-                            <DollarSign className="w-3 h-3 mr-1" />
-                            {project.budget}
+                          
+                          {/* Project Details */}
+                          <div className="space-y-2 mb-4">
+                            <div className="flex items-center text-sm text-gray-300 group-hover:text-gray-200 transition-colors duration-300">
+                              <Clock className="w-4 h-4 mr-2 text-primary-accent" />
+                              <span className="font-medium">Timeline: {project.timeline}</span>
+                            </div>
+                            <div className="flex items-center text-sm text-gray-300 group-hover:text-gray-200 transition-colors duration-300">
+                              <DollarSign className="w-4 h-4 mr-2 text-cta-yellow" />
+                              <span className="font-medium">Starting at: {project.budget}</span>
+                            </div>
+                          </div>
+                          
+                          {/* Hover Indicator */}
+                          <div className={`flex items-center text-sm font-medium transition-all duration-300 ${
+                            formData.projectType === project.id
+                              ? 'text-primary-accent'
+                              : 'text-gray-400 group-hover:text-primary-accent'
+                          }`}>
+                            <span>
+                              {formData.projectType === project.id ? 'Selected' : 'Select this option'}
+                            </span>
+                            <motion.div
+                              className="ml-2"
+                              animate={{ x: formData.projectType === project.id ? 0 : [0, 4, 0] }}
+                              transition={{ 
+                                duration: formData.projectType === project.id ? 0 : 1.5, 
+                                repeat: formData.projectType === project.id ? 0 : Infinity 
+                              }}
+                            >
+                              {formData.projectType === project.id ? (
+                                <Check className="w-4 h-4" />
+                              ) : (
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                              )}
+                            </motion.div>
                           </div>
                         </div>
+                        
+                        {/* Animated Border Effect */}
+                        <div className={`absolute inset-0 rounded-xl transition-all duration-300 ${
+                          formData.projectType === project.id
+                            ? 'shadow-lg shadow-primary-accent/25'
+                            : 'group-hover:shadow-md group-hover:shadow-primary-accent/10'
+                        }`} />
                       </motion.button>
                     ))}
                   </div>
+                  
+                  {/* Selection Summary */}
+                  <AnimatePresence>
+                    {formData.projectType && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -20, height: 0 }}
+                        animate={{ opacity: 1, y: 0, height: 'auto' }}
+                        exit={{ opacity: 0, y: -20, height: 0 }}
+                        transition={{ duration: 0.4, ease: "easeOut" }}
+                        className="bg-gradient-to-r from-primary-accent/10 to-secondary-purple/10 border border-primary-accent/30 rounded-lg p-4 mb-4"
+                      >
+                        <div className="flex items-center">
+                          <div className="w-8 h-8 bg-primary-accent/20 rounded-full flex items-center justify-center mr-3">
+                            <Check className="w-4 h-4 text-primary-accent" />
+                          </div>
+                          <div>
+                            <p className="text-white font-semibold">
+                              Great choice! You've selected: <span className="text-primary-accent">{selectedProject?.name}</span>
+                            </p>
+                            <p className="text-gray-300 text-sm mt-1">
+                              Expected timeline: {selectedProject?.timeline} • Starting budget: {selectedProject?.budget}
+                            </p>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  
                   {errors.projectType && (
                     <motion.div 
                       className="flex items-center mt-2 text-red-400 text-sm"
