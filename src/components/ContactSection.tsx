@@ -315,30 +315,6 @@ export function ContactSection() {
           </div>
         </motion.div>
         
-        {/* Quick Navigation Links */}
-        <motion.div 
-          className="flex flex-wrap justify-center gap-4 mb-8"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          viewport={{ once: true }}
-        >
-          <InternalLink 
-            targetSection="services" 
-            variant="secondary"
-            className="text-sm px-4 py-2"
-          >
-            View Our Services
-          </InternalLink>
-          <InternalLink 
-            targetSection="pricing" 
-            variant="secondary"
-            className="text-sm px-4 py-2"
-          >
-            See Pricing
-          </InternalLink>
-        </motion.div>
-        
         <motion.div 
           className="max-w-2xl mx-auto bg-gray-800 border border-gray-700 rounded-lg shadow-sm p-4 md:p-6 lg:p-8"
           initial={{ opacity: 0, scale: 0.9 }}
