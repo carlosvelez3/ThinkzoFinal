@@ -33,7 +33,7 @@ const processPhases = [
     ],
     outcome: 'Complete technical specifications, visual mockups, and a detailed project timeline with defined milestones and deliverables.',
     circleGradient: 'from-blue-600 to-blue-500'
-  }
+  },
   {
     id: 'execution',
     title: 'Execution',
