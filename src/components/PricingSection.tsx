@@ -195,7 +195,6 @@ export function PricingSection() {
                     <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r ${tier.color} rounded-full mb-4`}>
                       <IconComponent className="w-8 h-8 text-white" aria-hidden="true" />
                     </div>
-                    <h3 className="text-2xl font-bold text-dark-primary mb-2 font-montserrat">
                     <h3 className="text-2xl font-bold text-white mb-2 font-montserrat">
                       {tier.name}
                     </h3>
