@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion, useScroll, useTransform, useRef } from 'framer-motion';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { Check, Star, Zap, Crown, Layout } from 'lucide-react';
 
 const pricingTiers = [
