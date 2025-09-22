@@ -693,7 +693,6 @@ export function ContactSection() {
                       </p>
                     )}
                   </div>
-                  </p>
                 </motion.div>
               )}
             </AnimatePresence>
