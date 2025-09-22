@@ -6,6 +6,7 @@ import { Check, AlertCircle, ChevronDown, ChevronUp, Zap, Clock, DollarSign } fr
 import { useErrorHandler } from '../hooks/useErrorHandler';
 import { useOfflineStatus } from '../hooks/useOfflineStatus';
 import { useRecaptchaV3 } from '../hooks/useRecaptchaV3';
+import { submitContactForm, FormSubmissionData } from '../services/formSubmissionService';
 
 // Smart defaults and project types
 const PROJECT_TYPES = [
@@ -152,23 +153,42 @@ export function ContactForm({ onCloseModal }: ContactFormProps) {
   };
 
   const submitForm = async () => {
-    // Get reCAPTCHA token
-    const recaptchaToken = await executeRecaptcha('contact_form_submit');
-    
-    if (!recaptchaToken) {
-      throw new Error('reCAPTCHA verification failed. Please try again.');
+    try {
+      // Get reCAPTCHA token
+      const recaptchaToken = await executeRecaptcha('contact_form_submit');
+      
+      if (!recaptchaToken) {
+        throw new Error('reCAPTCHA verification failed. Please try again.');
+      }
+      
+      // Prepare form data for submission
+      const submissionData: FormSubmissionData = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company,
+        projectType: formData.projectType,
+        message: formData.message
+      };
+      
+      // Submit form to backend API
+      const result = await submitContactForm(submissionData);
+      
+      if (!result.success) {
+        throw new Error(result.errors?.join(', ') || 'Form submission failed');
+      }
+      
+      console.log('Form submitted successfully:', {
+        submissionId: result.response?.submissionId,
+        emailSent: result.response?.emailSent,
+        recaptchaToken,
+        submittedAt: new Date().toISOString()
+      });
+      
+    } catch (error) {
+      console.error('Form submission error:', error);
+      throw error;
     }
-    
-    // Simulate API call with reCAPTCHA token
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    console.log('Enhanced form submitted:', {
-      ...formData,
-      recaptchaToken,
-      submittedAt: new Date().toISOString(),
-      userAgent: navigator.userAgent,
-      referrer: document.referrer
-    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
