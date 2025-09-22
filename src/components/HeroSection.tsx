@@ -112,10 +112,15 @@ export function HeroSection({ onOpenContactModal }: HeroSectionProps) {
             </motion.p>
             
             <motion.button
-              onClick={scrollToContact}
-              onKeyDown={handleKeyDown}
+              onClick={onOpenContactModal}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  onOpenContactModal();
+                }
+              }}
               className="group relative bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white px-8 py-4 rounded-xl font-bold text-lg md:text-xl transition-all duration-300 transform hover:scale-105 focus:scale-105 shadow-2xl hover:shadow-amber-500/50 focus:shadow-amber-500/50 focus:outline-none focus:ring-4 focus:ring-amber-500/30 focus:ring-offset-2 focus:ring-offset-transparent"
-              aria-label="Start your AI journey - Navigate to contact form"
+              aria-label="Start your AI journey - Open contact form"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 2.4 }}
