@@ -20,6 +20,7 @@ const processPhases = [
     ],
     outcome: 'A detailed project blueprint with technical specifications, user personas, and strategic recommendations that align with your business objectives.',
     circleGradient: 'from-slate-600 to-slate-500'
+  }
   {
     id: 'planning',
     title: 'Planning',
@@ -32,6 +33,7 @@ const processPhases = [
     ],
     outcome: 'Complete technical specifications, visual mockups, and a detailed project timeline with defined milestones and deliverables.',
     circleGradient: 'from-blue-600 to-blue-500'
+  }
   {
     id: 'execution',
     title: 'Execution',
@@ -56,6 +58,7 @@ const processPhases = [
     ],
     circleGradient: 'from-purple-600 to-purple-500'
     circleGradient: 'from-indigo-600 to-indigo-500'
+  }
 ];
 
 export function ProcessSection() {
