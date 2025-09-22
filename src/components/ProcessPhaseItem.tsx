@@ -75,24 +75,20 @@ export function ProcessPhaseItem({ phase, index }: ProcessPhaseItemProps) {
 
       {/* Content */}
       <div className="flex-1 text-center lg:text-left bg-dark-primary p-8 rounded-xl shadow-xl border border-primary-accent">
-        <h3 className="text-2xl lg:text-3xl font-bold text-white mb-4">
         <h3 className="text-2xl lg:text-3xl font-bold text-white mb-4 font-montserrat">
           Phase {index + 1}: {phase.title}
         </h3>
         
-        <p className="text-gray-300 mb-6 leading-relaxed text-base lg:text-lg">
         <p className="text-gray-300 mb-6 leading-relaxed text-base lg:text-lg font-poppins">
           {phase.description}
         </p>
 
         <div className="mb-6">
-          <h4 className="text-lg font-semibold text-white mb-3">Key Activities</h4>
           <h4 className="text-lg font-semibold text-white mb-3 font-poppins">Key Activities</h4>
           <ul className="space-y-2" role="list">
             {phase.keyActivities.map((activity, activityIndex) => (
               <li key={activityIndex} className="flex items-start" role="listitem">
                 <div className="w-2 h-2 bg-primary-accent rounded-full mt-2 mr-3 flex-shrink-0" aria-hidden="true"></div>
-                <span className="text-gray-300">{activity}</span>
                 <span className="text-gray-300 font-poppins">{activity}</span>
               </li>
             ))}
@@ -100,16 +96,9 @@ export function ProcessPhaseItem({ phase, index }: ProcessPhaseItemProps) {
         </div>
 
         <div className="bg-gray-800 p-6 rounded-lg border-l-4 border-primary-accent mb-6">
-          <h4 className="text-lg font-semibold text-white mb-2">Deliverable</h4>
           <h4 className="text-lg font-semibold text-white mb-2 font-poppins">Deliverable</h4>
-          <p className="text-gray-200 leading-relaxed">{phase.outcome}</p>
           <p className="text-gray-200 leading-relaxed font-poppins">{phase.outcome}</p>
         </div>
       </div>
     </motion.div>
   );
-}
-  )
-}
-  )
-}
