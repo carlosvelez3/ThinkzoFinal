@@ -57,10 +57,10 @@ export function HeroSection({ onOpenContactModal }: HeroSectionProps) {
     >
       {/* Main Content Grid */}
       <div className="relative z-10 flex items-start pt-24 px-4">
-        <div className="max-w-7xl mx-auto w-full lg:grid lg:grid-cols-2 lg:gap-12 lg:items-center">
+        <div className="max-w-7xl mx-auto w-full">
           
-          {/* Main Text Content - Full Width */}
-          <div className="text-center lg:text-left text-white lg:col-span-1">
+          {/* Main Text Content */}
+          <div className="text-center lg:text-left text-white lg:max-w-2xl">
             <h1 
               id="hero-heading"
               className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-8 leading-tight cursor-default font-montserrat text-white"
@@ -143,12 +143,11 @@ export function HeroSection({ onOpenContactModal }: HeroSectionProps) {
               />
             </motion.button>
           </div>
-
-          {/* Terminal Overlay - Positioned Absolutely */}
-          <div className="lg:col-span-1 flex justify-center lg:justify-end w-full hidden lg:flex" aria-hidden="true">
-            <AICodeScreen />
-          </div>
-          
+        </div>
+        
+        {/* AI Terminal - Positioned to extend towards right border */}
+        <div className="absolute top-24 right-0 w-[65vw] max-w-4xl hidden lg:block z-0">
+          <AICodeScreen />
         </div>
       </div>
 
