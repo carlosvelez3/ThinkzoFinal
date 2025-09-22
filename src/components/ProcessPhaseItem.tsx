@@ -76,7 +76,6 @@ export function ProcessPhaseItem({ phase, index, circleGradient }: ProcessPhaseI
 
       {/* Content */}
       <div className="flex-1 text-center lg:text-left bg-cool-dark-1 p-8 rounded-xl shadow-xl border border-cool-dark-3">
-        <h3 className="text-2xl lg:text-3xl font-bold text-white mb-4 font-montserrat">
         <h3 
           className="text-2xl lg:text-3xl font-bold text-white mb-4 font-montserrat"
           style={{
@@ -99,7 +98,6 @@ export function ProcessPhaseItem({ phase, index, circleGradient }: ProcessPhaseI
         </p>
 
         <div className="mb-6">
-          <h4 className="text-lg font-semibold text-white mb-3 font-poppins">Key Activities</h4>
           <h4 
             className="text-lg font-semibold text-white mb-3 font-poppins"
             style={{
@@ -128,7 +126,6 @@ export function ProcessPhaseItem({ phase, index, circleGradient }: ProcessPhaseI
         </div>
 
         <div className="bg-gray-800 p-6 rounded-lg border-l-4 border-primary-accent mb-6">
-          <h4 className="text-lg font-semibold text-white mb-2 font-poppins">Deliverable</h4>
           <h4 
             className="text-lg font-semibold text-white mb-2 font-poppins"
             style={{
