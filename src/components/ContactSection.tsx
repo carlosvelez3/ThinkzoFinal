@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { useRef } from 'react';
+import ReCAPTCHA from 'react-google-recaptcha';
 import { useTypingEffect } from '../hooks/useTypingEffect';
 import { InternalLink } from './InternalLinkingHelper';
 import { AnimatedI } from './AnimatedI';
@@ -77,6 +78,9 @@ export function ContactSection() {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaError, setCaptchaError] = useState<string | null>(null);
+  const captchaRef = useRef<ReCAPTCHA>(null);
 
   const { handleAsyncError, createValidationError } = useErrorHandler();
   const { isOnline, addToOfflineQueue } = useOfflineStatus();
@@ -101,6 +105,9 @@ export function ContactSection() {
         return '';
       case 'name':
         if (currentStep > 1 && !value) return 'We\'d love to know what to call you';
+        return '';
+      case 'captcha':
+        if (!captchaToken) return 'Please complete the reCAPTCHA verification';
         return '';
       default:
         return '';
@@ -145,6 +152,31 @@ export function ContactSection() {
     setCurrentStep(3);
   };
 
+  // reCAPTCHA handlers
+  const handleCaptchaChange = (token: string | null) => {
+    setCaptchaToken(token);
+    setCaptchaError(null);
+    
+    // Clear captcha error from validation errors
+    if (token && errors.captcha) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors.captcha;
+        return newErrors;
+      });
+    }
+  };
+
+  const handleCaptchaExpired = () => {
+    setCaptchaToken(null);
+    setCaptchaError('reCAPTCHA has expired. Please verify again.');
+  };
+
+  const handleCaptchaError = () => {
+    setCaptchaToken(null);
+    setCaptchaError('reCAPTCHA error occurred. Please try again.');
+  };
+
   const canProceedToStep = (step: number): boolean => {
     switch (step) {
       case 2:
@@ -162,6 +194,7 @@ export function ContactSection() {
     
     console.log('Enhanced form submitted:', {
       ...formData,
+      captchaToken,
       submittedAt: new Date().toISOString(),
       userAgent: navigator.userAgent,
       referrer: document.referrer
@@ -170,6 +203,13 @@ export function ContactSection() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check reCAPTCHA first
+    if (!captchaToken) {
+      setCaptchaError('Please complete the reCAPTCHA verification');
+      setErrors(prev => ({ ...prev, captcha: 'Please complete the reCAPTCHA verification' }));
+      return;
+    }
     
     // Final validation
     const requiredFields = ['email', 'projectType'];
@@ -260,6 +300,12 @@ export function ContactSection() {
             </div>
             <button
               onClick={() => {
+                // Reset captcha when resetting form
+                if (captchaRef.current) {
+                  captchaRef.current.reset();
+                }
+                setCaptchaToken(null);
+                setCaptchaError(null);
                 setSubmitSuccess(false);
                 setFormData({
                   email: '',
@@ -659,17 +705,60 @@ export function ContactSection() {
                     <p className="text-xs text-gray-400 mt-1">The more details you provide, the better we can help you</p>
                   </div>
 
+                  {/* reCAPTCHA */}
+                  <div className="space-y-2">
+                    <div className="flex justify-center">
+                      <div className="bg-white p-2 rounded-lg">
+                        <ReCAPTCHA
+                          ref={captchaRef}
+                          sitekey="6Lebn9ErAAAAAAJ8eIte2bUmwKThvN7jN926S8-V"
+                          onChange={handleCaptchaChange}
+                          onExpired={handleCaptchaExpired}
+                          onErrored={handleCaptchaError}
+                          theme="light"
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* reCAPTCHA Error Display */}
+                    <AnimatePresence>
+                      {(captchaError || errors.captcha) && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          className="flex items-center justify-center text-red-400 text-sm"
+                        >
+                          <AlertCircle className="w-4 h-4 mr-2" />
+                          <span>{captchaError || errors.captcha}</span>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                    
+                    {/* reCAPTCHA Success Display */}
+                    {captchaToken && !captchaError && !errors.captcha && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex items-center justify-center text-green-400 text-sm"
+                      >
+                        <Check className="w-4 h-4 mr-2" />
+                        <span>reCAPTCHA verified successfully</span>
+                      </motion.div>
+                    )}
+                  </div>
+
                   {/* Submit Button */}
                   <motion.button
                     type="submit"
-                    disabled={isSubmitting || !canProceedToStep(3) || (!isOnline && offlineQueue.length > 5)}
+                    disabled={isSubmitting || !canProceedToStep(3) || !captchaToken || (!isOnline && offlineQueue.length > 5)}
                     className={`w-full py-4 px-6 rounded-lg font-bold text-lg transition-all duration-300 transform focus:outline-none focus:ring-4 focus:ring-offset-2 ${
-                      isSubmitting || !canProceedToStep(3) || (!isOnline && offlineQueue.length > 5)
+                      isSubmitting || !canProceedToStep(3) || !captchaToken || (!isOnline && offlineQueue.length > 5)
                         ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
                         : 'bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white hover:scale-105 focus:scale-105 shadow-lg hover:shadow-xl focus:shadow-xl focus:ring-amber-500/30'
                     }`}
-                    whileHover={!isSubmitting && canProceedToStep(3) && (isOnline || offlineQueue.length <= 5) ? { scale: 1.02 } : {}}
-                    whileTap={!isSubmitting && canProceedToStep(3) && (isOnline || offlineQueue.length <= 5) ? { scale: 0.98 } : {}}
+                    whileHover={!isSubmitting && canProceedToStep(3) && captchaToken && (isOnline || offlineQueue.length <= 5) ? { scale: 1.02 } : {}}
+                    whileTap={!isSubmitting && canProceedToStep(3) && captchaToken && (isOnline || offlineQueue.length <= 5) ? { scale: 0.98 } : {}}
                   >
                     {isSubmitting ? (
                       <div className="flex items-center justify-center">
@@ -684,6 +773,8 @@ export function ContactSection() {
                       'Offline queue full'
                     ) : !isOnline ? (
                       'Save for later (offline)'
+                    ) : !captchaToken ? (
+                      'Complete reCAPTCHA to continue'
                     ) : (
                       <div className="flex items-center justify-center">
                         <Zap className="w-5 h-5 mr-2" />
@@ -696,6 +787,8 @@ export function ContactSection() {
                     <p className="text-xs text-gray-400">
                       {isOnline 
                         ? "We'll respond within 24 hours with next steps"
+                        : !captchaToken 
+                        ? "Please complete the security verification above"
                         : "Form will be submitted when you're back online"
                       }
                     </p>
@@ -704,6 +797,17 @@ export function ContactSection() {
                         📱 Currently offline - your form will be saved locally
                       </p>
                     )}
+                    <p className="text-xs text-gray-500 text-center">
+                      This site is protected by reCAPTCHA and the Google{' '}
+                      <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-primary-accent hover:underline">
+                        Privacy Policy
+                      </a>{' '}
+                      and{' '}
+                      <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" className="text-primary-accent hover:underline">
+                        Terms of Service
+                      </a>{' '}
+                      apply.
+                    </p>
                   </div>
                 </motion.div>
               )}
