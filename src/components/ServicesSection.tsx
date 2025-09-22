@@ -13,6 +13,9 @@ const services = [
     title: 'Custom Web Development',
     description: 'We build fast, secure websites that work perfectly on all devices. Choose from WordPress, Shopify, or custom solutions designed for your business.',
     icon: Code,
+    cardBgClass: 'bg-gradient-to-br from-cool-blue-1 to-cool-blue-2',
+    iconBgClass: 'bg-gradient-to-br from-blue-500/20 to-blue-600/20',
+    hoverBorderClass: 'hover:border-blue-400 focus:border-blue-400',
     detailedContent: {
       overview: 'We create custom web solutions that perfectly align with your business objectives and technical requirements.',
       features: [
@@ -32,6 +35,9 @@ const services = [
     title: <>A<AnimatedI /> & Automation</>,
     description: 'Integrate AI‑powered search, recommendation engines and automation tools to enhance user experience and efficiency.',
     icon: Brain,
+    cardBgClass: 'bg-gradient-to-br from-secondary-purple to-indigo-700',
+    iconBgClass: 'bg-gradient-to-br from-purple-500/20 to-indigo-600/20',
+    hoverBorderClass: 'hover:border-purple-400 focus:border-purple-400',
     detailedContent: {
       overview: 'We help you save time and money with smart AI tools. Automate repetitive tasks and give your customers better experiences.',
       features: [
@@ -51,6 +57,9 @@ const services = [
     title: 'System Integration',
     description: 'Connect all your business systems together. Get real-time data from your CRM, inventory, and other tools in one place.',
     icon: Settings,
+    cardBgClass: 'bg-gradient-to-br from-cool-teal-1 to-cool-teal-2',
+    iconBgClass: 'bg-gradient-to-br from-teal-500/20 to-emerald-600/20',
+    hoverBorderClass: 'hover:border-teal-400 focus:border-teal-400',
     detailedContent: {
       overview: 'Seamlessly connect all your business systems for unified data management and improved operational efficiency.',
       features: [
@@ -70,6 +79,9 @@ const services = [
     title: 'Maintenance & Support',
     description: 'Keep your website running smoothly with our ongoing support. We handle updates, security, and backups so you can focus on your business.',
     icon: Shield,
+    cardBgClass: 'bg-gradient-to-br from-amber-600 to-orange-600',
+    iconBgClass: 'bg-gradient-to-br from-amber-500/20 to-orange-600/20',
+    hoverBorderClass: 'hover:border-amber-400 focus:border-amber-400',
     detailedContent: {
       overview: 'Ensure your digital infrastructure remains secure, updated, and performing at its best with our ongoing support services.',
       features: [
@@ -185,7 +197,7 @@ export function ServicesSection() {
                   role="button"
                   aria-label={`Learn more about ${service.title}`}
                   aria-describedby={`service-${index}-description`}
-                  className="bg-gray-800 border-2 border-gray-700 rounded-xl p-4 md:p-6 lg:p-8 shadow-lg hover:shadow-2xl focus:shadow-2xl cursor-pointer transform transition-all duration-300 hover:-translate-y-2 focus:-translate-y-2 hover:border-primary-accent focus:border-primary-accent group min-h-[220px] md:min-h-[260px] flex flex-col justify-between focus:outline-none focus:ring-4 focus:ring-primary-accent/30"
+                  className={`${service.cardBgClass} border-2 border-gray-700 rounded-xl p-4 md:p-6 lg:p-8 shadow-lg hover:shadow-2xl focus:shadow-2xl cursor-pointer transform transition-all duration-300 hover:-translate-y-2 focus:-translate-y-2 ${service.hoverBorderClass} group min-h-[220px] md:min-h-[260px] flex flex-col justify-between focus:outline-none focus:ring-4 focus:ring-primary-accent/30`}
                   initial={{ opacity: 0, x: index % 2 === 0 ? -100 : 100 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ 
@@ -197,7 +209,7 @@ export function ServicesSection() {
                   whileHover={{ scale: 1.02 }}
                 >
                   <div>
-                    <div className="flex items-center justify-center w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 bg-gradient-to-br from-primary-accent/20 to-secondary-purple/20 rounded-lg mb-4 md:mb-5 lg:mb-6 group-hover:bg-gradient-to-br group-hover:from-cool-teal-1 group-hover:to-cool-teal-2 transition-all duration-300">
+                    <div className={`flex items-center justify-center w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 ${service.iconBgClass} rounded-lg mb-4 md:mb-5 lg:mb-6 group-hover:bg-gradient-to-br group-hover:from-white/20 group-hover:to-white/10 transition-all duration-300`}>
                       <IconComponent className="w-6 h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 text-white group-hover:text-white group-focus:text-white transition-colors duration-300" aria-hidden="true" />
                     </div>
                     <h3 
