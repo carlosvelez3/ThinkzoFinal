@@ -264,7 +264,6 @@ export function PricingSection() {
                     className={`w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 focus:scale-105 shadow-lg hover:shadow-xl focus:shadow-xl focus:outline-none focus:ring-4 focus:ring-offset-2 ${
                       tier.popular
                         ? 'bg-gradient-to-r from-button-gradient-start to-button-gradient-end hover:from-button-gradient-start-hover hover:to-button-gradient-end-hover focus:from-button-gradient-start-hover focus:to-button-gradient-end-hover text-white focus:ring-blue-500/30'
-                        : 'bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 focus:from-gray-700 focus:to-gray-800 text-white focus:ring-gray-500/30'
                         : 'bg-gradient-to-r from-cool-dark-1 to-cool-dark-2 hover:from-cool-dark-2 hover:to-cool-dark-3 focus:from-cool-dark-2 focus:to-cool-dark-3 text-white focus:ring-cool-teal-2/30'
                     }`}
                     aria-label={`Choose ${tier.name} plan - Navigate to contact form`}
