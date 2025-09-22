@@ -5,6 +5,9 @@ import { useTypingEffect } from '../hooks/useTypingEffect';
 import { InternalLink } from './InternalLinkingHelper';
 import { AnimatedI } from './AnimatedI';
 import { Check, AlertCircle, ChevronDown, ChevronUp, Zap, Clock, DollarSign } from 'lucide-react';
+import { useErrorHandler } from '../hooks/useErrorHandler';
+import { useOfflineStatus } from '../hooks/useOfflineStatus';
+import { RetryButton } from './RetryButton';
 
 // Smart defaults and project types
 const PROJECT_TYPES = [
@@ -74,6 +77,9 @@ export function ContactSection() {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  const { handleAsyncError, createValidationError } = useErrorHandler();
+  const { isOnline, addToOfflineQueue } = useOfflineStatus();
 
   const titleRef = useRef(null);
   const isInView = useInView(titleRef, { once: true, amount: 0.5 });
@@ -150,6 +156,18 @@ export function ContactSection() {
     }
   };
 
+  const submitForm = async () => {
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    console.log('Enhanced form submitted:', {
+      ...formData,
+      submittedAt: new Date().toISOString(),
+      userAgent: navigator.userAgent,
+      referrer: document.referrer
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -164,28 +182,38 @@ export function ContactSection() {
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
+      // Focus first error field
+      const firstErrorField = Object.keys(newErrors)[0];
+      const element = document.getElementById(firstErrorField);
+      if (element) {
+        element.focus();
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
       return;
     }
 
     setIsSubmitting(true);
     
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+    const result = await handleAsyncError(async () => {
+      if (!isOnline) {
+        // Add to offline queue
+        addToOfflineQueue(submitForm, formData);
+        throw createValidationError(
+          'Offline submission queued',
+          'Your form has been saved and will be submitted when you\'re back online.',
+          { formData }
+        );
+      }
       
-      console.log('Enhanced form submitted:', {
-        ...formData,
-        submittedAt: new Date().toISOString(),
-        userAgent: navigator.userAgent,
-        referrer: document.referrer
-      });
-      
+      await submitForm();
       setSubmitSuccess(true);
-    } catch (error) {
-      console.error('Submission error:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
+    }, { formData, action: 'contact_form_submit' });
+    
+    setIsSubmitting(false);
+  };
+
+  const handleRetrySubmit = async () => {
+    await handleSubmit({ preventDefault: () => {} } as React.FormEvent);
   };
 
   const selectedProject = PROJECT_TYPES.find(p => p.id === formData.projectType);
@@ -622,14 +650,14 @@ export function ContactSection() {
                   {/* Submit Button */}
                   <motion.button
                     type="submit"
-                    disabled={isSubmitting || !canProceedToStep(3)}
+                    disabled={isSubmitting || !canProceedToStep(3) || (!isOnline && offlineQueue.length > 5)}
                     className={`w-full py-4 px-6 rounded-lg font-bold text-lg transition-all duration-300 transform focus:outline-none focus:ring-4 focus:ring-offset-2 ${
-                      isSubmitting || !canProceedToStep(3)
+                      isSubmitting || !canProceedToStep(3) || (!isOnline && offlineQueue.length > 5)
                         ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
                         : 'bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white hover:scale-105 focus:scale-105 shadow-lg hover:shadow-xl focus:shadow-xl focus:ring-amber-500/30'
                     }`}
-                    whileHover={!isSubmitting && canProceedToStep(3) ? { scale: 1.02 } : {}}
-                    whileTap={!isSubmitting && canProceedToStep(3) ? { scale: 0.98 } : {}}
+                    whileHover={!isSubmitting && canProceedToStep(3) && (isOnline || offlineQueue.length <= 5) ? { scale: 1.02 } : {}}
+                    whileTap={!isSubmitting && canProceedToStep(3) && (isOnline || offlineQueue.length <= 5) ? { scale: 0.98 } : {}}
                   >
                     {isSubmitting ? (
                       <div className="flex items-center justify-center">
@@ -640,6 +668,10 @@ export function ContactSection() {
                         />
                         Sending...
                       </div>
+                    ) : !isOnline && offlineQueue.length > 5 ? (
+                      'Offline queue full'
+                    ) : !isOnline ? (
+                      'Save for later (offline)'
                     ) : (
                       <div className="flex items-center justify-center">
                         <Zap className="w-5 h-5 mr-2" />
@@ -648,8 +680,19 @@ export function ContactSection() {
                     )}
                   </motion.button>
                   
-                  <p className="text-xs text-gray-400 text-center">
-                    We'll respond within 24 hours with next steps
+                  <div className="text-center space-y-2">
+                    <p className="text-xs text-gray-400">
+                      {isOnline 
+                        ? "We'll respond within 24 hours with next steps"
+                        : "Form will be submitted when you're back online"
+                      }
+                    </p>
+                    {!isOnline && (
+                      <p className="text-xs text-orange-400">
+                        📱 Currently offline - your form will be saved locally
+                      </p>
+                    )}
+                  </div>
                   </p>
                 </motion.div>
               )}

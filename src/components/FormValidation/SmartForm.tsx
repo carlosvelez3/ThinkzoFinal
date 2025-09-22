@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, AlertCircle, Eye, EyeOff, Info, X, CheckCircle } from 'lucide-react';
+import { useErrorHandler } from '../../hooks/useErrorHandler';
+import { RetryButton } from '../RetryButton';
 
 // Types for form validation
 interface ValidationRule {
@@ -44,7 +46,10 @@ export function SmartForm() {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState<{ [key: string]: boolean }>({});
   const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const validationTimeouts = useRef<{ [key: string]: NodeJS.Timeout }>({});
+
+  const { handleAsyncError } = useErrorHandler();
 
   // Form configuration
   const formFields: FormField[] = [
@@ -392,12 +397,10 @@ export function SmartForm() {
     
     setIsSubmitting(true);
     
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      console.log('Form submitted:', formData);
+    const result = await handleAsyncError(async () => {
+      await submitFormData();
       setSubmitSuccess(true);
+      setSubmitError(null);
       
       // Reset form after success
       setTimeout(() => {
@@ -407,12 +410,30 @@ export function SmartForm() {
         setTouchedFields(new Set());
         setSubmitSuccess(false);
       }, 3000);
-      
-    } catch (error) {
-      console.error('Submission error:', error);
-    } finally {
-      setIsSubmitting(false);
+    }, { formData, action: 'smart_form_submit' });
+    
+    if (!result) {
+      setSubmitError('Failed to submit form. Please try again.');
     }
+    
+    setIsSubmitting(false);
+  };
+
+  const handleRetrySubmit = async () => {
+    setSubmitError(null);
+    await handleSubmit({ preventDefault: () => {} } as React.FormEvent);
+  };
+
+  const submitFormData = async () => {
+    // Simulate API call with potential failure
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Simulate random failures for demo
+    if (Math.random() < 0.3) {
+      throw new Error('Network error: Failed to submit form');
+    }
+    
+    console.log('Form submitted:', formData);
   };
 
   // Cleanup timeouts
@@ -683,6 +704,28 @@ export function SmartForm() {
             'Submit Project Request'
           )}
         </motion.button>
+          
+          {/* Error state with retry */}
+          {submitError && (
+            <motion.div
+              className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <div className="flex items-start space-x-3">
+                <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <p className="text-red-700 text-sm mb-3">{submitError}</p>
+                  <RetryButton
+                    onRetry={handleRetrySubmit}
+                    className="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1"
+                  >
+                    Try Again
+                  </RetryButton>
+                </div>
+              </div>
+            </motion.div>
+          )}
 
         {/* Form footer */}
         <div className="text-center text-sm text-gray-500">
