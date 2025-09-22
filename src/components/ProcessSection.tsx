@@ -19,7 +19,7 @@ const processPhases = [
       'Competitive analysis and market positioning review'
     ],
     outcome: 'A detailed project blueprint with technical specifications, user personas, and strategic recommendations that align with your business objectives.',
-  },
+    circleGradient: 'from-slate-600 to-slate-500'
   {
     id: 'planning',
     title: 'Planning',
@@ -31,7 +31,7 @@ const processPhases = [
       'Integration planning for existing business systems'
     ],
     outcome: 'Complete technical specifications, visual mockups, and a detailed project timeline with defined milestones and deliverables.',
-  },
+    circleGradient: 'from-blue-600 to-blue-500'
   {
     id: 'execution',
     title: 'Execution',
@@ -54,8 +54,8 @@ const processPhases = [
       'Comprehensive team training and documentation',
       'Performance monitoring and optimization setup'
     ],
-    outcome: 'A successfully launched solution with trained users, established support protocols, and measurable performance improvements.',
-  }
+    circleGradient: 'from-purple-600 to-purple-500'
+    circleGradient: 'from-indigo-600 to-indigo-500'
 ];
 
 export function ProcessSection() {
