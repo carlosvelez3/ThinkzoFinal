@@ -158,11 +158,9 @@ export function PricingSection() {
                     <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r ${tier.color} rounded-full mb-4`}>
                       <IconComponent className="w-8 h-8 text-white" aria-hidden="true" />
                     </div>
-                    <h3 className="text-2xl font-bold text-dark-primary mb-2">
                     <h3 className="text-2xl font-bold text-dark-primary mb-2 font-montserrat">
                       {tier.name}
                     </h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">
                     <p className="text-gray-600 text-sm leading-relaxed font-poppins">
                       {tier.description}
                     </p>
@@ -188,7 +186,6 @@ export function PricingSection() {
                       {tier.features.map((feature, featureIndex) => (
                         <li key={featureIndex} className="flex items-start" role="listitem">
                           <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5 mr-3" aria-hidden="true" />
-                          <span className="text-gray-700 text-sm">{feature}</span>
                           <span className="text-gray-700 text-sm font-poppins">{feature}</span>
                         </li>
                       ))}
@@ -223,11 +220,9 @@ export function PricingSection() {
           viewport={{ once: true }}
         >
           <div className="bg-gray-800 rounded-2xl p-8 max-w-4xl mx-auto border border-gray-700">
-            <h3 className="text-2xl font-bold text-white mb-4">
             <h3 className="text-2xl font-bold text-white mb-4 font-montserrat">
               Need Something Custom?
             </h3>
-            <p className="text-gray-300 mb-6 leading-relaxed">
             <p className="text-gray-300 mb-6 leading-relaxed font-poppins">
               Every business is unique. If our standard tiers don't fit your specific needs, 
               we'll create a custom solution tailored to your requirements and budget. 
