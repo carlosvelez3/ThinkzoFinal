@@ -211,14 +211,14 @@ export function Header() {
                   onKeyDown={(e) => handleKeyDown(e, item.href)}
                   className={`relative px-3 md:px-4 py-2 rounded-lg font-semibold font-poppins text-sm uppercase tracking-wide transition-all duration-300 shadow-lg transform border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent ${
                     activeSection === item.id
-                      ? 'bg-gradient-to-r from-primary-accent to-secondary-purple text-white border-white/40 scale-105 shadow-xl'
-                      : 'bg-gradient-to-r from-button-gradient-start to-button-gradient-end hover:from-button-gradient-start-hover hover:to-button-gradient-end-hover focus:from-button-gradient-start-hover focus:to-button-gradient-end-hover text-white hover:border-white/40 focus:border-white/60 hover:scale-105 focus:scale-105 hover:shadow-xl focus:shadow-xl'
+                      ? 'bg-gradient-to-r from-cta-yellow to-cta-yellow-hover text-white border-white/40 scale-105 shadow-xl'
+                      : 'bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white hover:border-white/40 focus:border-white/60 hover:scale-105 focus:scale-105 hover:shadow-xl focus:shadow-xl'
                   }`}
                   aria-label={`Navigate to ${item.label} section`}
                   aria-current={activeSection === item.id ? 'page' : undefined}
                   whileHover={{ 
                     scale: 1.05,
-                    boxShadow: "0 10px 25px rgba(224, 58, 138, 0.3)",
+                    boxShadow: "0 10px 25px rgba(217, 119, 6, 0.3)",
                     transition: { duration: 0.2 }
                   }}
                   whileTap={{ scale: 0.95 }}
