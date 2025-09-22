@@ -110,7 +110,6 @@ export function ContactSection() {
               transition={{ duration: 0.5, delay: 0.8 }}
               viewport={{ once: true }}
             >
-              <label htmlFor="name" className="block text-sm font-bold text-dark-primary mb-1" aria-required="true">
               <label htmlFor="name" className="block text-sm font-bold text-dark-primary mb-1 font-poppins" aria-required="true">
                 Name
               </label>
@@ -135,7 +134,6 @@ export function ContactSection() {
               transition={{ duration: 0.5, delay: 0.9 }}
               viewport={{ once: true }}
             >
-              <label htmlFor="email" className="block text-sm font-bold text-dark-primary mb-1" aria-required="true">
               <label htmlFor="email" className="block text-sm font-bold text-dark-primary mb-1 font-poppins" aria-required="true">
                 Email
               </label>
@@ -160,7 +158,6 @@ export function ContactSection() {
               transition={{ duration: 0.5, delay: 1.0 }}
               viewport={{ once: true }}
             >
-              <label htmlFor="phone" className="block text-sm font-bold text-dark-primary mb-1">
               <label htmlFor="phone" className="block text-sm font-bold text-dark-primary mb-1 font-poppins">
                 Phone
               </label>
@@ -184,7 +181,6 @@ export function ContactSection() {
               transition={{ duration: 0.5, delay: 1.1 }}
               viewport={{ once: true }}
             >
-              <label htmlFor="message" className="block text-sm font-bold text-dark-primary mb-1" aria-required="true">
               <label htmlFor="message" className="block text-sm font-bold text-dark-primary mb-1 font-poppins" aria-required="true">
                 Project Details
               </label>
