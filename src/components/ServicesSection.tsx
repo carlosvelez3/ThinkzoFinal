@@ -98,7 +98,11 @@ const services = [
   }
 ];
 
-export function ServicesSection() {
+interface ServicesSectionProps {
+  onOpenContactModal: () => void;
+}
+
+export function ServicesSection({ onOpenContactModal }: ServicesSectionProps) {
   const [selectedService, setSelectedService] = useState<typeof services[0] | null>(null);
   const titleRef = useRef(null);
   const isInView = useInView(titleRef, { once: true, amount: 0.5 });
@@ -129,16 +133,6 @@ export function ServicesSection() {
     }
   };
 
-  const handleGetStartedKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      closeModal();
-      const element = document.getElementById('contact');
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-  };
   
   return (
     <>
@@ -332,14 +326,17 @@ export function ServicesSection() {
                   <button
                     onClick={() => {
                       closeModal();
-                      const element = document.getElementById('contact');
-                      if (element) {
-                        element.scrollIntoView({ behavior: 'smooth' });
+                      onOpenContactModal();
+                    }}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        closeModal();
+                        onOpenContactModal();
                       }
                     }}
-                    onKeyDown={handleGetStartedKeyDown}
                     className="bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors w-full focus:outline-none focus:ring-4 focus:ring-amber-500/30 focus:ring-offset-2"
-                    aria-label="Get started with this service - Navigate to contact form"
+                    aria-label="Get started with this service - Open contact form"
                   >
                     Get Started with This Service
                   </button>

@@ -61,7 +61,11 @@ const processPhases = [
   }
 ];
 
-export function ProcessSection() {
+interface ProcessSectionProps {
+  onOpenContactModal: () => void;
+}
+
+export function ProcessSection({ onOpenContactModal }: ProcessSectionProps) {
   const titleRef = useRef(null);
   const isInView = useInView(titleRef, { once: true, amount: 0.5 });
   const displayedTitle = useTypingEffect({ 
@@ -150,14 +154,15 @@ export function ProcessSection() {
             Let's discuss how our systematic approach can deliver measurable results for your business.
           </p>
           <motion.button
-            onClick={() => {
-              const element = document.getElementById('contact');
-              if (element) {
-                element.scrollIntoView({ behavior: 'smooth' });
+            onClick={onOpenContactModal}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                onOpenContactModal();
               }
             }}
             className="bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 focus:scale-105 shadow-2xl hover:shadow-amber-500/50 focus:shadow-amber-500/50 focus:outline-none focus:ring-4 focus:ring-amber-500/30 focus:ring-offset-2"
-            aria-label="Start your project - Navigate to contact form"
+            aria-label="Start your project - Open contact form"
             whileHover={{ 
               scale: 1.05,
               boxShadow: "0 20px 40px rgba(217, 119, 6, 0.4)"

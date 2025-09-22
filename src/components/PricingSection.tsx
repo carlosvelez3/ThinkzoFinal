@@ -96,7 +96,11 @@ const pricingTiers = [
   }
 ];
 
-export function PricingSection() {
+interface PricingSectionProps {
+  onOpenContactModal: () => void;
+}
+
+export function PricingSection({ onOpenContactModal }: PricingSectionProps) {
   const sectionRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -105,19 +109,6 @@ export function PricingSection() {
   
   const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
 
-  const scrollToContact = () => {
-    const element = document.getElementById('contact');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      scrollToContact();
-    }
-  };
 
   return (
     <motion.section 
@@ -267,14 +258,19 @@ export function PricingSection() {
 
                   {/* CTA Button */}
                   <button
-                    onClick={scrollToContact}
-                    onKeyDown={handleKeyDown}
+                    onClick={onOpenContactModal}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        onOpenContactModal();
+                      }
+                    }}
                     className={`w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 focus:scale-105 shadow-lg hover:shadow-xl focus:shadow-xl focus:outline-none focus:ring-4 focus:ring-offset-2 ${
                       tier.popular
                         ? 'bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white focus:ring-amber-500/30'
                         : 'bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white focus:ring-amber-500/30'
                     }`}
-                    aria-label={`Choose ${tier.name} plan - Navigate to contact form`}
+                    aria-label={`Choose ${tier.name} plan - Open contact form`}
                   >
                     {tier.ctaText}
                   </button>
@@ -301,10 +297,15 @@ export function PricingSection() {
               Contact us to discuss your specific requirements and get a personalized quote.
             </p>
             <button
-              onClick={scrollToContact}
-              onKeyDown={handleKeyDown}
+              onClick={onOpenContactModal}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  onOpenContactModal();
+                }
+              }}
               className="bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 focus:scale-105 shadow-lg hover:shadow-xl focus:shadow-xl focus:outline-none focus:ring-4 focus:ring-amber-500/30 focus:ring-offset-2"
-              aria-label="Discuss custom pricing - Navigate to contact form"
+              aria-label="Discuss custom pricing - Open contact form"
             >
               Discuss Custom Pricing
             </button>

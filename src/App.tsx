@@ -56,11 +56,11 @@ function App() {
         <div className="relative">
           <Header onOpenContactModal={openContactModal} />
           <main id="main-content" tabIndex={-1} role="main">
-            <HeroSection />
+            <HeroSection onOpenContactModal={openContactModal} />
           </main>
-          <ServicesSection />
-          <ProcessSection />
-          <PricingSection />
+          <ServicesSection onOpenContactModal={openContactModal} />
+          <ProcessSection onOpenContactModal={openContactModal} />
+          <PricingSection onOpenContactModal={openContactModal} />
           <Footer onOpenContactModal={openContactModal} />
         </div>
 
