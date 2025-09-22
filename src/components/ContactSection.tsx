@@ -67,8 +67,8 @@ export function ContactSection() {
           transition={{ duration: 0.6, delay: 0.4 }}
           viewport={{ once: true }}
         >
-          Interested in working together? Fill out the form below and one of
-          our experts will reach out to discuss your project requirements.
+          Ready to start your project? Fill out the form below. 
+          We'll contact you within 24 hours to discuss your needs.
         </motion.p>
         
         {/* Quick Navigation Links */}

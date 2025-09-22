@@ -106,8 +106,8 @@ export function HeroSection() {
                 transition: { duration: 0.3 }
               }}
             >
-              Crafting intelligent web experiences with AI-driven design, development, 
-              and optimization, empowering your business to innovate and lead in the digital age.
+              We create smart websites that help your business grow. Our AI-powered solutions 
+              boost your online presence and drive real results.
             </motion.p>
             
             <motion.button

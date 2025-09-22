@@ -11,7 +11,7 @@ const services = [
   {
     id: 'web-development',
     title: 'Custom Web Development',
-    description: 'Responsive, secure websites built on modern frameworks like WordPress, WooCommerce and Shopify, tailored to your business needs.',
+    description: 'We build fast, secure websites that work perfectly on all devices. Choose from WordPress, Shopify, or custom solutions designed for your business.',
     icon: Code,
     detailedContent: {
       overview: 'We create custom web solutions that perfectly align with your business objectives and technical requirements.',
@@ -33,7 +33,7 @@ const services = [
     description: 'Integrate AI‑powered search, recommendation engines and automation tools to enhance user experience and efficiency.',
     icon: Brain,
     detailedContent: {
-      overview: 'Transform your business processes with cutting-edge A<AnimatedI /> technology and intelligent automation solutions.',
+      overview: 'We help you save time and money with smart AI tools. Automate repetitive tasks and give your customers better experiences.',
       features: [
         'A<AnimatedI />-powered search and recommendations',
         'Chatbots and virtual assistants',
@@ -49,7 +49,7 @@ const services = [
   {
     id: 'system-integration',
     title: 'System Integration',
-    description: 'Connect your website to ERP, CRM and inventory systems for seamless data flow and real‑time insights.',
+    description: 'Connect all your business systems together. Get real-time data from your CRM, inventory, and other tools in one place.',
     icon: Settings,
     detailedContent: {
       overview: 'Seamlessly connect all your business systems for unified data management and improved operational efficiency.',
@@ -68,7 +68,7 @@ const services = [
   {
     id: 'maintenance-support',
     title: 'Maintenance & Support',
-    description: 'Keep your digital assets secure and up to date with our comprehensive maintenance plans and dedicated support.',
+    description: 'Keep your website running smoothly with our ongoing support. We handle updates, security, and backups so you can focus on your business.',
     icon: Shield,
     detailedContent: {
       overview: 'Ensure your digital infrastructure remains secure, updated, and performing at its best with our ongoing support services.',
@@ -161,7 +161,7 @@ export function ServicesSection() {
             transition={{ duration: 0.6, delay: 0.4 }}
             viewport={{ once: true }}
           >
-            Comprehensive A<AnimatedI /> solutions for modern web development and business automation
+            Complete AI solutions that transform your website and automate your business processes
           </motion.p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8">

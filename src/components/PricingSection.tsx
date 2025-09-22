@@ -11,11 +11,11 @@ const pricingTiers = [
     period: 'one-time',
     description: 'Single-page focused design optimized for conversions and marketing campaigns',
     features: [
-      'Single-page conversion-focused design',
-      'Strategic layout with compelling headlines',
-      'Key benefits showcase and social proof integration',
-      'Prominent call-to-action placement',
-      'Minimal navigation to eliminate distractions',
+      'One-page design focused on conversions',
+      'Clear headlines and compelling copy',
+      'Customer testimonials and trust signals',
+      'Strong call-to-action buttons',
+      'Simple navigation that guides visitors',
       'Mobile-responsive design for all devices',
       'One primary CTA button strategically placed',
       'Up to 2 rounds of revisions included',
@@ -35,8 +35,8 @@ const pricingTiers = [
     monthlyPeriod: 'Payment options available',
     description: 'Perfect for small businesses needing a simple, professional web presence',
     features: [
-      '3-5 pages (Home, About, Contact, Services)',
-      'Template theme or lightly customized',
+      '3-5 essential pages for your business',
+      'Professional template with your branding',
       'Mobile responsive design',
       'Basic SEO optimization',
       'Basic site speed optimization',
@@ -57,10 +57,10 @@ const pricingTiers = [
     monthlyPeriod: 'Payment options available',
     description: 'Ideal for growing businesses needing more customization and functionality',
     features: [
-      '6-10 pages with more content',
-      'More customization of design (branding, custom graphics)',
-      'Basic dynamic content (blog, simple CMS)',
-      'Enhanced SEO & performance optimization',
+      '6-10 pages with rich content',
+      'Custom design with your brand colors and graphics',
+      'Blog and content management system',
+      'Advanced SEO and speed optimization',
       'Google Analytics integration',
       'Social media integration',
       'Basic payment gateway (if needed)',
@@ -80,10 +80,10 @@ const pricingTiers = [
     monthlyPeriod: 'Payment options available',
     description: 'Comprehensive solution for businesses needing advanced functionality and custom design',
     features: [
-      '10-20+ pages or more',
+      '10+ pages with advanced features',
       'Custom design from scratch',
-      'Advanced functionality (e-commerce, user accounts, booking)',
-      'Comprehensive SEO & speed optimization',
+      'E-commerce, user accounts, and booking systems',
+      'Complete SEO and performance optimization',
       'Content creation assistance',
       'CRM and email marketing integrations',
       'Payment processing integration',
@@ -156,8 +156,7 @@ export function PricingSection() {
             id="pricing-description"
             className="text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed font-poppins"
           >
-            Choose the perfect tier for your business needs. These are approximate ranges for professional 
-            web development services, with costs varying based on specific requirements and scope.
+            Choose the right plan for your business. Prices may vary based on your specific needs and project complexity.
           </p>
         </motion.div>
 
@@ -289,9 +288,8 @@ export function PricingSection() {
               Need Something Custom?
             </h3>
             <p className="text-gray-300 mb-6 leading-relaxed font-poppins">
-              Every business is unique. If our standard tiers don't fit your specific needs, 
-              we'll create a custom solution tailored to your requirements and budget. 
-              Costs may vary based on location, complexity, and additional integrations.
+              Need something different? We create custom solutions for unique business needs. 
+              Contact us to discuss your specific requirements and get a personalized quote.
             </p>
             <button
               onClick={scrollToContact}

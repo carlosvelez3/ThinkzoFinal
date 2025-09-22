@@ -12,7 +12,7 @@ const processPhases = [
     id: 'discovery',
     title: 'Discovery',
     icon: Search,
-    description: 'We start by talking with your key team members and reviewing your current systems to fully understand your manufacturing processes, compliance needs, and market position. Then, we evaluate your digital setup and outline the most important user journeys—for both your internal teams and your customers.',
+    description: 'We start by learning about your business goals and current challenges. Our team reviews your existing systems and identifies the best opportunities for improvement.',
     keyActivities: [
       'Stakeholder interviews and requirements gathering',
       'Technical infrastructure assessment',
@@ -24,7 +24,7 @@ const processPhases = [
     id: 'planning',
     title: 'Planning',
     icon: PenTool,
-    description: 'Our engineering team develops comprehensive technical architecture and detailed project specifications tailored to your industry\'s regulatory standards and operational complexity. We create wireframes, system integration maps, and establish development milestones that account for manufacturing cycles, compliance testing, and stakeholder approval processes.',
+    description: 'We create a detailed plan for your project. This includes wireframes, technical specifications, and a clear timeline with milestones you can track.',
     keyActivities: [
       'Technical architecture and system design',
       'Wireframing and user experience mapping',
@@ -36,7 +36,7 @@ const processPhases = [
     id: 'execution',
     title: 'Execution',
     icon: Cog,
-    description: 'Our development team builds your solution using industry-leading frameworks and security protocols, with continuous integration testing and regular stakeholder reviews. We implement robust data management systems, establish secure API connections, and conduct thorough quality assurance testing that meets your industry\'s stringent performance and compliance standards.',
+    description: 'Our developers build your solution using the latest technology and security standards. We test everything thoroughly and keep you updated with regular progress reports.',
     keyActivities: [
       'Agile development with regular milestone reviews',
       'System integration and API development',
@@ -48,7 +48,7 @@ const processPhases = [
     id: 'delivery',
     title: 'Delivery',
     icon: Rocket,
-    description: 'We orchestrate a strategic launch sequence that minimizes operational disruption while maximizing user adoption and system performance. Our team provides comprehensive training for your internal teams, establishes monitoring protocols, and implements ongoing support structures that ensure long-term success and continuous optimization of your digital infrastructure.',
+    description: 'We launch your project smoothly with minimal disruption to your business. Our team trains your staff and provides ongoing support to ensure everything runs perfectly.',
     keyActivities: [
       'Strategic deployment and launch coordination',
       'Comprehensive team training and documentation',
@@ -98,7 +98,7 @@ export function ProcessSection() {
             transition={{ duration: 0.6, delay: 0.4 }}
             viewport={{ once: true }}
           >
-            Our systematic approach to A<AnimatedI />-powered web development, ensuring cutting-edge digital solutions that drive measurable business results.
+            Our proven 4-step process delivers AI-powered websites that grow your business and increase your revenue.
           </motion.p>
         </div>
 
