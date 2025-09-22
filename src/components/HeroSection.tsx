@@ -145,8 +145,8 @@ export function HeroSection({ onOpenContactModal }: HeroSectionProps) {
           </div>
         </div>
         
-        {/* AI Terminal - Positioned to extend towards right border, enlarged by 1.3x */}
-        <div className="absolute top-24 right-8 w-[39vw] max-w-4xl hidden lg:block z-0">
+        {/* AI Terminal - Positioned to extend towards right border, enlarged */}
+        <div className="absolute top-24 right-8 w-[50vw] max-w-6xl hidden lg:block z-0">
           <AICodeScreen />
         </div>
       </div>
