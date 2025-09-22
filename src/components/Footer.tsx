@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { ArrowUp } from 'lucide-react';
 import { AnimatedI } from './AnimatedI';
 
 export function Footer() {
@@ -22,6 +23,11 @@ export function Footer() {
       scrollToSection(sectionId);
     }
   };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <motion.footer 
       className="bg-gray-900 text-gray-300 py-8 px-4"
@@ -34,6 +40,25 @@ export function Footer() {
     >
       <div className="max-w-site mx-auto">
         <h2 className="sr-only">Footer Information</h2>
+        
+        {/* Back to Top Button */}
+        <motion.div 
+          className="text-center mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+        >
+          <button
+            onClick={scrollToTop}
+            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary-accent to-secondary-purple text-white rounded-lg font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-105 focus:scale-105 focus:outline-none focus:ring-4 focus:ring-primary-accent/30"
+            aria-label="Back to top"
+          >
+            <ArrowUp className="w-4 h-4 mr-2" aria-hidden="true" />
+            Back to Top
+          </button>
+        </motion.div>
+
         <motion.div 
           className="flex flex-wrap gap-8 justify-between mb-8"
           initial={{ opacity: 0, y: 50 }}
@@ -62,7 +87,7 @@ export function Footer() {
           >
             <h3 className="text-white font-semibold mb-3 font-montserrat">Navigation Links</h3>
             <nav role="navigation" aria-label="Footer navigation">
-              <ul className="space-y-2" role="list">
+              <ul className="grid grid-cols-2 gap-2" role="list">
                 <li role="listitem">
                   <button
                     onClick={() => scrollToSection('services')}
@@ -71,6 +96,16 @@ export function Footer() {
                     aria-label="Navigate to Services section"
                   >
                     Services
+                  </button>
+                </li>
+                <li role="listitem">
+                  <button
+                    onClick={() => scrollToSection('process')}
+                    onKeyDown={(e) => handleKeyDown(e, 'process')}
+                    className="text-gray-300 hover:text-white focus:text-white text-sm transition-colors focus:outline-none focus:underline"
+                    aria-label="Navigate to Process section"
+                  >
+                    Process
                   </button>
                 </li>
                 <li role="listitem">
@@ -106,7 +141,10 @@ export function Footer() {
             <h3 className="text-white font-semibold mb-3 font-montserrat">Contact Information</h3>
             <ul className="space-y-2" role="list">
               <li className="text-sm" role="listitem">
-                Email: <a href="mailto:Team@thinkzo.ai" className="text-gray-300 hover:text-white focus:text-white transition-colors focus:outline-none focus:underline" aria-label="Send email to Team@thinkzo.ai">Team@thinkzo.ai</a>
+                <strong>Email:</strong> <a href="mailto:Team@thinkzo.ai" className="text-primary-accent hover:text-primary-accent-hover focus:text-primary-accent-hover transition-colors focus:outline-none focus:underline" aria-label="Send email to Team@thinkzo.ai">Team@thinkzo.ai</a>
+              </li>
+              <li className="text-sm" role="listitem">
+                <strong>Response Time:</strong> Within 24 hours
               </li>
             </ul>
           </motion.div>
