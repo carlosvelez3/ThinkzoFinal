@@ -32,7 +32,7 @@ const pricingTiers = [
     price: '$800 – $1,500',
     period: 'one-time',
     monthlyPrice: '$100 – $200',
-    monthlyPeriod: 'monthly',
+    monthlyPeriod: 'Payment options available',
     description: 'Perfect for small businesses needing a simple, professional web presence',
     features: [
       '3-5 pages (Home, About, Contact, Services)',
@@ -54,7 +54,7 @@ const pricingTiers = [
     price: '$1,500 – $3,500',
     period: 'one-time',
     monthlyPrice: '$200 – $400',
-    monthlyPeriod: 'monthly',
+    monthlyPeriod: 'Payment options available',
     description: 'Ideal for growing businesses needing more customization and functionality',
     features: [
       '6-10 pages with more content',
@@ -77,7 +77,7 @@ const pricingTiers = [
     price: '$3,500 – $6,000',
     period: 'one-time',
     monthlyPrice: '$400 – $700',
-    monthlyPeriod: 'monthly',
+    monthlyPeriod: 'Payment options available',
     description: 'Comprehensive solution for businesses needing advanced functionality and custom design',
     features: [
       '10-20+ pages or more',
@@ -223,15 +223,12 @@ export function PricingSection() {
                         
                         {/* Monthly Payment Option */}
                         <div className="p-3 bg-blue-50 rounded-lg border-2 border-blue-200">
-                          <div className="flex items-baseline justify-center">
-                            <span className="text-2xl font-bold text-blue-700">
-                              {tier.monthlyPrice}
-                            </span>
-                            <span className="text-blue-600 ml-2 text-sm">
+                          <div className="text-center">
+                            <span className="text-lg font-semibold text-blue-700">
                               {tier.monthlyPeriod}
                             </span>
                           </div>
-                          <p className="text-xs text-blue-600 mt-1">Flexible monthly payments</p>
+                          <p className="text-xs text-blue-600 mt-2">Contact us for flexible payment plans</p>
                         </div>
                       </div>
                     ) : (
