@@ -137,7 +137,7 @@ export function Header() {
           loop
           muted
           playsInline
-          className="absolute inset-0 w-full h-full object-cover -z-10 transform scale-x-[-1]"
+          className="absolute inset-0 w-full h-full object-cover -z-10 transform scale-x-[-1] rotate-45"
         >
           <source src="/hero_animation_1080p_10s.mp4" type="video/mp4" />
         </video>
