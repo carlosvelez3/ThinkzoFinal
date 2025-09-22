@@ -19,7 +19,7 @@ const processPhases = [
       'Competitive analysis and market positioning review'
     ],
     outcome: 'A detailed project blueprint with technical specifications, user personas, and strategic recommendations that align with your business objectives.',
-    circleGradient: 'from-slate-600 to-slate-500'
+    circleGradient: 'from-amber-300 to-amber-400'
   },
   {
     id: 'planning',
@@ -32,7 +32,7 @@ const processPhases = [
       'Integration planning for existing business systems'
     ],
     outcome: 'Complete technical specifications, visual mockups, and a detailed project timeline with defined milestones and deliverables.',
-    circleGradient: 'from-blue-600 to-blue-500'
+    circleGradient: 'from-amber-300 to-amber-400'
   },
   {
     id: 'execution',
@@ -45,7 +45,7 @@ const processPhases = [
       'Comprehensive testing and quality assurance'
     ],
     outcome: 'A fully functional, tested solution ready for deployment, complete with documentation and training materials.',
-    circleGradient: 'from-teal-600 to-teal-500'
+    circleGradient: 'from-amber-300 to-amber-400'
   },
   {
     id: 'delivery',
@@ -57,7 +57,7 @@ const processPhases = [
       'Comprehensive team training and documentation',
       'Performance monitoring and optimization setup'
     ],
-    circleGradient: 'from-indigo-600 to-indigo-500'
+    circleGradient: 'from-amber-300 to-amber-400'
   }
 ];
 
