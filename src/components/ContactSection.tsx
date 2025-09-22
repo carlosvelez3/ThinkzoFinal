@@ -96,7 +96,7 @@ export function ContactSection() {
         </motion.div>
         
         <motion.div 
-          className="max-w-2xl mx-auto bg-white rounded-lg shadow-sm p-4 md:p-6 lg:p-8"
+          className="max-w-2xl mx-auto bg-gray-800 border border-gray-700 rounded-lg shadow-sm p-4 md:p-6 lg:p-8"
           initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.6 }}
@@ -110,7 +110,7 @@ export function ContactSection() {
               transition={{ duration: 0.5, delay: 0.8 }}
               viewport={{ once: true }}
             >
-              <label htmlFor="name" className="block text-sm font-bold text-dark-primary mb-1 font-poppins" aria-required="true">
+              <label htmlFor="name" className="block text-sm font-bold text-white mb-1 font-poppins" aria-required="true">
                 Name
               </label>
               <input
@@ -122,7 +122,7 @@ export function ContactSection() {
                 placeholder="Your name"
                 required
                 aria-describedby="name-error"
-                className="w-full px-3 py-2 border border-gray-300 rounded text-sm md:text-base focus:outline-none focus:border-primary-accent focus:ring-2 focus:ring-primary-accent/20 transition-all duration-200"
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-sm md:text-base text-white placeholder-gray-400 focus:outline-none focus:border-primary-accent focus:ring-2 focus:ring-primary-accent/20 transition-all duration-200"
               />
               <div id="name-error" className="sr-only" aria-live="polite"></div>
             </motion.div>
@@ -134,7 +134,7 @@ export function ContactSection() {
               transition={{ duration: 0.5, delay: 0.9 }}
               viewport={{ once: true }}
             >
-              <label htmlFor="email" className="block text-sm font-bold text-dark-primary mb-1 font-poppins" aria-required="true">
+              <label htmlFor="email" className="block text-sm font-bold text-white mb-1 font-poppins" aria-required="true">
                 Email
               </label>
               <input
@@ -146,7 +146,7 @@ export function ContactSection() {
                 placeholder="Your email"
                 required
                 aria-describedby="email-error"
-                className="w-full px-3 py-2 border border-gray-300 rounded text-sm md:text-base focus:outline-none focus:border-primary-accent focus:ring-2 focus:ring-primary-accent/20 transition-all duration-200"
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-sm md:text-base text-white placeholder-gray-400 focus:outline-none focus:border-primary-accent focus:ring-2 focus:ring-primary-accent/20 transition-all duration-200"
               />
               <div id="email-error" className="sr-only" aria-live="polite"></div>
             </motion.div>
@@ -158,7 +158,7 @@ export function ContactSection() {
               transition={{ duration: 0.5, delay: 1.0 }}
               viewport={{ once: true }}
             >
-              <label htmlFor="phone" className="block text-sm font-bold text-dark-primary mb-1 font-poppins">
+              <label htmlFor="phone" className="block text-sm font-bold text-white mb-1 font-poppins">
                 Phone
               </label>
               <input
@@ -169,9 +169,9 @@ export function ContactSection() {
                 onChange={handleChange}
                 placeholder="Your phone (optional)"
                 aria-describedby="phone-help"
-                className="w-full px-3 py-2 border border-gray-300 rounded text-sm md:text-base focus:outline-none focus:border-primary-accent focus:ring-2 focus:ring-primary-accent/20 transition-all duration-200"
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-sm md:text-base text-white placeholder-gray-400 focus:outline-none focus:border-primary-accent focus:ring-2 focus:ring-primary-accent/20 transition-all duration-200"
               />
-              <div id="phone-help" className="text-xs text-gray-500 mt-1">Optional - We'll use this for urgent project updates</div>
+              <div id="phone-help" className="text-xs text-gray-400 mt-1">Optional - We'll use this for urgent project updates</div>
             </motion.div>
             
             <motion.div 
@@ -181,7 +181,7 @@ export function ContactSection() {
               transition={{ duration: 0.5, delay: 1.1 }}
               viewport={{ once: true }}
             >
-              <label htmlFor="message" className="block text-sm font-bold text-dark-primary mb-1 font-poppins" aria-required="true">
+              <label htmlFor="message" className="block text-sm font-bold text-white mb-1 font-poppins" aria-required="true">
                 Project Details
               </label>
               <textarea
@@ -193,9 +193,9 @@ export function ContactSection() {
                 required
                 rows={5}
                 aria-describedby="message-help message-error"
-                className="w-full px-3 py-2 border border-gray-300 rounded text-sm md:text-base resize-y focus:outline-none focus:border-primary-accent focus:ring-2 focus:ring-primary-accent/20 transition-all duration-200"
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-sm md:text-base text-white placeholder-gray-400 resize-y focus:outline-none focus:border-primary-accent focus:ring-2 focus:ring-primary-accent/20 transition-all duration-200"
               />
-              <div id="message-help" className="text-xs text-gray-500 mt-1">Please describe your project goals, timeline, and any specific requirements</div>
+              <div id="message-help" className="text-xs text-gray-400 mt-1">Please describe your project goals, timeline, and any specific requirements</div>
               <div id="message-error" className="sr-only" aria-live="polite"></div>
             </motion.div>
             
@@ -212,7 +212,7 @@ export function ContactSection() {
             >
               Send Request
             </motion.button>
-            <div id="submit-help" className="text-xs text-gray-500 mt-2">We'll respond within 24 hours</div>
+            <div id="submit-help" className="text-xs text-gray-400 mt-2">We'll respond within 24 hours</div>
           </form>
         </motion.div>
       </div>
