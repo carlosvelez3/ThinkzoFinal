@@ -342,7 +342,6 @@ export function ContactSection() {
                   transition={{ duration: 0.3 }}
                   className="mb-6"
                 >
-                  <label htmlFor="email" className="block text-sm font-bold text-white mb-2 font-poppins">
                   <label 
                     htmlFor="email" 
                     className="block text-sm font-bold text-white mb-2 font-poppins"
