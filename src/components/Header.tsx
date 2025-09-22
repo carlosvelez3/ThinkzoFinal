@@ -138,10 +138,8 @@ export function Header() {
           muted
           playsInline
           className="absolute inset-0 w-full h-full object-cover -z-10"
-          style={{ filter: 'brightness(2.0)' }}
         >
           <source src="/hero_animation_1080p_10s.mp4" type="video/mp4" />
-          <div className="absolute inset-0 bg-gradient-to-r from-dark-primary to-gray-800" />
         </video>
 
         <div className="relative z-20 max-w-site mx-auto flex justify-between items-center px-4 md:px-6 border border-white/30 rounded-2xl py-3 md:py-4 bg-white/5 backdrop-blur-sm shadow-2xl hover:border-white/30 transition-all duration-300">
