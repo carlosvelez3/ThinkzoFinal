@@ -185,7 +185,6 @@ export function ServicesSection() {
                   role="button"
                   aria-label={`Learn more about ${service.title}`}
                   aria-describedby={`service-${index}-description`}
-                  className="bg-white border-2 border-gray-200 rounded-xl p-4 md:p-6 lg:p-8 shadow-lg hover:shadow-2xl focus:shadow-2xl cursor-pointer transform transition-all duration-300 hover:-translate-y-2 focus:-translate-y-2 hover:border-primary-accent focus:border-primary-accent group min-h-[220px] md:min-h-[260px] flex flex-col justify-between focus:outline-none focus:ring-4 focus:ring-primary-accent/30"
                   className="bg-gray-800 border-2 border-gray-700 rounded-xl p-4 md:p-6 lg:p-8 shadow-lg hover:shadow-2xl focus:shadow-2xl cursor-pointer transform transition-all duration-300 hover:-translate-y-2 focus:-translate-y-2 hover:border-primary-accent focus:border-primary-accent group min-h-[220px] md:min-h-[260px] flex flex-col justify-between focus:outline-none focus:ring-4 focus:ring-primary-accent/30"
                   initial={{ opacity: 0, x: index % 2 === 0 ? -100 : 100 }}
                   whileInView={{ opacity: 1, x: 0 }}
@@ -201,7 +200,6 @@ export function ServicesSection() {
                     <div className="flex items-center justify-center w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 bg-gradient-to-br from-primary-accent/20 to-secondary-purple/20 rounded-lg mb-4 md:mb-5 lg:mb-6 group-hover:bg-gradient-to-br group-hover:from-cool-teal-1 group-hover:to-cool-teal-2 transition-all duration-300">
                       <IconComponent className="w-6 h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 text-white group-hover:text-white group-focus:text-white transition-colors duration-300" aria-hidden="true" />
                     </div>
-                    <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-white mb-3 md:mb-4 group-hover:text-primary-accent transition-colors duration-300 font-montserrat">
                     <h3 
                       className="text-lg md:text-xl lg:text-2xl font-bold text-white mb-3 md:mb-4 group-hover:text-primary-accent transition-colors duration-300 font-montserrat"
                       style={{
