@@ -158,7 +158,7 @@ export function Header() {
                 transition: { duration: 0.3 }
               }}
               style={{
-                background: 'linear-gradient(135deg, #E03A8A 0%, #8B5CF6 30%, #3B82F6 60%, #E03A8A 100%)',
+                background: 'linear-gradient(135deg, #06B6D4 0%, #6366F1 30%, #0EA5E9 60%, #06B6D4 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
@@ -189,7 +189,7 @@ export function Header() {
               transition={{ duration: 0.6, delay: 0.3 }}
               whileHover={{ 
                 color: "#E03A8A",
-                textShadow: "0 0 15px rgba(224, 58, 138, 0.6)",
+                textShadow: "0 0 15px rgba(6, 182, 212, 0.6)",
                 transition: { duration: 0.3 }
               }}
             >
