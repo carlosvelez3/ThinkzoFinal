@@ -28,16 +28,14 @@ const navigationItems: NavigationItem[] = [
     label: 'Pricing',
     href: 'pricing',
     description: 'Transparent, flexible pricing plans'
-  },
-  {
-    id: 'contact',
-    label: 'Contact',
-    href: 'contact',
-    description: 'Start your AI project today'
   }
 ];
 
-export function Header() {
+interface HeaderProps {
+  onOpenContactModal: () => void;
+}
+
+export function Header({ onOpenContactModal }: HeaderProps) {
   const [activeSection, setActiveSection] = useState('hero');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
@@ -49,7 +47,7 @@ export function Header() {
       const scrollPosition = window.scrollY + 100;
       setIsScrolled(window.scrollY > 50);
 
-      const sections = ['hero', 'services', 'process', 'pricing', 'contact'];
+      const sections = ['hero', 'services', 'process', 'pricing'];
       
       for (const section of sections) {
         const element = document.getElementById(section === 'hero' ? 'main-content' : section);
@@ -260,6 +258,21 @@ export function Header() {
                 </AnimatePresence>
               </div>
             ))}
+            
+            {/* Contact Button */}
+            <motion.button
+              onClick={onOpenContactModal}
+              className="relative px-3 md:px-4 py-2 rounded-lg font-semibold font-poppins text-sm uppercase tracking-wide transition-all duration-300 shadow-lg transform border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white hover:border-white/40 focus:border-white/60 hover:scale-105 focus:scale-105 hover:shadow-xl focus:shadow-xl"
+              aria-label="Open contact form"
+              whileHover={{ 
+                scale: 1.05,
+                boxShadow: "0 10px 25px rgba(217, 119, 6, 0.3)",
+                transition: { duration: 0.2 }
+              }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Contact
+            </motion.button>
           </nav>
 
           {/* Mobile Menu Button */}
@@ -392,6 +405,25 @@ export function Header() {
                       )}
                     </motion.div>
                   ))}
+                  
+                  {/* Mobile Contact Button */}
+                  <motion.div
+                    initial={{ opacity: 0, x: 50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: navigationItems.length * 0.1 }}
+                  >
+                    <button
+                      onClick={onOpenContactModal}
+                      className="w-full text-left p-4 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-accent bg-gradient-to-r from-cta-yellow to-cta-yellow-hover text-white shadow-lg"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="font-semibold text-lg">Contact</div>
+                          <div className="text-sm opacity-80 mt-1">Start your AI project today</div>
+                        </div>
+                      </div>
+                    </button>
+                  </motion.div>
                 </nav>
 
                 {/* Mobile Menu Footer */}
@@ -399,7 +431,7 @@ export function Header() {
                   <div className="text-center text-gray-400 text-sm">
                     <div className="font-semibold text-white mb-2">Ready to start?</div>
                     <button
-                      onClick={() => scrollToSection('contact')}
+                      onClick={onOpenContactModal}
                       className="w-full bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-amber-500/30 focus:ring-offset-2"
                     >
                       Get Started Today

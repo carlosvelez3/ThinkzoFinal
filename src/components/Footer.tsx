@@ -3,7 +3,11 @@ import { motion } from 'framer-motion';
 import { ArrowUp } from 'lucide-react';
 import { AnimatedI } from './AnimatedI';
 
-export function Footer() {
+interface FooterProps {
+  onOpenContactModal: () => void;
+}
+
+export function Footer({ onOpenContactModal }: FooterProps) {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
   useEffect(() => {
@@ -21,6 +25,13 @@ export function Footer() {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       scrollToSection(sectionId);
+    }
+  };
+
+  const handleContactKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onOpenContactModal();
     }
   };
 
@@ -136,10 +147,10 @@ export function Footer() {
                 </li>
                 <li role="listitem">
                   <button
-                    onClick={() => scrollToSection('contact')}
-                    onKeyDown={(e) => handleKeyDown(e, 'contact')}
+                    onClick={onOpenContactModal}
+                    onKeyDown={handleContactKeyDown}
                     className="text-gray-300 hover:text-white focus:text-white text-sm transition-colors focus:outline-none focus:underline"
-                    aria-label="Navigate to Contact section"
+                    aria-label="Open contact form"
                   >
                     Contact
                   </button>
