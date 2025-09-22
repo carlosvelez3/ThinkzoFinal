@@ -138,7 +138,7 @@ export function Header() {
           muted
           playsInline
           className="absolute inset-0 w-full h-full object-cover -z-10"
-          style={{ filter: 'brightness(0.6)' }}
+          style={{ filter: 'brightness(1.2)' }}
         >
           <source src="/hero_animation_1080p_10s.mp4" type="video/mp4" />
           <div className="absolute inset-0 bg-gradient-to-r from-dark-primary to-gray-800" />
