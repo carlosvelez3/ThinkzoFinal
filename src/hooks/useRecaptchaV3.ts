@@ -10,6 +10,7 @@ declare global {
 }
 
 const RECAPTCHA_SITE_KEY = '6Lebn9ErAAAAACW0EgCF02Jp3CTrk5hVF5P1O7qy';
+const IS_LOCALHOST = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
 export function useRecaptchaV3() {
   const [isReady, setIsReady] = useState(false);
@@ -17,6 +18,13 @@ export function useRecaptchaV3() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Skip reCAPTCHA initialization on localhost
+    if (IS_LOCALHOST) {
+      setIsReady(true);
+      setIsLoading(false);
+      return;
+    }
+
     // Check if reCAPTCHA is already loaded
     if (window.grecaptcha) {
       window.grecaptcha.ready(() => {
@@ -49,9 +57,15 @@ export function useRecaptchaV3() {
       
       return () => clearTimeout(timeout);
     }
-  }, [isReady]);
+  }, [isReady, IS_LOCALHOST]);
 
   const executeRecaptcha = useCallback(async (action: string): Promise<string | null> => {
+    // Return a mock token for localhost development
+    if (IS_LOCALHOST) {
+      console.log('reCAPTCHA bypassed for localhost development');
+      return 'localhost-development-token';
+    }
+
     if (!isReady || !window.grecaptcha) {
       setError('reCAPTCHA is not ready');
       return null;
@@ -67,7 +81,7 @@ export function useRecaptchaV3() {
       console.error('reCAPTCHA execution error:', err);
       return null;
     }
-  }, [isReady]);
+  }, [isReady, IS_LOCALHOST]);
 
   return {
     isReady,
