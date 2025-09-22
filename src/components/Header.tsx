@@ -152,9 +152,6 @@ export function Header() {
               className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold font-montserrat drop-shadow-lg flex items-center space-x-2 cursor-pointer"
               role="heading"
               aria-level={1}
-              onClick={() => scrollToSection('hero')}
-              onKeyDown={(e) => handleKeyDown(e, 'hero')}
-              tabIndex={0}
               whileHover={{ 
                 scale: 1.05,
                 textShadow: "0 0 25px rgba(224, 58, 138, 0.9)",
@@ -312,7 +309,6 @@ export function Header() {
         <div className="hidden md:block mt-4 px-6">
           <Breadcrumbs 
             items={[
-              { label: 'Home', href: 'hero' },
               { 
                 label: navigationItems.find(item => item.id === activeSection)?.label || 'Home', 
                 href: activeSection,
