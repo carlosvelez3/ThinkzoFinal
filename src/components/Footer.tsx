@@ -41,7 +41,8 @@ export function Footer({ onOpenContactModal }: FooterProps) {
 
   return (
     <motion.footer 
-      className="bg-gray-800 text-gray-300 py-8 px-4"
+      className="relative bg-cool-gradient-animated animate-background-pan text-gray-300 py-8 px-4 overflow-hidden"
+      style={{ backgroundSize: '400% 400%' }}
       role="contentinfo"
       aria-label="Site footer"
       initial={{ opacity: 0 }}
@@ -49,6 +50,12 @@ export function Footer({ onOpenContactModal }: FooterProps) {
       transition={{ duration: 0.8 }}
       viewport={{ once: true, amount: 0.3 }}
     >
+      {/* Animated Cool Pattern Overlay */}
+      <div 
+        className="absolute inset-0 z-0 bg-cool-pattern animate-cool-wave opacity-10 pointer-events-none"
+        aria-hidden="true"
+      />
+      
       <div className="max-w-site mx-auto">
         <h2 className="sr-only">Footer Information</h2>
         

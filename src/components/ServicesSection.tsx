@@ -138,7 +138,8 @@ export function ServicesSection({ onOpenContactModal }: ServicesSectionProps) {
     <>
       <motion.section 
         id="services" 
-        className="relative py-20 px-4 overflow-hidden bg-gray-800"
+        className="relative py-20 px-4 overflow-hidden bg-cool-gradient-animated animate-background-pan"
+        style={{ backgroundSize: '400% 400%' }}
         role="region"
         aria-labelledby="services-heading"
         initial={{ opacity: 0, y: 100 }}
@@ -146,6 +147,12 @@ export function ServicesSection({ onOpenContactModal }: ServicesSectionProps) {
         transition={{ duration: 0.8, ease: "easeOut" }}
         viewport={{ once: true, amount: 0.3 }}
       >
+        {/* Animated Cool Pattern Overlay */}
+        <div 
+          className="absolute inset-0 z-0 bg-cool-pattern animate-cool-wave opacity-10 pointer-events-none"
+          aria-hidden="true"
+        />
+        
         <div className="max-w-6xl mx-auto">
           <motion.h2 
             id="services-heading"
