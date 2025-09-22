@@ -5,14 +5,21 @@ import { HeroSection } from './components/HeroSection';
 import { ServicesSection } from './components/ServicesSection';
 import { ProcessSection } from './components/ProcessSection';
 import { PricingSection } from './components/PricingSection';
-import { ContactSection } from './components/ContactSection';
+import { Modal } from './components/Modal';
+import { ContactForm } from './components/ContactForm';
 import { Footer } from './components/Footer';
 import { ThreeDScene } from './components/ThreeDScene';
 import { AccessibilityPanel } from './components/AccessibilitySettings';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { OfflineIndicator } from './components/OfflineIndicator';
+import { useState } from 'react';
 
 function App() {
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+
+  const openContactModal = () => setIsContactModalOpen(true);
+  const closeContactModal = () => setIsContactModalOpen(false);
+
   const skipToMain = () => {
     const mainContent = document.getElementById('main-content');
     if (mainContent) {
@@ -20,6 +27,7 @@ function App() {
       mainContent.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
   return (
     <ErrorBoundary>
       <div className="relative">
@@ -42,16 +50,25 @@ function App() {
 
         {/* Main Content */}
         <div className="relative">
-          <Header />
+          <Header onOpenContactModal={openContactModal} />
           <main id="main-content" tabIndex={-1} role="main">
             <HeroSection />
           </main>
           <ServicesSection />
           <ProcessSection />
           <PricingSection />
-          <ContactSection />
-          <Footer />
+          <Footer onOpenContactModal={openContactModal} />
         </div>
+
+        {/* Contact Modal */}
+        <Modal
+          isOpen={isContactModalOpen}
+          onClose={closeContactModal}
+          title="Start Your AI Project"
+          maxWidth="max-w-4xl"
+        >
+          <ContactForm onCloseModal={closeContactModal} />
+        </Modal>
         
         {/* Global Components */}
         <OfflineIndicator />
