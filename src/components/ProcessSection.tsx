@@ -131,7 +131,7 @@ export function ProcessSection() {
                 element.scrollIntoView({ behavior: 'smooth' });
               }
             }}
-            className="bg-gradient-to-r from-primary-accent to-secondary-purple hover:from-primary-accent-hover hover:to-purple-600 focus:from-primary-accent-hover focus:to-purple-600 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 focus:scale-105 shadow-2xl hover:shadow-primary-accent/50 focus:shadow-primary-accent/50 focus:outline-none focus:ring-4 focus:ring-primary-accent/30 focus:ring-offset-2"
+            className="bg-gradient-to-r from-button-gradient-start to-button-gradient-end hover:from-button-gradient-start-hover hover:to-button-gradient-end-hover focus:from-button-gradient-start-hover focus:to-button-gradient-end-hover text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 focus:scale-105 shadow-2xl hover:shadow-blue-500/50 focus:shadow-blue-500/50 focus:outline-none focus:ring-4 focus:ring-blue-500/30 focus:ring-offset-2"
             aria-label="Start your project - Navigate to contact form"
             whileHover={{ 
               scale: 1.05,

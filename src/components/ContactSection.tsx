@@ -201,7 +201,7 @@ export function ContactSection() {
             
             <motion.button
               type="submit"
-              className="bg-gradient-to-r from-primary-accent to-secondary-purple hover:from-primary-accent-hover hover:to-purple-600 focus:from-primary-accent-hover focus:to-purple-600 text-white px-4 md:px-6 py-2 md:py-3 rounded font-semibold text-sm md:text-base cursor-pointer transition-colors w-full md:w-auto focus:outline-none focus:ring-4 focus:ring-primary-accent/30 focus:ring-offset-2"
+              className="bg-gradient-to-r from-button-gradient-start to-button-gradient-end hover:from-button-gradient-start-hover hover:to-button-gradient-end-hover focus:from-button-gradient-start-hover focus:to-button-gradient-end-hover text-white px-4 md:px-6 py-2 md:py-3 rounded font-semibold text-sm md:text-base cursor-pointer transition-colors w-full md:w-auto focus:outline-none focus:ring-4 focus:ring-blue-500/30 focus:ring-offset-2"
               aria-describedby="submit-help"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
