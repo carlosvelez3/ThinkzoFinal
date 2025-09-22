@@ -39,7 +39,7 @@ function App() {
       {/* Main Content */}
       <div className="relative">
         <Header />
-        <main id="main-content" tabIndex={-1}>
+        <main id="main-content" tabIndex={-1} role="main">
           <HeroSection />
         </main>
         <ServicesSection />
