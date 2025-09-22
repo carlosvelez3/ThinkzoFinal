@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Check, Star, Zap, Crown, Layout } from 'lucide-react';
 
 const pricingTiers = [
@@ -101,18 +101,10 @@ interface PricingSectionProps {
 }
 
 export function PricingSection({ onOpenContactModal }: PricingSectionProps) {
-  const sectionRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"]
-  });
-  
-  const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
 
 
   return (
     <motion.section 
-      ref={sectionRef}
       id="pricing" 
       className="relative py-20 px-4 overflow-hidden bg-cool-gradient-animated animate-background-pan"
       style={{ backgroundSize: '400% 400%' }}
@@ -121,7 +113,6 @@ export function PricingSection({ onOpenContactModal }: PricingSectionProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      style={{ y }}
     >
       {/* Animated Cool Pattern Overlay */}
       <div 
