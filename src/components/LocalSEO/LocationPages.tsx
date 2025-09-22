@@ -309,7 +309,14 @@ export function MultiLocationDirectory({
                   </div>
                   <div className="mt-4">
                     <p className="text-sm text-gray-500 mb-2">Service Areas:</p>
-                    <p className="text-sm">{location.serviceAreas.slice(0, 3).join(', ')}</p>
+                    <ul className="text-sm" role="list">
+                      {location.serviceAreas.slice(0, 3).map((area, areaIndex) => (
+                        <li key={areaIndex} role="listitem" className="inline">
+                          {area}
+                          {areaIndex < location.serviceAreas.slice(0, 3).length - 1 && ', '}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
                 <button className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition-colors">

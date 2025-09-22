@@ -103,10 +103,9 @@ export function BusinessHours({ hours }: { hours: BusinessHours[] }) {
   return (
     <div className="business-hours bg-white rounded-lg shadow-md p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-          <Clock className="w-5 h-5 mr-2 text-gray-600" />
-          Business Hours
-        </h3>
+        <div className="flex items-center">
+          <Clock className="w-5 h-5 mr-2 text-gray-600" aria-hidden="true" />
+        </div>
         <span className={`px-3 py-1 rounded-full text-sm font-medium ${
           isCurrentlyOpen 
             ? 'bg-green-100 text-green-800' 
@@ -116,27 +115,64 @@ export function BusinessHours({ hours }: { hours: BusinessHours[] }) {
         </span>
       </div>
       
-      <div className="space-y-2">
-        {hours.map((day, index) => (
-          <div 
-            key={index}
-            className={`flex justify-between items-center py-2 px-3 rounded ${
-              day.day === currentDay ? 'bg-blue-50 border border-blue-200' : ''
-            }`}
-          >
-            <span className={`font-medium ${
-              day.day === currentDay ? 'text-blue-900' : 'text-gray-700'
-            }`}>
-              {day.day}
-            </span>
-            <span className={`${
-              day.day === currentDay ? 'text-blue-800' : 'text-gray-600'
-            }`}>
-              {day.closed ? 'Closed' : `${day.open} - ${day.close}`}
-            </span>
-          </div>
-        ))}
-      </div>
+      <table 
+        className="w-full border-collapse"
+        role="table"
+        aria-label="Business operating hours for each day of the week"
+      >
+        <caption className="text-lg font-semibold text-gray-900 mb-4 text-left">
+          Business Hours
+        </caption>
+        
+        <thead>
+          <tr className="sr-only">
+            <th scope="col" className="text-left font-medium text-gray-700">
+              Day of Week
+            </th>
+            <th scope="col" className="text-right font-medium text-gray-700">
+              Operating Hours
+            </th>
+          </tr>
+        </thead>
+        
+        <tbody>
+          {hours.map((day, index) => (
+            <tr 
+              key={index}
+              className={`${
+                day.day === currentDay 
+                  ? 'bg-blue-50 border border-blue-200 rounded' 
+                  : ''
+              }`}
+            >
+              <th 
+                scope="row"
+                className={`py-2 px-3 text-left font-medium ${
+                  day.day === currentDay ? 'text-blue-900' : 'text-gray-700'
+                }`}
+              >
+                {day.day}
+                {day.day === currentDay && (
+                  <span className="sr-only"> (Today)</span>
+                )}
+              </th>
+              <td 
+                className={`py-2 px-3 text-right ${
+                  day.day === currentDay ? 'text-blue-800' : 'text-gray-600'
+                }`}
+              >
+                {day.closed ? (
+                  <span aria-label="Closed all day">Closed</span>
+                ) : (
+                  <span aria-label={`Open from ${day.open} to ${day.close}`}>
+                    {day.open} - {day.close}
+                  </span>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -212,6 +248,9 @@ export function ReviewsWidget({
           <div className="flex items-center space-x-2">
             <div className="flex items-center">
               {renderStars(Math.round(averageRating))}
+              <span className="sr-only">
+                Average rating: {averageRating.toFixed(1)} out of 5 stars
+              </span>
             </div>
             <span className="text-sm text-gray-600">
               {averageRating.toFixed(1)} ({totalReviews} reviews)
@@ -244,6 +283,7 @@ export function ReviewsWidget({
                   <span className="text-sm text-gray-500">{review.date}</span>
                 </div>
                 
+                      <span className="sr-only">{review.rating} out of 5 stars</span>
                 <div className="flex items-center mb-2">
                   {renderStars(review.rating)}
                 </div>
