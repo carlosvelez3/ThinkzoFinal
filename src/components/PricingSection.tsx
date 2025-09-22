@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform, useRef } from 'framer-motion';
 import { Check, Star, Zap, Crown, Layout } from 'lucide-react';
 
 const pricingTiers = [
@@ -91,6 +91,14 @@ const pricingTiers = [
 ];
 
 export function PricingSection() {
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+  
+  const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
+
   const scrollToContact = () => {
     const element = document.getElementById('contact');
     if (element) {
@@ -107,6 +115,7 @@ export function PricingSection() {
 
   return (
     <motion.section 
+      ref={sectionRef}
       id="pricing" 
       className="relative py-20 px-4 overflow-hidden bg-gray-900"
       role="region"
@@ -114,6 +123,7 @@ export function PricingSection() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
+      style={{ y }}
     >
       {/* Animated Code Background */}
       <div 
