@@ -309,7 +309,7 @@ export function Header() {
             items={[
               { 
                 label: navigationItems.find(item => item.id === activeSection)?.label || 'Home', 
-                href: activeSection,
+                href: activeSection === 'hero' ? 'main-content' : activeSection,
                 current: true 
               }
             ]}
