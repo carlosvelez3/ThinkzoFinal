@@ -48,7 +48,7 @@ export function ContactSection() {
       <div className="max-w-site mx-auto">
         <motion.h2 
           id="contact-heading"
-          className="text-3xl md:text-4xl lg:text-4xl font-bold text-center text-white mb-3 md:mb-4 font-retro-mono"
+          className="text-3xl md:text-4xl lg:text-4xl font-bold text-center text-white mb-3 md:mb-4 font-montserrat"
           aria-describedby="contact-description"
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -59,7 +59,7 @@ export function ContactSection() {
         </motion.h2>
         <motion.p 
           id="contact-description"
-          className="text-base md:text-lg text-center text-gray-300 max-w-3xl mx-auto mb-6 md:mb-8 leading-relaxed"
+          className="text-base md:text-lg text-center text-gray-300 max-w-3xl mx-auto mb-6 md:mb-8 leading-relaxed font-poppins"
           role="text"
           aria-describedby="contact-heading"
           initial={{ opacity: 0, y: 30 }}
@@ -111,6 +111,7 @@ export function ContactSection() {
               viewport={{ once: true }}
             >
               <label htmlFor="name" className="block text-sm font-bold text-dark-primary mb-1" aria-required="true">
+              <label htmlFor="name" className="block text-sm font-bold text-dark-primary mb-1 font-poppins" aria-required="true">
                 Name
               </label>
               <input
@@ -135,6 +136,7 @@ export function ContactSection() {
               viewport={{ once: true }}
             >
               <label htmlFor="email" className="block text-sm font-bold text-dark-primary mb-1" aria-required="true">
+              <label htmlFor="email" className="block text-sm font-bold text-dark-primary mb-1 font-poppins" aria-required="true">
                 Email
               </label>
               <input
@@ -159,6 +161,7 @@ export function ContactSection() {
               viewport={{ once: true }}
             >
               <label htmlFor="phone" className="block text-sm font-bold text-dark-primary mb-1">
+              <label htmlFor="phone" className="block text-sm font-bold text-dark-primary mb-1 font-poppins">
                 Phone
               </label>
               <input
@@ -182,6 +185,7 @@ export function ContactSection() {
               viewport={{ once: true }}
             >
               <label htmlFor="message" className="block text-sm font-bold text-dark-primary mb-1" aria-required="true">
+              <label htmlFor="message" className="block text-sm font-bold text-dark-primary mb-1 font-poppins" aria-required="true">
                 Project Details
               </label>
               <textarea

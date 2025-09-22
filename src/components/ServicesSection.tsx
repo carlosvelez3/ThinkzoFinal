@@ -142,7 +142,7 @@ export function ServicesSection() {
         <div className="max-w-6xl mx-auto">
           <motion.h2 
             id="services-heading"
-            className="text-3xl md:text-4xl lg:text-5xl font-bold text-center text-white mb-8 md:mb-12 font-retro-mono"
+            className="text-3xl md:text-4xl lg:text-5xl font-bold text-center text-white mb-8 md:mb-12 font-montserrat"
             aria-describedby="services-description"
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -154,7 +154,7 @@ export function ServicesSection() {
           
           <motion.p
             id="services-description"
-            className="text-lg text-gray-300 text-center mb-8 max-w-3xl mx-auto"
+            className="text-lg text-gray-300 text-center mb-8 max-w-3xl mx-auto font-poppins"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
@@ -191,9 +191,11 @@ export function ServicesSection() {
                       <IconComponent className="w-6 h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 text-yellow-400 group-hover:text-white group-focus:text-white transition-colors duration-300" aria-hidden="true" />
                     </div>
                     <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-dark-primary mb-3 md:mb-4 group-hover:text-primary-accent transition-colors duration-300">
+                    <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-dark-primary mb-3 md:mb-4 group-hover:text-primary-accent transition-colors duration-300 font-montserrat">
                       {service.title}
                     </h3>
                     <p id={`service-${index}-description`} className="text-gray-700 text-sm md:text-base leading-relaxed mb-4 md:mb-6">
+                    <p id={`service-${index}-description`} className="text-gray-700 text-sm md:text-base leading-relaxed mb-4 md:mb-6 font-poppins">
                       {service.description}
                     </p>
                   </div>
@@ -238,6 +240,7 @@ export function ServicesSection() {
                     <selectedService.icon className="w-6 h-6 text-yellow-400" aria-hidden="true" />
                   </div>
                   <h3 id="modal-title" className="text-3xl font-bold text-dark-primary">
+                  <h3 id="modal-title" className="text-3xl font-bold text-dark-primary font-montserrat">
                     {selectedService.title}
                   </h3>
                 </div>
@@ -253,16 +256,20 @@ export function ServicesSection() {
               <div id="modal-description" className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div>
                   <h4 className="text-xl font-semibold text-dark-primary mb-4">Overview</h4>
+                  <h4 className="text-xl font-semibold text-dark-primary mb-4 font-poppins">Overview</h4>
                   <p className="text-gray-600 mb-6 leading-relaxed">
+                  <p className="text-gray-600 mb-6 leading-relaxed font-poppins">
                     {selectedService.detailedContent.overview}
                   </p>
 
                   <h4 className="text-xl font-semibold text-dark-primary mb-4">Key Features</h4>
+                  <h4 className="text-xl font-semibold text-dark-primary mb-4 font-poppins">Key Features</h4>
                   <ul className="space-y-2 mb-6" role="list">
                     {selectedService.detailedContent.features.map((feature, index) => (
                       <li key={index} className="flex items-start" role="listitem">
                         <div className="w-2 h-2 bg-primary-accent rounded-full mt-2 mr-3 flex-shrink-0" aria-hidden="true"></div>
                         <span className="text-gray-600">{feature}</span>
+                        <span className="text-gray-600 font-poppins">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -270,12 +277,14 @@ export function ServicesSection() {
 
                 <div>
                   <h4 className="text-xl font-semibold text-dark-primary mb-4">Technologies</h4>
+                  <h4 className="text-xl font-semibold text-dark-primary mb-4 font-poppins">Technologies</h4>
                   <div className="flex flex-wrap gap-2 mb-6" role="list" aria-label="Technologies used">
                     {selectedService.detailedContent.technologies.map((tech, index) => (
                       <span
                         key={index}
                         role="listitem"
                         className="px-3 py-1 bg-gradient-to-r from-primary-accent to-secondary-purple bg-opacity-10 text-yellow-400 rounded-full text-sm font-medium"
+                        className="px-3 py-1 bg-gradient-to-r from-primary-accent to-secondary-purple bg-opacity-10 text-yellow-400 rounded-full text-sm font-medium font-poppins"
                       >
                         {tech}
                       </span>
@@ -283,7 +292,9 @@ export function ServicesSection() {
                   </div>
 
                   <h4 className="text-xl font-semibold text-dark-primary mb-4">Timeline</h4>
+                  <h4 className="text-xl font-semibold text-dark-primary mb-4 font-poppins">Timeline</h4>
                   <p className="text-gray-600 mb-6">
+                  <p className="text-gray-600 mb-6 font-poppins">
                     {selectedService.detailedContent.timeline}
                   </p>
 

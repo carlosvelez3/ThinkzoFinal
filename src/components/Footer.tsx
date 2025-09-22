@@ -49,7 +49,9 @@ export function Footer() {
             viewport={{ once: true }}
           >
             <h3 className="text-white font-semibold mb-3">About Thinkzo.ai</h3>
+            <h3 className="text-white font-semibold mb-3 font-montserrat">About Thinkzo.ai</h3>
             <p className="text-sm leading-relaxed">
+            <p className="text-sm leading-relaxed font-poppins">
               At Thinkzo.ai, we design and deliver A<AnimatedI />-ready web solutions that empower businesses to grow, adapt, and innovate.
             </p>
           </motion.div>
@@ -61,6 +63,7 @@ export function Footer() {
             viewport={{ once: true }}
           >
             <h3 className="text-white font-semibold mb-3">Navigation Links</h3>
+            <h3 className="text-white font-semibold mb-3 font-montserrat">Navigation Links</h3>
             <nav role="navigation" aria-label="Footer navigation">
               <ul className="space-y-2" role="list">
                 <li role="listitem">
@@ -104,6 +107,7 @@ export function Footer() {
             viewport={{ once: true }}
           >
             <h3 className="text-white font-semibold mb-3">Contact Information</h3>
+            <h3 className="text-white font-semibold mb-3 font-montserrat">Contact Information</h3>
             <ul className="space-y-2" role="list">
               <li className="text-sm" role="listitem">
                 Email: <a href="mailto:Team@thinkzo.ai" className="text-gray-300 hover:text-white focus:text-white transition-colors focus:outline-none focus:underline" aria-label="Send email to Team@thinkzo.ai">Team@thinkzo.ai</a>
@@ -114,6 +118,7 @@ export function Footer() {
         
         <motion.p 
           className="text-center text-xs text-gray-400"
+          className="text-center text-xs text-gray-400 font-poppins"
           role="text"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}

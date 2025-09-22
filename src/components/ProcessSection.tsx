@@ -81,7 +81,7 @@ export function ProcessSection() {
         <div className="text-center mb-16">
           <motion.h2 
             id="process-heading"
-            className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 font-retro-mono"
+            className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 font-montserrat"
             aria-describedby="process-description"
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -92,7 +92,7 @@ export function ProcessSection() {
           </motion.h2>
           <motion.p 
             id="process-description"
-           className="text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed font-retro-mono"
+           className="text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed font-poppins"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
@@ -121,6 +121,7 @@ export function ProcessSection() {
           viewport={{ once: true }}
         >
          <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
+         <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto font-poppins">
             Ready to transform your digital presence with a proven methodology? 
             Let's discuss how our systematic approach can deliver measurable results for your business.
           </p>
