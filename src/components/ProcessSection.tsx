@@ -45,6 +45,7 @@ const processPhases = [
       'Comprehensive testing and quality assurance'
     ],
     outcome: 'A fully functional, tested solution ready for deployment, complete with documentation and training materials.',
+    circleGradient: 'from-teal-600 to-teal-500'
   },
   {
     id: 'delivery',
@@ -56,7 +57,6 @@ const processPhases = [
       'Comprehensive team training and documentation',
       'Performance monitoring and optimization setup'
     ],
-    circleGradient: 'from-purple-600 to-purple-500'
     circleGradient: 'from-indigo-600 to-indigo-500'
   }
 ];
