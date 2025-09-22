@@ -113,15 +113,15 @@ export function HeroSection() {
             <motion.button
               onClick={scrollToContact}
               onKeyDown={handleKeyDown}
-              className="group relative bg-gradient-to-r from-button-gradient-start to-button-gradient-end hover:from-button-gradient-start-hover hover:to-button-gradient-end-hover focus:from-button-gradient-start-hover focus:to-button-gradient-end-hover text-white px-8 py-4 rounded-xl font-bold text-lg md:text-xl transition-all duration-300 transform hover:scale-105 focus:scale-105 shadow-2xl hover:shadow-blue-500/50 focus:shadow-blue-500/50 focus:outline-none focus:ring-4 focus:ring-white/30 focus:ring-offset-2 focus:ring-offset-transparent"
+              className="group relative bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white px-8 py-4 rounded-xl font-bold text-lg md:text-xl transition-all duration-300 transform hover:scale-105 focus:scale-105 shadow-2xl hover:shadow-amber-500/50 focus:shadow-amber-500/50 focus:outline-none focus:ring-4 focus:ring-amber-500/30 focus:ring-offset-2 focus:ring-offset-transparent"
               aria-label="Start your AI journey - Navigate to contact form"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 2.4 }}
               whileHover={{ 
                 scale: 1.05,
-                boxShadow: "0 20px 40px rgba(224, 58, 138, 0.4)",
-                textShadow: "0 0 20px rgba(255, 255, 255, 0.8)"
+                boxShadow: "0 20px 40px rgba(217, 119, 6, 0.4)",
+                textShadow: "0 0 20px rgba(255, 255, 255, 0.9)"
               }}
               whileTap={{ scale: 0.95 }}
             >

@@ -28,6 +28,8 @@ export default {
         'cool-blue-2': '#075985',
         'cool-teal-1': '#134E4A',
         'cool-teal-2': '#0F766E',
+        'cta-yellow': '#D97706',
+        'cta-yellow-hover': '#B45309',
       },
       maxWidth: {
         'site': '1100px',
