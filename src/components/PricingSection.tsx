@@ -1,8 +1,30 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Check, Star, Zap, Crown } from 'lucide-react';
+import { Check, Star, Zap, Crown, Layout } from 'lucide-react';
 
 const pricingTiers = [
+  {
+    id: 'landing-page',
+    name: 'Landing Page',
+    icon: Layout,
+    price: '$495',
+    period: 'one-time',
+    description: 'Single-page focused design optimized for conversions and marketing campaigns',
+    features: [
+      'Single-page conversion-focused design',
+      'Strategic layout with compelling headlines',
+      'Key benefits showcase and social proof integration',
+      'Prominent call-to-action placement',
+      'Minimal navigation to eliminate distractions',
+      'Mobile-responsive design for all devices',
+      'One primary CTA button strategically placed',
+      'Up to 2 rounds of revisions included',
+      '5-7 business days delivery'
+    ],
+    popular: false,
+    ctaText: 'Get Started',
+    color: 'from-green-500 to-green-600'
+  },
   {
     id: 'basic',
     name: 'Basic',
