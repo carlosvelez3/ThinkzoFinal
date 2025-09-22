@@ -366,7 +366,7 @@ export function ContactSection() {
         </motion.div>
         
         <motion.div 
-          className="max-w-2xl mx-auto bg-gray-700 border border-gray-600 rounded-lg shadow-sm p-4 md:p-6 lg:p-8"
+          className="max-w-2xl mx-auto rounded-lg shadow-sm p-4 md:p-6 lg:p-8"
           initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.6 }}
