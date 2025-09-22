@@ -222,11 +222,25 @@ export function ContactSection() {
     return (
       <motion.section 
         id="contact" 
-        className="relative bg-gradient-to-br from-dark-primary to-gray-800 py-8 md:py-12 px-4 overflow-hidden"
+       className="relative py-8 md:py-12 px-4 overflow-hidden bg-cool-gradient-animated animate-background-pan"
+       style={{ backgroundSize: '400% 400%' }}
+       style={{ backgroundSize: '400% 400%' }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
+       {/* Animated Cool Pattern Overlay */}
+       <div 
+         className="absolute inset-0 z-0 bg-cool-pattern animate-cool-wave opacity-10 pointer-events-none"
+         aria-hidden="true"
+       />
+       
+       {/* Animated Cool Pattern Overlay */}
+       <div 
+         className="absolute inset-0 z-0 bg-cool-pattern animate-cool-wave opacity-10 pointer-events-none"
+         aria-hidden="true"
+       />
+       
         <div className="max-w-site mx-auto text-center">
           <motion.div
             className="bg-gray-800 border border-green-500/30 rounded-lg p-8 max-w-2xl mx-auto"
