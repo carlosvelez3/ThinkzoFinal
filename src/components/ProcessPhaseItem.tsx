@@ -109,3 +109,5 @@ export function ProcessPhaseItem({ phase, index }: ProcessPhaseItemProps) {
     </motion.div>
   );
 }
+  )
+}

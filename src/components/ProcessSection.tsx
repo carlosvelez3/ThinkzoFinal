@@ -148,3 +148,5 @@ export function ProcessSection() {
     </motion.section>
   );
 }
+  )
+}
