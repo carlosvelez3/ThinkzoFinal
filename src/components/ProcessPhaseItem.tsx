@@ -74,7 +74,7 @@ export function ProcessPhaseItem({ phase, index }: ProcessPhaseItemProps) {
       </div>
 
       {/* Content */}
-      <div className="flex-1 text-center lg:text-left bg-dark-primary p-8 rounded-xl shadow-xl border border-primary-accent">
+      <div className="flex-1 text-center lg:text-left bg-cool-dark-1 p-8 rounded-xl shadow-xl border border-cool-teal-2">
         <h3 className="text-2xl lg:text-3xl font-bold text-white mb-4 font-montserrat">
           Phase {index + 1}: {phase.title}
         </h3>

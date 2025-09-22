@@ -70,13 +70,20 @@ export function ProcessSection() {
   return (
     <motion.section 
       id="process" 
-      className="relative py-20 px-4 overflow-hidden bg-gray-800"
+      className="relative py-20 px-4 overflow-hidden bg-cool-gradient-animated animate-background-pan"
+      style={{ backgroundSize: '400% 400%' }}
       role="region"
       aria-labelledby="process-heading"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
+      {/* Animated Cool Pattern Overlay */}
+      <div 
+        className="absolute inset-0 z-0 bg-cool-pattern animate-cool-wave opacity-10 pointer-events-none"
+        aria-hidden="true"
+      />
+      
       <div className="relative z-10 max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <motion.h2 

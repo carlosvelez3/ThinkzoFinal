@@ -123,7 +123,8 @@ export function PricingSection() {
     <motion.section 
       ref={sectionRef}
       id="pricing" 
-      className="relative py-20 px-4 overflow-hidden bg-gray-800"
+      className="relative py-20 px-4 overflow-hidden bg-cool-gradient-animated animate-background-pan"
+      style={{ backgroundSize: '400% 400%' }}
       role="region"
       aria-labelledby="pricing-heading"
       initial={{ opacity: 0 }}
@@ -131,9 +132,9 @@ export function PricingSection() {
       transition={{ duration: 0.5 }}
       style={{ y }}
     >
-      {/* Animated Code Background */}
+      {/* Animated Cool Pattern Overlay */}
       <div 
-        className="absolute inset-0 z-0 bg-code-pattern bg-repeat animate-code-scroll opacity-5 pointer-events-none"
+        className="absolute inset-0 z-0 bg-cool-pattern animate-cool-wave opacity-10 pointer-events-none"
         aria-hidden="true"
       />
       
@@ -166,10 +167,10 @@ export function PricingSection() {
             return (
               <motion.div
                 key={tier.id}
-                className={`relative bg-gray-700 rounded-2xl shadow-xl border-2 flex flex-col h-full ${
+                className={`relative bg-cool-dark-2 rounded-2xl shadow-xl border-2 flex flex-col h-full ${
                   tier.popular 
-                    ? 'border-primary-accent shadow-2xl transform scale-105' 
-                    : 'border-gray-700 hover:border-primary-accent/50'
+                    ? 'border-cool-teal-2 shadow-2xl transform scale-105' 
+                    : 'border-cool-dark-3 hover:border-cool-teal-2/50'
                 } transition-all duration-300 hover:shadow-2xl hover:-translate-y-2`}
                 initial={{ opacity: 0, y: 100 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -208,7 +209,7 @@ export function PricingSection() {
                     {tier.monthlyPrice ? (
                       <div className="space-y-3">
                         {/* One-time Payment Option */}
-                        <div className="p-3 bg-gray-700 rounded-lg border border-gray-600">
+                        <div className="p-3 bg-cool-dark-3 rounded-lg border border-cool-dark-2">
                           <div className="flex items-baseline justify-center">
                             <span className="text-2xl font-bold text-white">
                               {tier.price}
@@ -221,7 +222,7 @@ export function PricingSection() {
                         </div>
                         
                         {/* Monthly Payment Option */}
-                        <div className="p-3 bg-blue-900/20 rounded-lg border-2 border-blue-700/50">
+                        <div className="p-3 bg-cool-blue-1/20 rounded-lg border-2 border-cool-blue-2/50">
                           <div className="text-center">
                             <span className="text-lg font-semibold text-blue-400">
                               {tier.monthlyPeriod}
@@ -264,6 +265,7 @@ export function PricingSection() {
                       tier.popular
                         ? 'bg-gradient-to-r from-button-gradient-start to-button-gradient-end hover:from-button-gradient-start-hover hover:to-button-gradient-end-hover focus:from-button-gradient-start-hover focus:to-button-gradient-end-hover text-white focus:ring-blue-500/30'
                         : 'bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 focus:from-gray-700 focus:to-gray-800 text-white focus:ring-gray-500/30'
+                        : 'bg-gradient-to-r from-cool-dark-1 to-cool-dark-2 hover:from-cool-dark-2 hover:to-cool-dark-3 focus:from-cool-dark-2 focus:to-cool-dark-3 text-white focus:ring-cool-teal-2/30'
                     }`}
                     aria-label={`Choose ${tier.name} plan - Navigate to contact form`}
                   >
@@ -283,7 +285,7 @@ export function PricingSection() {
           transition={{ duration: 0.6, delay: 0.8 }}
           viewport={{ once: true }}
         >
-          <div className="bg-gray-700 rounded-2xl p-8 max-w-4xl mx-auto border border-gray-600">
+          <div className="bg-cool-dark-2 rounded-2xl p-8 max-w-4xl mx-auto border border-cool-dark-3">
             <h3 className="text-2xl font-bold text-white mb-4 font-montserrat">
               Need Something Custom?
             </h3>
