@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Menu, X, ChevronDown } from 'lucide-react';
-import { Breadcrumbs } from './Breadcrumbs';
 
 interface NavigationItem {
   id: string;
@@ -303,19 +302,6 @@ export function Header() {
           </button>
         </div>
 
-        {/* Breadcrumbs for larger screens */}
-        <div className="hidden md:block mt-4 px-6">
-          <Breadcrumbs 
-            items={[
-              { 
-                label: navigationItems.find(item => item.id === activeSection)?.label || 'Home', 
-                href: activeSection === 'hero' ? 'main-content' : activeSection,
-                current: true 
-              }
-            ]}
-            className="text-white/70"
-          />
-        </div>
       </motion.header>
 
       {/* Mobile Menu Overlay */}
