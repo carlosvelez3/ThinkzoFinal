@@ -102,3 +102,4 @@ export function ProcessPhaseItem({ phase, index }: ProcessPhaseItemProps) {
       </div>
     </motion.div>
   );
+}
