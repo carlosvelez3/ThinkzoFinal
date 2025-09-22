@@ -146,7 +146,7 @@ export function AICodeScreen() {
   const currentSnippetData = codeSnippets[currentSnippet];
 
   return (
-    <div className="relative w-full" style={{ width: '200%' }}>
+    <div className="relative w-full">
       {/* Computer Screen Frame */}
       <div className="relative bg-gradient-to-br from-terminal-bg-start to-terminal-bg-end rounded-2xl shadow-2xl border border-gray-700 overflow-hidden">
         {/* Screen Header */}
