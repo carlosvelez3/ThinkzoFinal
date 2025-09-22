@@ -20,7 +20,7 @@ const processPhases = [
     ],
     outcome: 'A detailed project blueprint with technical specifications, user personas, and strategic recommendations that align with your business objectives.',
     circleGradient: 'from-slate-600 to-slate-500'
-  }
+  },
   {
     id: 'planning',
     title: 'Planning',
