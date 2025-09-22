@@ -724,55 +724,54 @@ export function ContactForm({ onCloseModal }: ContactFormProps) {
                   <span>🛡️ Protected by reCAPTCHA v3 - No interaction required</span>
                 </motion.div>
               )}
-              </div>
-
-              {/* Submit Button */}
-              <motion.button
-                type="submit"
-                disabled={isSubmitting || !canProceedToStep(3) || !recaptchaReady}
-                className={`w-full py-4 px-6 rounded-lg font-bold text-lg transition-all duration-300 transform focus:outline-none focus:ring-4 focus:ring-offset-2 ${
-                  isSubmitting || !canProceedToStep(3) || !recaptchaReady
-                    ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white hover:scale-105 focus:scale-105 shadow-lg hover:shadow-xl focus:shadow-xl focus:ring-amber-500/30'
-                }`}
-                whileHover={!isSubmitting && canProceedToStep(3) && recaptchaReady ? { scale: 1.02 } : {}}
-                whileTap={!isSubmitting && canProceedToStep(3) && recaptchaReady ? { scale: 0.98 } : {}}
-              >
-                {isSubmitting ? (
-                  <div className="flex items-center justify-center">
-                    <motion.div
-                      className="w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-2"
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    />
-                    Sending...
-                  </div>
-                ) : !recaptchaReady ? (
-                  'Loading security verification...'
-                ) : recaptchaError ? (
-                  'Security verification failed - Please refresh'
-                ) : (
-                  <div className="flex items-center justify-center">
-                    <Zap className="w-5 h-5 mr-2" />
-                    Send Project Request
-                  </div>
-                )}
-              </motion.button>
-              
-              <div className="text-center space-y-2">
-                <p className="text-xs text-gray-400">
-                  {!recaptchaReady 
-                    ? "Initializing security verification..."
-                    : "We'll respond within 24 hours with next steps"
-                  }
-                </p>
-                <p className="text-xs text-gray-500 text-center">
-                  This site is protected by reCAPTCHA v3 for enhanced security without interruption.
-                </p>
-              </div>
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Submit Button */}
+        <motion.button
+          type="submit"
+          disabled={isSubmitting || !canProceedToStep(3) || !recaptchaReady}
+          className={`w-full py-4 px-6 rounded-lg font-bold text-lg transition-all duration-300 transform focus:outline-none focus:ring-4 focus:ring-offset-2 ${
+            isSubmitting || !canProceedToStep(3) || !recaptchaReady
+              ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+              : 'bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white hover:scale-105 focus:scale-105 shadow-lg hover:shadow-xl focus:shadow-xl focus:ring-amber-500/30'
+          }`}
+          whileHover={!isSubmitting && canProceedToStep(3) && recaptchaReady ? { scale: 1.02 } : {}}
+          whileTap={!isSubmitting && canProceedToStep(3) && recaptchaReady ? { scale: 0.98 } : {}}
+        >
+          {isSubmitting ? (
+            <div className="flex items-center justify-center">
+              <motion.div
+                className="w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-2"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              />
+              Sending...
+            </div>
+          ) : !recaptchaReady ? (
+            'Loading security verification...'
+          ) : recaptchaError ? (
+            'Security verification failed - Please refresh'
+          ) : (
+            <div className="flex items-center justify-center">
+              <Zap className="w-5 h-5 mr-2" />
+              Send Project Request
+            </div>
+          )}
+        </motion.button>
+        
+        <div className="text-center space-y-2">
+          <p className="text-xs text-gray-400">
+            {!recaptchaReady 
+              ? "Initializing security verification..."
+              : "We'll respond within 24 hours with next steps"
+            }
+          </p>
+          <p className="text-xs text-gray-500 text-center">
+            This site is protected by reCAPTCHA v3 for enhanced security without interruption.
+          </p>
+        </div>
       </form>
     </div>
   );
