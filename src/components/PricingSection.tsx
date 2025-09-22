@@ -166,7 +166,7 @@ export function PricingSection() {
             return (
               <motion.div
                 key={tier.id}
-                className={`relative bg-white rounded-2xl shadow-xl border-2 ${
+                className={`relative bg-white rounded-2xl shadow-xl border-2 flex flex-col h-full ${
                   tier.popular 
                     ? 'border-primary-accent shadow-2xl transform scale-105' 
                     : 'border-gray-200 hover:border-primary-accent/50'
@@ -189,7 +189,7 @@ export function PricingSection() {
                   </div>
                 )}
 
-                <div className="p-8">
+                <div className="p-8 flex flex-col flex-grow">
                   {/* Header */}
                   <div className="text-center mb-8">
                     <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r ${tier.color} rounded-full mb-4`}>
@@ -245,7 +245,7 @@ export function PricingSection() {
                   </div>
 
                   {/* Features */}
-                  <div className="mb-8">
+                  <div className="mb-8 flex-grow">
                     <ul className="space-y-3" role="list">
                       {tier.features.map((feature, featureIndex) => (
                         <li key={featureIndex} className="flex items-start" role="listitem">
