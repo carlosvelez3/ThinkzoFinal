@@ -146,7 +146,7 @@ export function AICodeScreen() {
   const currentSnippetData = codeSnippets[currentSnippet];
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full" style={{ width: '200%' }}>
       {/* Computer Screen Frame */}
       <div className="relative bg-gradient-to-br from-terminal-bg-start to-terminal-bg-end rounded-2xl shadow-2xl border border-gray-700 overflow-hidden">
         {/* Screen Header */}
@@ -178,8 +178,8 @@ export function AICodeScreen() {
           </div>
         </div>
 
-        {/* Code Display Area - FIXED HEIGHT AND LAYOUT */}
-        <div className="bg-terminal-bg-end font-mono text-sm" style={{ height: '500px' }}>
+        {/* Code Display Area - EXPANDED WIDTH AND FIXED HEIGHT */}
+        <div className="bg-terminal-bg-end font-mono text-sm" style={{ height: '500px', minWidth: '100%' }}>
           {/* Fixed Header Section */}
           <div className="px-2 pt-6 pb-4">
             <div className="flex items-center space-x-2 text-gray-400">
@@ -195,9 +195,10 @@ export function AICodeScreen() {
           </div>
 
           {/* Fixed Code Content Area */}
-          <div className="px-2 pb-6" style={{ height: 'calc(500px - 88px)' }}>
+          <div className="px-2 pb-6" style={{ height: 'calc(500px - 88px)', minWidth: '100%' }}>
             <div 
               className="h-full overflow-hidden"
+              style={{ minWidth: '100%' }}
             >
               <pre className="text-gray-300 leading-relaxed whitespace-pre-wrap m-0 p-0">
                 <code className="block font-mono">
