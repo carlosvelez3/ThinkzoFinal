@@ -181,7 +181,7 @@ export function AICodeScreen() {
         {/* Code Display Area - EXPANDED WIDTH AND FIXED HEIGHT */}
         <div className="bg-terminal-bg-end font-mono text-sm" style={{ height: '500px', minWidth: '100%' }}>
           {/* Fixed Header Section */}
-          <div className="px-2 pt-6 pb-4">
+          <div className="px-6 pt-6 pb-4">
             <div className="flex items-center space-x-2 text-gray-400">
               <Play className="w-4 h-4 text-secondary-blue" />
               <span>Executing A<AnimatedI /> algorithms...</span>
@@ -195,10 +195,10 @@ export function AICodeScreen() {
           </div>
 
           {/* Fixed Code Content Area */}
-          <div className="px-2 pb-6" style={{ height: 'calc(500px - 88px)', minWidth: '100%' }}>
+          <div className="px-6 pb-6" style={{ height: 'calc(500px - 88px)', minWidth: '100%' }}>
             <div 
               className="h-full overflow-hidden"
-              style={{ minWidth: '100%' }}
+              style={{ minWidth: 'calc(100% - 3rem)' }}
             >
               <pre className="text-gray-300 leading-relaxed whitespace-pre-wrap m-0 p-0">
                 <code className="block font-mono">
@@ -214,7 +214,7 @@ export function AICodeScreen() {
         </div>
 
         {/* Status Bar */}
-        <div className="bg-terminal-bg-end px-2 py-2 flex items-center justify-between text-xs text-gray-400 border-t border-gray-700">
+        <div className="bg-terminal-bg-end px-6 py-2 flex items-center justify-between text-xs text-gray-400 border-t border-gray-700">
           <div className="flex items-center space-x-4">
             <span>Lines: {displayedCode.split('\n').length}</span>
             <span>A<AnimatedI /> Model: GPT-4 Turbo</span>
