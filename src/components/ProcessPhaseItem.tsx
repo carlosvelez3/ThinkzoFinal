@@ -68,7 +68,7 @@ export function ProcessPhaseItem({ phase, index, circleGradient }: ProcessPhaseI
               }}
               viewport={{ once: false, amount: 0.3 }}
             >
-              <IconComponent className="w-10 h-10 lg:w-12 lg:h-12 text-cta-yellow" aria-hidden="true" />
+              <IconComponent className="w-10 h-10 lg:w-12 lg:h-12 text-secondary-purple" aria-hidden="true" />
             </motion.div>
           </div>
         </div>
