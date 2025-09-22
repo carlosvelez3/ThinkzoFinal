@@ -120,7 +120,6 @@ export function ProcessSection() {
           transition={{ duration: 0.6, delay: 0.8 }}
           viewport={{ once: true }}
         >
-         <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
          <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto font-poppins">
             Ready to transform your digital presence with a proven methodology? 
             Let's discuss how our systematic approach can deliver measurable results for your business.
@@ -147,8 +146,4 @@ export function ProcessSection() {
       </div>
     </motion.section>
   );
-}
-  )
-}
-  )
 }
