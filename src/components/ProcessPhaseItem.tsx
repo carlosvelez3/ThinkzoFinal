@@ -13,10 +13,9 @@ interface ProcessPhase {
 interface ProcessPhaseItemProps {
   phase: ProcessPhase;
   index: number;
+  circleGradient: string;
 }
 
-export function ProcessPhaseItem({ phase, index }: ProcessPhaseItemProps) {
-}
 export function ProcessPhaseItem({ phase, index, circleGradient }: ProcessPhaseItemProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { 
@@ -49,7 +48,7 @@ export function ProcessPhaseItem({ phase, index, circleGradient }: ProcessPhaseI
       {/* Icon and Phase Number */}
       <div className="flex-shrink-0">
         <div className="relative">
-          <div className="w-24 h-24 lg:w-32 lg:h-32 bg-gradient-to-br from-primary-accent to-secondary-purple rounded-full flex items-center justify-center shadow-2xl">
+          <div className={`w-24 h-24 lg:w-32 lg:h-32 bg-gradient-to-br ${circleGradient} rounded-full flex items-center justify-center shadow-2xl`}>
             <motion.div
               initial={{ scale: 0, rotate: -180 }}
               whileInView={{ 
