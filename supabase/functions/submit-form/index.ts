@@ -28,26 +28,14 @@ interface FormSubmission {
   recaptchaToken?: string
 }
 
-// reCAPTCHA Enterprise verification interface
-interface RecaptchaAssessment {
-  event: {
-    token: string
-    expectedAction: string
-    siteKey: string
-  }
-}
-
-interface RecaptchaResponse {
-  tokenProperties: {
-    valid: boolean
-    action: string
-    createTime: string
-  }
-  riskAnalysis: {
-    score: number
-    reasons: string[]
-  }
-  name: string
+// reCAPTCHA v3 verification response interface
+interface RecaptchaV3Response {
+  success: boolean // whether this request was a valid reCAPTCHA token for your site
+  score: number // the score for this request (0.0 - 1.0)
+  action: string // the action name for this request (important to verify)
+  challenge_ts: string // timestamp of the challenge load (ISO format yyyy-MM-dd'T'HH:mm:ssZ)
+  hostname: string // the hostname of the site where the reCAPTCHA was solved
+  'error-codes'?: string[] // optional; error codes from the API call
 }
 
 // Validation functions
@@ -116,72 +104,60 @@ function validateFormData(data: any): { isValid: boolean; errors: string[]; sani
   return { isValid: true, errors: [], sanitized }
 }
 
-// Verify reCAPTCHA Enterprise token
-async function verifyRecaptchaToken(token: string, expectedAction: string): Promise<{ success: boolean; score?: number; error?: string }> {
-  const projectId = Deno.env.get('GOOGLE_CLOUD_PROJECT_ID')
-  const secretKey = Deno.env.get('RECAPTCHA_ENTERPRISE_SECRET_KEY')
-  const siteKey = Deno.env.get('RECAPTCHA_ENTERPRISE_SITE_KEY')
-  
-  if (!projectId || !secretKey || !siteKey) {
-    console.error('Missing reCAPTCHA Enterprise configuration')
-    return { success: false, error: 'reCAPTCHA configuration missing' }
+// Verify reCAPTCHA v3 token
+async function verifyRecaptchaToken(token: string, expectedAction: string): Promise<{ success: boolean; score?: number; error?: string; }> {
+  const secretKey = Deno.env.get('RECAPTCHA_V3_SECRET_KEY');
+
+  if (!secretKey) {
+    console.error('Missing reCAPTCHA v3 secret key configuration');
+    return { success: false, error: 'reCAPTCHA v3 configuration missing' };
   }
-  
+
   try {
-    const assessment: RecaptchaAssessment = {
-      event: {
-        token: token,
-        expectedAction: expectedAction,
-        siteKey: siteKey
-      }
-    }
-    
     const response = await fetch(
-      `https://recaptchaenterprise.googleapis.com/v1/projects/${projectId}/assessments?key=${secretKey}`,
+      `https://www.google.com/recaptcha/api/siteverify`,
       {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: JSON.stringify(assessment)
+        body: `secret=${secretKey}&response=${token}`,
       }
-    )
-    
+    );
+
     if (!response.ok) {
-      const errorText = await response.text()
-      console.error('reCAPTCHA Enterprise API error:', response.status, errorText)
-      return { success: false, error: `reCAPTCHA verification failed: ${response.status}` }
+      const errorText = await response.text();
+      console.error('reCAPTCHA v3 API error:', response.status, errorText);
+      return { success: false, error: `reCAPTCHA verification failed: ${response.status}` };
     }
-    
-    const result: RecaptchaResponse = await response.json()
-    
+
+    const result: RecaptchaV3Response = await response.json();
+
     // Check if token is valid
-    if (!result.tokenProperties.valid) {
-      console.error('Invalid reCAPTCHA token')
-      return { success: false, error: 'Invalid reCAPTCHA token' }
+    if (!result.success) {
+      console.error('Invalid reCAPTCHA v3 token:', result['error-codes']);
+      return { success: false, error: 'Invalid reCAPTCHA v3 token' };
     }
-    
     // Check if action matches
-    if (result.tokenProperties.action !== expectedAction) {
-      console.error('reCAPTCHA action mismatch:', result.tokenProperties.action, 'expected:', expectedAction)
-      return { success: false, error: 'reCAPTCHA action mismatch' }
+    if (result.action !== expectedAction) {
+      console.error('reCAPTCHA v3 action mismatch:', result.action, 'expected:', expectedAction);
+      return { success: false, error: 'reCAPTCHA v3 action mismatch' };
     }
-    
     // Check risk score (0.0 = very likely a bot, 1.0 = very likely a human)
     const score = result.riskAnalysis.score
-    const minimumScore = 0.5 // Adjust this threshold based on your needs
-    
+    const minimumScore = 0.5; // Adjust this threshold based on your needs
+
     if (score < minimumScore) {
-      console.error('reCAPTCHA score too low:', score, 'reasons:', result.riskAnalysis.reasons)
-      return { success: false, error: 'Security verification failed' }
+      console.error('reCAPTCHA v3 score too low:', score);
+      return { success: false, error: 'Security verification failed' };
     }
-    
-    console.log('reCAPTCHA verification successful:', { score, action: result.tokenProperties.action })
-    return { success: true, score }
-    
+
+    console.log('reCAPTCHA v3 verification successful:', { score, action: result.action });
+    return { success: true, score };
+
   } catch (error) {
-    console.error('reCAPTCHA verification error:', error)
-    return { success: false, error: 'reCAPTCHA verification failed' }
+    console.error('reCAPTCHA v3 verification error:', error);
+    return { success: false, error: 'reCAPTCHA v3 verification failed' };
   }
 }
 
