@@ -26,7 +26,7 @@ export function useRecaptchaV3() {
     }
 
     // Check if reCAPTCHA is already loaded
-    if (window.grecaptcha) {
+    if (window.grecaptcha && typeof window.grecaptcha.ready === 'function') {
       window.grecaptcha.ready(() => {
         setIsReady(true);
         setIsLoading(false);
@@ -34,7 +34,7 @@ export function useRecaptchaV3() {
     } else {
       // Wait for script to load
       const checkRecaptcha = () => {
-        if (window.grecaptcha) {
+        if (window.grecaptcha && typeof window.grecaptcha.ready === 'function') {
           window.grecaptcha.ready(() => {
             setIsReady(true);
             setIsLoading(false);
