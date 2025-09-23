@@ -9,7 +9,7 @@ declare global {
   }
 }
 
-const RECAPTCHA_SITE_KEY = '6Lebn9ErAAAAACW0EgCF02Jp3CTrk5hVF5P1O7qy';
+const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
 const IS_LOCALHOST = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
 export function useRecaptchaV3() {
