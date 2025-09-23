@@ -29,7 +29,7 @@ interface FormSubmission {
 }
 
 // reCAPTCHA v3 verification response interface
-interface RecaptchaV3Response {
+interface RecaptchaResponse {
   success: boolean // whether this request was a valid reCAPTCHA token for your site
   score: number // the score for this request (0.0 - 1.0)
   action: string // the action name for this request (important to verify)
@@ -105,7 +105,7 @@ function validateFormData(data: any): { isValid: boolean; errors: string[]; sani
 }
 
 // Verify reCAPTCHA v3 token
-async function verifyRecaptchaToken(token: string): Promise<{ success: boolean; score?: number; error?: string; }> {
+async function verifyRecaptchaToken(token: string, clientIp?: string): Promise<{ success: boolean; score?: number; error?: string; }> {
   const secretKey = Deno.env.get('RECAPTCHA_V3_SECRET_KEY')
 
   if (!secretKey) {
@@ -114,45 +114,45 @@ async function verifyRecaptchaToken(token: string): Promise<{ success: boolean; 
   }
 
   try {
-    const response = await fetch( // Changed API endpoint for reCAPTCHA v3
+    const response = await fetch(
       `https://www.google.com/recaptcha/api/siteverify`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: `secret=${secretKey}&response=${token}`,
+        body: `secret=${secretKey}&response=${token}${clientIp ? `&remoteip=${clientIp}` : ''}`,
       }
     );
 
-    const result = await response.json()
+    const result: RecaptchaResponse = await response.json()
 
     // Check if token is valid
     if (!result.success) {
       console.error('Invalid reCAPTCHA v3 token:', result['error-codes'])
-      return { success: false, error: 'Invalid reCAPTCHA v3 token' }
+      return { success: false, error: `Invalid reCAPTCHA v3 token: ${result['error-codes']?.join(', ')}` }
     }
-    // reCAPTCHA v3 does not have 'riskAnalysis.score', it has 'score' directly
+    
     const score = result.score
-    const minimumScore = 0.5; // Adjust this threshold based on your needs
+    const minimumScore = 0.5 // Adjust this threshold based on your needs (0.0 = likely bot, 1.0 = likely human)
 
     if (score < minimumScore) {
       console.error('reCAPTCHA v3 score too low:', score)
-      return { success: false, error: 'Security verification failed' }
+      return { success: false, error: `Security verification failed (score: ${score})` }
     }
-    // reCAPTCHA v3 also has an 'action' field, which should be verified
-    // However, the frontend is sending 'contact_form_submit', so we can verify it here.
+    
+    // Verify the action name to prevent replay attacks
     if (result.action !== 'contact_form_submit') {
-      console.error('reCAPTCHA v3 action mismatch:', result.action, 'expected: contact_form_submit');
-      return { success: false, error: 'reCAPTCHA v3 action mismatch' };
+      console.error('reCAPTCHA v3 action mismatch:', result.action, 'expected: contact_form_submit')
+      return { success: false, error: 'reCAPTCHA v3 action mismatch' }
     }
 
-    console.log('reCAPTCHA v3 verification successful:', { score, action: result.action });
-    return { success: true, score };
+    console.log('reCAPTCHA v3 verification successful:', { score, action: result.action })
+    return { success: true, score }
 
   } catch (error) {
-    console.error('reCAPTCHA v3 verification error:', error);
-    return { success: false, error: 'reCAPTCHA v3 verification failed' };
+    console.error('reCAPTCHA v3 verification error:', error)
+    return { success: false, error: 'reCAPTCHA v3 verification failed' }
   }
 }
 
@@ -282,12 +282,15 @@ serve(async (req) => {
   }
   
   try {
+    // Get client IP address for reCAPTCHA verification
+    const clientIp = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip')
+    
     // Parse request body
     const requestData = await req.json()
     
     // Verify reCAPTCHA Enterprise token
     if (requestData.recaptchaToken) {
-      const recaptchaResult = await verifyRecaptchaToken(requestData.recaptchaToken)
+      const recaptchaResult = await verifyRecaptchaToken(requestData.recaptchaToken, clientIp || undefined)
       
       if (!recaptchaResult.success) {
         return new Response(
@@ -302,10 +305,10 @@ serve(async (req) => {
         )
       }
       
-      console.log('reCAPTCHA verification passed with score:', recaptchaResult.score)
+      console.log('reCAPTCHA v3 verification passed with score:', recaptchaResult.score)
     } else {
       console.warn('No reCAPTCHA token provided in request')
-      // Optionally, you can make reCAPTCHA required by returning an error here
+      // For production, consider making reCAPTCHA required by uncommenting the following:
       // return new Response(
       //   JSON.stringify({ error: 'reCAPTCHA token required' }),
       //   { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
