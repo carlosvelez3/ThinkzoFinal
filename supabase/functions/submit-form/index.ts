@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { SmtpClient } from "https://deno.land/x/smtp@v0.7.0/mod.ts"
 
 // CORS headers for cross-origin requests
 const corsHeaders = {
@@ -8,8 +9,11 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
-// Email service configuration (using Resend as example)
-const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
+// SMTP email service configuration
+const SMTP_HOST = Deno.env.get('SMTP_HOST') || 'mail.spacemail.com'
+const SMTP_PORT = parseInt(Deno.env.get('SMTP_PORT') || '465')
+const SMTP_USERNAME = Deno.env.get('SMTP_USERNAME')
+const SMTP_PASSWORD = Deno.env.get('SMTP_PASSWORD')
 const FROM_EMAIL = Deno.env.get('FROM_EMAIL') || 'noreply@thinkzo.ai'
 const COMPANY_NAME = 'Thinkzo.ai'
 
@@ -160,41 +164,39 @@ function generateEmailTemplate(name: string, submissionId: string): string {
   `
 }
 
-// Send email using Resend API
+// Send email using SMTP
 async function sendConfirmationEmail(email: string, name: string, submissionId: string): Promise<{ success: boolean; error?: string }> {
-  if (!RESEND_API_KEY) {
-    console.error('RESEND_API_KEY not configured')
+  if (!SMTP_USERNAME || !SMTP_PASSWORD) {
+    console.error('SMTP credentials not configured')
     return { success: false, error: 'Email service not configured' }
   }
   
   try {
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${RESEND_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: `${COMPANY_NAME} <${FROM_EMAIL}>`,
-        to: [email],
-        subject: `Thank you for your inquiry - ${COMPANY_NAME}`,
-        html: generateEmailTemplate(name, submissionId),
-      }),
+    const client = new SmtpClient()
+    
+    await client.connectTLS({
+      hostname: SMTP_HOST,
+      port: SMTP_PORT,
+      username: SMTP_USERNAME,
+      password: SMTP_PASSWORD,
     })
     
-    if (!response.ok) {
-      const errorData = await response.text()
-      console.error('Email sending failed:', errorData)
-      return { success: false, error: `Email service error: ${response.status}` }
-    }
+    await client.send({
+      from: FROM_EMAIL,
+      to: email,
+      subject: `Thank you for your inquiry - ${COMPANY_NAME}`,
+      content: generateEmailTemplate(name, submissionId),
+      html: generateEmailTemplate(name, submissionId),
+    })
     
-    const result = await response.json()
-    console.log('Email sent successfully:', result.id)
+    await client.close()
+    
+    console.log('Email sent successfully via SMTP')
     return { success: true }
     
   } catch (error) {
-    console.error('Email sending error:', error)
-    return { success: false, error: error.message }
+    console.error('SMTP email sending error:', error)
+    return { success: false, error: `SMTP error: ${error.message}` }
   }
 }
 
