@@ -9,7 +9,7 @@ declare global {
   }
 }
 
-const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
+const RECAPTCHA_ENTERPRISE_SITE_KEY = import.meta.env.VITE_RECAPTCHA_ENTERPRISE_SITE_KEY;
 const IS_LOCALHOST = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
 export function useRecaptchaV3() {
@@ -72,7 +72,7 @@ export function useRecaptchaV3() {
     }
 
     try {
-      const token = await window.grecaptcha.execute(RECAPTCHA_SITE_KEY, { action });
+      const token = await window.grecaptcha.execute(RECAPTCHA_ENTERPRISE_SITE_KEY, { action });
       setError(null);
       return token;
     } catch (err) {
