@@ -13,7 +13,7 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <!-- reCAPTCHA v3 Script - Loaded dynamically -->
-    <script>
+    <script type="module">
       // Load reCAPTCHA script with environment variable
       const script = document.createElement('script');
       script.src = `https://www.google.com/recaptcha/api.js?render=${import.meta.env.VITE_RECAPTCHA_SITE_KEY}`;
