@@ -236,7 +236,7 @@ export function PricingSection({ onOpenContactModal }: PricingSectionProps) {
                   </div>
 
                   {/* Features */}
-                  <div className="mb-8 flex-grow">
+                  <div className="mb-8 flex-grow" id={`pricing-features-${index}`}>
                     <ul className="space-y-3" role="list">
                       {tier.features.map((feature, featureIndex) => (
                         <li key={featureIndex} className="flex items-start" role="listitem">

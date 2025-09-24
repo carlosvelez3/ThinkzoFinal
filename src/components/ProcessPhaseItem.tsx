@@ -75,18 +75,25 @@ export function ProcessPhaseItem({ phase, index, circleGradient }: ProcessPhaseI
       </div>
 
       {/* Content */}
-      <div className="flex-1 text-center lg:text-left bg-cool-dark-1 p-8 rounded-xl shadow-xl border border-cool-dark-3">
+      <div 
+        className="flex-1 text-center lg:text-left bg-cool-dark-1 p-8 rounded-xl shadow-xl border border-cool-dark-3"
+        aria-labelledby={`phase-title-${index}`}
+        aria-describedby={`phase-description-${index} phase-activities-${index}`}
+      >
         <h3 
+          id={`phase-title-${index}`}
           className="text-2xl lg:text-3xl font-bold text-white mb-4 font-montserrat"
           style={{
             lineHeight: '1.3',
             letterSpacing: '0.015em'
           }}
+          aria-label={`Development Phase ${index + 1}: ${phase.title} - Detailed process step`}
         >
           Phase {index + 1}: {phase.title}
         </h3>
         
         <p 
+          id={`phase-description-${index}`}
           className="text-gray-200 mb-6 leading-relaxed text-base lg:text-lg font-poppins"
           style={{
             lineHeight: '1.6',
@@ -97,7 +104,7 @@ export function ProcessPhaseItem({ phase, index, circleGradient }: ProcessPhaseI
           {phase.description}
         </p>
 
-        <div className="mb-6">
+        <div className="mb-6" id={`phase-activities-${index}`}>
           <h4 
             className="text-lg font-semibold text-white mb-3 font-poppins"
             style={{
