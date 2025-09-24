@@ -158,15 +158,6 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
 
       {/* Floating Elements with Scroll-Based Animation */}
       <motion.div
-        className="absolute top-1/4 left-10 w-20 h-20 bg-gradient-to-r from-primary-accent/20 to-secondary-purple/20 rounded-full blur-xl"
-        style={{
-          y: useTransform(scrollY, [0, 1000], [0, -300]),
-          x: useTransform(scrollY, [0, 1000], [0, 100])
-        }}
-        aria-hidden="true"
-      />
-      
-      <motion.div
         className="absolute top-1/3 right-20 w-32 h-32 bg-gradient-to-r from-cta-yellow/20 to-primary-accent/20 rounded-full blur-2xl"
         style={{
           y: useTransform(scrollY, [0, 1000], [0, -200]),
