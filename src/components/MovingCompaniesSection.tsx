@@ -38,35 +38,6 @@ export function MovingCompaniesSection() {
       />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4">
-        {/* Section Header */}
-        <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-        >
-          <h2 
-            id="companies-heading"
-            className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4 font-montserrat"
-            style={{
-              lineHeight: '1.2',
-              letterSpacing: '0.02em'
-            }}
-          >
-            Powered by Leading AI Technologies
-          </h2>
-          <p 
-            className="text-lg text-gray-300 max-w-3xl mx-auto font-poppins"
-            style={{
-              lineHeight: '1.6',
-              letterSpacing: '0.01em'
-            }}
-          >
-            We integrate with cutting-edge AI platforms to deliver intelligent solutions
-          </p>
-        </motion.div>
-
         {/* Moving Companies Container */}
         <div className="relative">
           {/* Gradient Overlays for Fade Effect */}
