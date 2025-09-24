@@ -44,9 +44,9 @@ export function ScrollRevealText({
             <motion.span
               key={index}
               style={{ opacity, y }}
-              className="inline-block mr-2 will-change-transform"
+              className="inline-block will-change-transform"
             >
-              {word}
+              {word}{index < words.length - 1 ? ' ' : ''}
             </motion.span>
           );
         })}
