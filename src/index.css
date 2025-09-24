@@ -124,11 +124,13 @@
     transform: translateX(0);
   }
   100% {
-    transform: translateX(-50%);
+    transform: translateX(-100%);
   }
 }
 
 .companies-scroll-container {
+  width: 100%;
+  overflow: hidden;
   mask-image: linear-gradient(
     to right,
     transparent 0%,
@@ -146,8 +148,12 @@
 }
 
 .companies-scroll-track {
-  animation: scroll-left 40s linear infinite;
+  animation: scroll-left 60s linear infinite;
   width: max-content;
+  min-width: 200%;
+  display: flex;
+  align-items: center;
+  will-change: transform;
 }
 
 .companies-scroll-container:hover .companies-scroll-track {
@@ -157,6 +163,6 @@
 /* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
   .companies-scroll-track {
-    animation: none;
+    animation: scroll-left 0.01ms linear infinite;
   }
 }
