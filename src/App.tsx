@@ -12,6 +12,9 @@ import { ThreeDScene } from './components/ThreeDScene';
 import { AccessibilityPanel } from './components/AccessibilitySettings';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { OfflineIndicator } from './components/OfflineIndicator';
+import { ReadingProgressIndicator } from './components/ReadingProgressIndicator';
+import { ScrollToTopButton } from './components/ScrollToTopButton';
+import { SectionProgressIndicator } from './components/SectionProgressIndicator';
 import { useRecaptchaV3 } from './hooks/useRecaptchaV3';
 import { useState } from 'react';
 
@@ -52,6 +55,9 @@ function App() {
           <ThreeDScene />
         </div>
 
+        {/* Reading Progress Indicator */}
+        <ReadingProgressIndicator />
+
         {/* Main Content */}
         <div className="relative">
           <Header onOpenContactModal={openContactModal} />
@@ -77,6 +83,8 @@ function App() {
         {/* Global Components */}
         <OfflineIndicator />
         <AccessibilityPanel />
+        <ScrollToTopButton />
+        <SectionProgressIndicator />
         
         {/* Toast Notifications */}
         <Toaster
