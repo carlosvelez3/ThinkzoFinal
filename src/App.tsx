@@ -37,7 +37,7 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <div className="relative">
+      <div className="relative overflow-x-hidden">
         {/* Skip to main content link for keyboard users */}
         <a 
           href="#main-content" 
@@ -59,7 +59,7 @@ function App() {
         <ReadingProgressIndicator />
 
         {/* Main Content */}
-        <div className="relative">
+        <div className="relative overflow-x-hidden">
           <Header onOpenContactModal={openContactModal} />
           <main id="main-content" tabIndex={-1} role="main">
             <EnhancedHeroSection onOpenContactModal={openContactModal} />
