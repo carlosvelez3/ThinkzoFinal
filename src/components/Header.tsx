@@ -123,6 +123,29 @@ export function Header({ onOpenContactModal }: HeaderProps) {
         transition={{ duration: 0.6 }}
       >
         <div className="relative z-20 max-w-site mx-auto flex justify-between items-center px-4 md:px-6 border border-white/30 rounded-2xl py-3 md:py-4 bg-white/5 backdrop-blur-sm shadow-2xl hover:border-white/30 transition-all duration-300">
+      <motion.header
+        role="banner"
+        className="relative sticky top-0 z-50 py-4 md:py-6 overflow-hidden"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        {/* Animated Background Layer */}
+        <motion.div
+          className="absolute inset-0 backdrop-blur-md bg-black/20"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isScrolled ? 1 : 0 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          style={{ willChange: 'opacity' }}
+        />
+        
+        <div className="relative z-20 max-w-site mx-auto flex justify-between items-center px-4 md:px-6 border border-white/30 rounded-2xl py-3 md:py-4 shadow-2xl transition-all duration-300"
+          style={{
+            background: 'rgba(255, 255, 255, 0.05)',
+            backdropFilter: 'blur(8px)',
+            willChange: 'transform, box-shadow'
+          }}
+        >
           
           {/* Logo Section */}
           <div className="flex flex-col">
