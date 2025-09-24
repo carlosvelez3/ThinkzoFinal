@@ -14,28 +14,28 @@ export function Footer({ onOpenContactModal }: FooterProps) {
     setCurrentYear(new Date().getFullYear());
   }, []);
 
-  const scrollToSection = (sectionId: string) => {
+  const scrollToSection = (sectionId: string): void => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent, sectionId: string) => {
+  const handleKeyDown = (event: React.KeyboardEvent, sectionId: string): void => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       scrollToSection(sectionId);
     }
   };
 
-  const handleContactKeyDown = (event: React.KeyboardEvent) => {
+  const handleContactKeyDown = (event: React.KeyboardEvent): void => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       onOpenContactModal();
     }
   };
 
-  const scrollToTop = () => {
+  const scrollToTop = (): void => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 

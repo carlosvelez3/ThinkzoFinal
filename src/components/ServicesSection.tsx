@@ -112,22 +112,22 @@ export function ServicesSection({ onOpenContactModal }: ServicesSectionProps) {
     startTyping: isInView 
   });
 
-  const openModal = (service: typeof services[0]) => {
+  const openModal = (service: typeof services[0]): void => {
     setSelectedService(service);
   };
 
-  const closeModal = () => {
+  const closeModal = (): void => {
     setSelectedService(null);
   };
 
-  const handleCardKeyDown = (event: React.KeyboardEvent, service: typeof services[0]) => {
+  const handleCardKeyDown = (event: React.KeyboardEvent, service: typeof services[0]): void => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       openModal(service);
     }
   };
 
-  const handleModalKeyDown = (event: React.KeyboardEvent) => {
+  const handleModalKeyDown = (event: React.KeyboardEvent): void => {
     if (event.key === 'Escape') {
       closeModal();
     }

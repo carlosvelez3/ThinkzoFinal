@@ -43,7 +43,7 @@ export function Header({ onOpenContactModal }: HeaderProps) {
 
   // Track active section based on scroll position
   useEffect(() => {
-    const handleScroll = () => {
+    const handleScroll = (): void => {
       const scrollPosition = window.scrollY + 100;
       setIsScrolled(window.scrollY > 50);
 
@@ -64,12 +64,12 @@ export function Header({ onOpenContactModal }: HeaderProps) {
     window.addEventListener('scroll', handleScroll);
     handleScroll(); // Initial check
     
-    return () => window.removeEventListener('scroll', handleScroll);
+    return (): void => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // Close mobile menu when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent): void => {
       const target = event.target as Element;
       if (isMobileMenuOpen && !target.closest('.mobile-menu-container')) {
         setIsMobileMenuOpen(false);
@@ -77,7 +77,7 @@ export function Header({ onOpenContactModal }: HeaderProps) {
     };
 
     document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
+    return (): void => document.removeEventListener('click', handleClickOutside);
   }, [isMobileMenuOpen]);
 
   // Prevent body scroll when mobile menu is open
@@ -88,12 +88,12 @@ export function Header({ onOpenContactModal }: HeaderProps) {
       document.body.style.overflow = 'unset';
     }
     
-    return () => {
+    return (): void => {
       document.body.style.overflow = 'unset';
     };
   }, [isMobileMenuOpen]);
 
-  const scrollToSection = (sectionId: string) => {
+  const scrollToSection = (sectionId: string): void => {
     const element = document.getElementById(sectionId === 'hero' ? 'main-content' : sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
@@ -101,7 +101,7 @@ export function Header({ onOpenContactModal }: HeaderProps) {
     }
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent, sectionId: string) => {
+  const handleKeyDown = (event: React.KeyboardEvent, sectionId: string): void => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       scrollToSection(sectionId);

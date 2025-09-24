@@ -259,7 +259,7 @@ export function SmartForm({
   // Check if we can proceed to next step
 
   // Real-time validation with debouncing
-  const handleFieldChange = (fieldName: string, value: string) => {
+  const handleFieldChange = (fieldName: string, value: string): void => {
     setFormData(prev => ({ ...prev, [fieldName]: value }));
     
     // Clear existing timeout
@@ -296,7 +296,7 @@ export function SmartForm({
   };
 
   // Handle field blur
-  const handleFieldBlur = (fieldName: string) => {
+  const handleFieldBlur = (fieldName: string): void => {
     setTouchedFields(prev => new Set([...prev, fieldName]));
     const value = formData[fieldName] || '';
     const error = validateField(fieldName, value);
@@ -308,7 +308,7 @@ export function SmartForm({
   };
 
   // Format phone number as user types
-  const formatPhoneNumber = (value: string) => {
+  const formatPhoneNumber = (value: string): string => {
     const cleaned = value.replace(/\D/g, '');
     const match = cleaned.match(/^(\d{0,3})(\d{0,3})(\d{0,4})$/);
     if (match) {
@@ -324,12 +324,12 @@ export function SmartForm({
   };
 
   // Handle project type selection for card-based UI
-  const handleProjectTypeSelect = (projectTypeId: string) => {
+  const handleProjectTypeSelect = (projectTypeId: string): void => {
     handleFieldChange('projectType', projectTypeId);
   };
 
   // Handle input change with formatting
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>): void => {
     const { name, value } = e.target;
     
     let formattedValue = value;
@@ -341,7 +341,7 @@ export function SmartForm({
   };
 
   // Password strength indicator
-  const getPasswordStrength = (password: string) => {
+  const getPasswordStrength = (password: string): { level: string; color: string; percentage: number } => {
     let strength = 0;
     const checks = [
       password.length >= 8,
@@ -364,7 +364,7 @@ export function SmartForm({
   };
 
   // Form submission
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     
     // Mark all fields as touched
@@ -436,13 +436,14 @@ export function SmartForm({
     setIsSubmitting(false);
   };
 
-  const handleRetrySubmit = async () => {
+  const handleRetrySubmit = async (): Promise<void> => {
     setSubmitError(null);
     await handleSubmit({ preventDefault: () => {} } as React.FormEvent);
   };
 
-  const submitFormData = async () => {
+  const submitFormData = async (): Promise<void> => {
     // Default submission logic (can be overridden by onSubmit prop)
+    // eslint-disable-next-line no-console
     console.log('Form submitted:', formData);
     
     // Simulate API call
@@ -457,9 +458,9 @@ export function SmartForm({
 
   // Cleanup timeouts
   useEffect(() => {
-    return () => {
+    return (): void => {
       Object.values(validationTimeouts.current).forEach(timeout => {
-        clearTimeout(timeout);
+        if (timeout) clearTimeout(timeout);
       });
     };
   }, []);

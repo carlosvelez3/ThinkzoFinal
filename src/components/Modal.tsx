@@ -22,7 +22,7 @@ export function Modal({
 
   // Handle escape key press
   useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
+    const handleEscape = (event: KeyboardEvent): void => {
       if (event.key === 'Escape' && isOpen) {
         onClose();
       }
@@ -50,21 +50,21 @@ export function Modal({
       }
     }
 
-    return () => {
+    return (): void => {
       document.removeEventListener('keydown', handleEscape);
       document.body.style.overflow = 'unset';
     };
   }, [isOpen, onClose]);
 
   // Handle backdrop click
-  const handleBackdropClick = (event: React.MouseEvent) => {
+  const handleBackdropClick = (event: React.MouseEvent): void => {
     if (event.target === event.currentTarget) {
       onClose();
     }
   };
 
   // Trap focus within modal
-  const handleKeyDown = (event: React.KeyboardEvent) => {
+  const handleKeyDown = (event: React.KeyboardEvent): void => {
     if (event.key === 'Tab') {
       const focusableElements = modalRef.current?.querySelectorAll(
         'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'

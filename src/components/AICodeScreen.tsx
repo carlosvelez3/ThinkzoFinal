@@ -123,7 +123,7 @@ export function AICodeScreen() {
     const lines = snippet.code.split('\n');
     
     if (currentLine < lines.length) {
-      const timer = setTimeout(() => {
+      const timer: NodeJS.Timeout = setTimeout(() => {
         setDisplayedCode(() => {
           const newCode = lines.slice(0, currentLine + 1).join('\n');
           return newCode;
@@ -131,15 +131,15 @@ export function AICodeScreen() {
         setCurrentLine(prev => prev + 1);
       }, 80);
 
-      return () => clearTimeout(timer);
+      return (): void => clearTimeout(timer);
     } else if (currentLine >= lines.length) {
-      const pauseTimer = setTimeout(() => {
+      const pauseTimer: NodeJS.Timeout = setTimeout(() => {
         setCurrentSnippet((prev) => (prev + 1) % codeSnippets.length);
         setCurrentLine(0);
         setDisplayedCode('');
       }, 3000);
 
-      return () => clearTimeout(pauseTimer);
+      return (): void => clearTimeout(pauseTimer);
     }
   }, [currentLine, currentSnippet]);
 

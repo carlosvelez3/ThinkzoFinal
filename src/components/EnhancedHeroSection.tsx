@@ -26,10 +26,10 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
     const typingSpeed = 80;
     let nextGenIndex = 0;
     let aiSolutionsIndex = 0;
-    let nextGenTimer: NodeJS.Timeout;
-    let aiSolutionsTimer: NodeJS.Timeout;
+    let nextGenTimer: NodeJS.Timeout | undefined;
+    let aiSolutionsTimer: NodeJS.Timeout | undefined;
 
-    const typeNextGen = () => {
+    const typeNextGen = (): void => {
       if (nextGenIndex < fullNextGenText.length) {
         setDisplayedNextGen(fullNextGenText.slice(0, nextGenIndex + 1));
         nextGenIndex++;
@@ -40,7 +40,7 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
       }
     };
 
-    const typeAISolutions = () => {
+    const typeAISolutions = (): void => {
       if (aiSolutionsIndex < fullAISolutionsText.length) {
         setDisplayedAISolutions(fullAISolutionsText.slice(0, aiSolutionsIndex + 1));
         aiSolutionsIndex++;
@@ -52,9 +52,9 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
     typeNextGen();
 
     // Cleanup function
-    return () => {
-      clearTimeout(nextGenTimer);
-      clearTimeout(aiSolutionsTimer);
+    return (): void => {
+      if (nextGenTimer) clearTimeout(nextGenTimer);
+      if (aiSolutionsTimer) clearTimeout(aiSolutionsTimer);
     };
   }, []);
 

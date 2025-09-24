@@ -109,17 +109,25 @@ class ErrorLogger {
     try {
       localStorage.setItem('app_error_logs', JSON.stringify(this.logs.slice(0, 10)));
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.warn('Could not save error logs to localStorage');
     }
 
     // Console logging for development
     if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
       console.group(`🚨 ${error.severity} Error: ${error.type}`);
+      // eslint-disable-next-line no-console
       console.error('Message:', error.message);
+      // eslint-disable-next-line no-console
       console.error('User Message:', error.userMessage);
+      // eslint-disable-next-line no-console
       console.error('Context:', error.context);
+      // eslint-disable-next-line no-console
       console.error('Original Error:', error.originalError);
+      // eslint-disable-next-line no-console
       console.error('Stack:', error.stack);
+      // eslint-disable-next-line no-console
       console.groupEnd();
     }
 
@@ -147,6 +155,7 @@ class ErrorLogger {
       //   })
       // });
     } catch (loggingError) {
+      // eslint-disable-next-line no-console
       console.warn('Failed to send error to logging service:', loggingError);
     }
   }
