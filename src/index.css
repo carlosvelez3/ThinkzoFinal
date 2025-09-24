@@ -6,10 +6,6 @@
 @import './styles/accessibility.css';
 
 @layer base {
-  html, body {
-    overflow-x: hidden;
-  }
-
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     line-height: 1.6;
@@ -128,13 +124,11 @@
     transform: translateX(0);
   }
   100% {
-    transform: translateX(-100%);
+    transform: translateX(-50%);
   }
 }
 
 .companies-scroll-container {
-  width: 100%;
-  overflow: hidden;
   mask-image: linear-gradient(
     to right,
     transparent 0%,
@@ -152,32 +146,17 @@
 }
 
 .companies-scroll-track {
-  width: fit-content;
-  min-width: 200%;
-  display: flex;
-  align-items: center;
-  will-change: transform;
-  white-space: nowrap;
-  animation: scroll-left 60s linear infinite;
+  animation: scroll-left 40s linear infinite;
+  width: max-content;
 }
 
 .companies-scroll-container:hover .companies-scroll-track {
   animation-play-state: paused;
 }
 
-/* Ensure the keyframes are properly defined */
-@keyframes scroll-left {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
-}
-
 /* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
   .companies-scroll-track {
-    animation-play-state: paused;
+    animation: none;
   }
 }
