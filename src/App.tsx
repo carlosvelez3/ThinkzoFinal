@@ -1,7 +1,7 @@
 import React from 'react';
 import { Toaster } from 'react-hot-toast';
 import { Header } from './components/Header';
-import { HeroSection } from './components/HeroSection';
+import { EnhancedHeroSection } from './components/EnhancedHeroSection';
 import { ServicesSection } from './components/ServicesSection';
 import { ProcessSection } from './components/ProcessSection';
 import { PricingSection } from './components/PricingSection';
@@ -12,6 +12,9 @@ import { ThreeDScene } from './components/ThreeDScene';
 import { AccessibilityPanel } from './components/AccessibilitySettings';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { OfflineIndicator } from './components/OfflineIndicator';
+import { ReadingProgressIndicator } from './components/ReadingProgressIndicator';
+import { ScrollToTopButton } from './components/ScrollToTopButton';
+import { SectionProgressIndicator } from './components/SectionProgressIndicator';
 import { ReadingProgressIndicator } from './components/ReadingProgressIndicator';
 import { ScrollToTopButton } from './components/ScrollToTopButton';
 import { SectionProgressIndicator } from './components/SectionProgressIndicator';
@@ -62,7 +65,7 @@ function App() {
         <div className="relative">
           <Header onOpenContactModal={openContactModal} />
           <main id="main-content" tabIndex={-1} role="main">
-            <HeroSection onOpenContactModal={openContactModal} />
+            <EnhancedHeroSection onOpenContactModal={openContactModal} />
           </main>
           <ServicesSection onOpenContactModal={openContactModal} />
           <ProcessSection onOpenContactModal={openContactModal} />
@@ -83,6 +86,8 @@ function App() {
         {/* Global Components */}
         <OfflineIndicator />
         <AccessibilityPanel />
+        <ScrollToTopButton />
+        <SectionProgressIndicator />
         <ScrollToTopButton />
         <SectionProgressIndicator />
         
