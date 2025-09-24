@@ -168,7 +168,8 @@ export function ContactForm({ onCloseModal }: ContactFormProps) {
         phone: formData.phone,
         company: formData.company,
         projectType: formData.projectType,
-        message: formData.message
+        message: formData.message,
+        recaptchaToken // send the token to backend
       };
       
       // Submit form to backend API

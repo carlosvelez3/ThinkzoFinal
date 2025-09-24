@@ -16,7 +16,7 @@
     <script type="module">
       // Load reCAPTCHA script with environment variable
       const script = document.createElement('script');
-      script.src = `https://www.google.com/recaptcha/api.js?render=6LeH0tIrAAAAAFRQ0NklcGxc-l35nhiEpaRvbHcB`;
+      script.src = 'https://www.google.com/recaptcha/api.js?render=' + (import.meta.env.VITE_RECAPTCHA_SITE_KEY || '6LeH0tIrAAAAAFRQ0NklcGxc-l35nhiEpaRvbHcB');
       document.head.appendChild(script);
     </script>
   </body>
