@@ -65,8 +65,10 @@
   textarea:focus,
   select:focus,
   [tabindex]:focus {
-    outline: 2px solid #2563eb;
+    outline: 3px solid #2563eb;
     outline-offset: 3px;
+    box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2);
+    border-radius: 4px;
   }
 
   /* Ensure focus is visible on all interactive elements */
@@ -76,8 +78,10 @@
   textarea:focus-visible,
   select:focus-visible,
   [tabindex]:focus-visible {
-    outline: 2px solid #2563eb;
+    outline: 3px solid #2563eb;
     outline-offset: 3px;
+    box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2);
+    border-radius: 4px;
   }
 
   /* Reduce motion for users who prefer it */

@@ -124,12 +124,48 @@ h6 {
 
 /* Responsive Typography */
 @media (max-width: 768px) {
-  h1 { font-size: var(--text-4xl); }
-  h2 { font-size: var(--text-3xl); }
-  h3 { font-size: var(--text-2xl); }
-  h4 { font-size: var(--text-xl); }
-  h5 { font-size: var(--text-lg); }
-  h6 { font-size: var(--text-base); }
+  h1 { 
+    font-size: var(--text-4xl); 
+    line-height: var(--leading-tight);
+    margin-bottom: var(--spacing-lg);
+  }
+  h2 { 
+    font-size: var(--text-3xl); 
+    line-height: var(--leading-tight);
+    margin-bottom: var(--spacing-md);
+  }
+  h3 { 
+    font-size: var(--text-2xl); 
+    line-height: var(--leading-normal);
+    margin-bottom: var(--spacing-md);
+  }
+  h4 { 
+    font-size: var(--text-xl); 
+    line-height: var(--leading-normal);
+    margin-bottom: var(--spacing-sm);
+  }
+  h5 { 
+    font-size: var(--text-lg); 
+    line-height: var(--leading-normal);
+    margin-bottom: var(--spacing-sm);
+  }
+  h6 { 
+    font-size: var(--text-base); 
+    line-height: var(--leading-normal);
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  p {
+    font-size: var(--text-base);
+    line-height: var(--leading-relaxed);
+    margin-bottom: var(--spacing-md);
+  }
+  
+  /* Ensure minimum touch targets on mobile */
+  button, a, input, select, textarea {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }
 
 /* Body Text with Optimal Readability */

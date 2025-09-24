@@ -220,16 +220,18 @@ export function ServicesSection({ onOpenContactModal }: ServicesSectionProps) {
                       }`} aria-hidden="true" />
                     </div>
                     <h3 
+                     id={`service-title-${index}`}
                       className="text-lg md:text-xl lg:text-2xl font-bold text-white mb-3 md:mb-4 group-hover:text-primary-accent transition-colors duration-300 font-montserrat"
                       style={{
                         lineHeight: '1.3',
                         letterSpacing: '0.015em'
                       }}
+                     aria-label={`${service.title} - Professional service offering`}
                     >
                       {service.title}
                     </h3>
                     <p 
-                      id={`service-${index}-description`} 
+                     id={`service-description-${index}`} 
                       className="text-gray-200 text-sm md:text-base leading-relaxed mb-4 md:mb-6 font-poppins"
                       style={{
                         lineHeight: '1.6',
