@@ -2,6 +2,7 @@ import React from 'react';
 import { Toaster } from 'react-hot-toast';
 import { Header } from './components/Header';
 import { EnhancedHeroSection } from './components/EnhancedHeroSection';
+import { MovingCompaniesSection } from './components/MovingCompaniesSection';
 import { ServicesSection } from './components/ServicesSection';
 import { ProcessSection } from './components/ProcessSection';
 import { PricingSection } from './components/PricingSection';
@@ -63,6 +64,7 @@ function App() {
           <main id="main-content" tabIndex={-1} role="main">
             <EnhancedHeroSection onOpenContactModal={openContactModal} />
           </main>
+          <MovingCompaniesSection />
           <ServicesSection onOpenContactModal={openContactModal} />
           <ProcessSection onOpenContactModal={openContactModal} />
           <PricingSection onOpenContactModal={openContactModal} />
