@@ -82,8 +82,6 @@ export function SmartForm({
   const [showPassword, setShowPassword] = useState<{ [key: string]: boolean }>({});
   const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [currentStep, setCurrentStep] = useState(1);
-  const [showAdvanced, setShowAdvanced] = useState(false);
   const validationTimeouts = useRef<{ [key: string]: NodeJS.Timeout }>({});
 
   const { handleAsyncError } = useErrorHandler();
@@ -259,18 +257,6 @@ export function SmartForm({
   };
 
   // Check if we can proceed to next step
-  const canProceedToStep = (step: number): boolean => {
-    if (!showProgressSteps) return true;
-    
-    switch (step) {
-      case 2:
-        return formData.email && !errors.email;
-      case 3:
-        return formData.projectType && formData.email && !errors.email;
-      default:
-        return true;
-    }
-  };
 
   // Real-time validation with debouncing
   const handleFieldChange = (fieldName: string, value: string) => {
@@ -306,16 +292,6 @@ export function SmartForm({
           }));
         }
       }
-
-      // Auto-advance logic for progressive forms
-      if (showProgressSteps) {
-        if (fieldName === 'email' && !error && currentStep === 1) {
-          setTimeout(() => setCurrentStep(2), 500);
-        }
-        if (fieldName === 'projectType' && value && currentStep === 2) {
-          setTimeout(() => setCurrentStep(3), 300);
-        }
-      }
     }, 300);
   };
 
@@ -349,16 +325,7 @@ export function SmartForm({
 
   // Handle project type selection for card-based UI
   const handleProjectTypeSelect = (projectTypeId: string) => {
-    const projectType = activeProjectTypes.find(p => p.id === projectTypeId);
-    setFormData(prev => ({
-      ...prev,
-      projectType: projectTypeId,
-      // Smart defaults based on project type
-      timeline: projectType?.timeline || '2-3-months'
-    }));
-    if (showProgressSteps && currentStep === 2) {
-      setCurrentStep(3);
-    }
+    handleFieldChange('projectType', projectTypeId);
   };
 
   // Handle input change with formatting
@@ -538,29 +505,6 @@ export function SmartForm({
         </p>
       </div>
 
-      {/* Progress Indicator */}
-      {showProgressSteps && (
-        <div className="flex justify-center">
-          <div className="flex items-center space-x-2">
-            {[1, 2, 3].map((step) => (
-              <div key={step} className="flex items-center">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
-                  currentStep >= step 
-                    ? 'bg-primary-accent text-white' 
-                    : 'bg-gray-700 text-gray-400'
-                }`}>
-                  {currentStep > step ? <Check className="w-4 h-4" /> : step}
-                </div>
-                {step < 3 && (
-                  <div className={`w-8 h-0.5 mx-2 transition-all duration-300 ${
-                    currentStep > step ? 'bg-primary-accent' : 'bg-gray-700'
-                  }`} />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       <form onSubmit={handleSubmit} noValidate className="space-y-6">
         {formFields.map((field) => {
@@ -571,133 +515,20 @@ export function SmartForm({
           const showError = fieldError && (isFieldTouched || status === 'invalid');
           const showSuccess = !fieldError && fieldValue && status === 'valid';
 
-          // Skip fields based on step progression
-          if (showProgressSteps && field.name === 'projectType' && currentStep < 2) return null;
-          if (showProgressSteps && !['email', 'projectType'].includes(field.name) && currentStep < 3) return null;
 
           return (
             <div key={field.name} className="space-y-2">
-              {/* Special rendering for project type with cards */}
-              {field.name === 'projectType' && projectTypes ? (
-                <div className="space-y-4">
-                  <label className="block text-sm font-bold text-white mb-4 font-poppins">
-                    What type of project do you have in mind? <span className="text-primary-accent">*</span>
-                  </label>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-                    {activeProjectTypes.map((project) => (
-                      <motion.button
-                        key={project.id}
-                        type="button"
-                        onClick={() => handleProjectTypeSelect(project.id)}
-                        className={`group relative p-6 rounded-xl border-2 text-left transition-all duration-300 transform hover:scale-105 focus:scale-105 overflow-hidden ${
-                          formData.projectType === project.id
-                            ? 'border-primary-accent bg-gradient-to-br from-primary-accent/20 to-secondary-purple/20 shadow-lg shadow-primary-accent/25'
-                            : 'border-gray-600 hover:border-primary-accent/50 bg-gradient-to-br from-gray-700/50 to-gray-800/50 hover:from-gray-600/50 hover:to-gray-700/50'
-                        } focus:outline-none focus:ring-2 focus:ring-primary-accent/50 focus:ring-offset-2 focus:ring-offset-transparent`}
-                        whileHover={{ 
-                          scale: 1.05,
-                          boxShadow: formData.projectType === project.id 
-                            ? "0 20px 40px rgba(6, 182, 212, 0.3)" 
-                            : "0 10px 30px rgba(0, 0, 0, 0.3)"
-                        }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        {/* Selection Indicator */}
-                        <AnimatePresence>
-                          {formData.projectType === project.id && (
-                            <motion.div
-                              className="absolute top-3 right-3 w-6 h-6 bg-primary-accent rounded-full flex items-center justify-center"
-                              initial={{ scale: 0, rotate: -180 }}
-                              animate={{ scale: 1, rotate: 0 }}
-                              exit={{ scale: 0, rotate: 180 }}
-                              transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                            >
-                              <Check className="w-4 h-4 text-white" />
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                        
-                        {/* Content */}
-                        <div className="relative z-10">
-                          <div className="flex items-center mb-3">
-                            <span className="text-3xl mr-3">{project.icon}</span>
-                            <span className={`font-bold text-lg transition-colors duration-300 ${
-                              formData.projectType === project.id 
-                                ? 'text-white' 
-                                : 'text-white group-hover:text-primary-accent'
-                            }`}>
-                              {project.name}
-                            </span>
-                          </div>
-                          
-                          <div className="space-y-2 mb-4">
-                            <div className="flex items-center text-sm text-gray-300 group-hover:text-gray-200 transition-colors duration-300">
-                              <Clock className="w-4 h-4 mr-2 text-primary-accent" />
-                              <span className="font-medium">Timeline: {project.timeline}</span>
-                            </div>
-                            <div className="flex items-center text-sm text-gray-300 group-hover:text-gray-200 transition-colors duration-300">
-                              <DollarSign className="w-4 h-4 mr-2 text-cta-yellow" />
-                              <span className="font-medium">Starting at: {project.budget}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </motion.button>
-                    ))}
-                  </div>
-                  
-                  {/* Selection Summary */}
-                  <AnimatePresence>
-                    {formData.projectType && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -20, height: 0 }}
-                        animate={{ opacity: 1, y: 0, height: 'auto' }}
-                        exit={{ opacity: 0, y: -20, height: 0 }}
-                        transition={{ duration: 0.4, ease: "easeOut" }}
-                        className="bg-gradient-to-r from-primary-accent/10 to-secondary-purple/10 border border-primary-accent/30 rounded-lg p-4 mb-4"
-                      >
-                        <div className="flex items-center">
-                          <div className="w-8 h-8 bg-primary-accent/20 rounded-full flex items-center justify-center mr-3">
-                            <Check className="w-4 h-4 text-primary-accent" />
-                          </div>
-                          <div>
-                            <p className="text-white font-semibold">
-                              Great choice! You've selected: <span className="text-primary-accent">{activeProjectTypes.find(p => p.id === formData.projectType)?.name}</span>
-                            </p>
-                          </div>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                  
-                  {errors.projectType && (
-                    <motion.div 
-                      className="flex items-center mt-2 text-red-400 text-sm"
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                    >
-                      <AlertCircle className="w-4 h-4 mr-2" />
-                      {errors.projectType}
-                    </motion.div>
-                  )}
-                </div>
-              ) : (
-                <>
-                  <label
-                    htmlFor={field.name}
-                    className="block text-sm font-bold text-white mb-2 font-poppins"
-                  >
-                    {field.label}
-                    {field.validation.required && (
-                      <span className="text-primary-accent ml-1">*</span>
-                    )}
-                  </label>
-                </>
-              )}
+              <label
+                htmlFor={field.name}
+                className="block text-sm font-bold text-white mb-2 font-poppins"
+              >
+                {field.label}
+                {field.validation.required && (
+                  <span className="text-primary-accent ml-1">*</span>
+                )}
+              </label>
 
-              {/* Regular form fields */}
-              {field.name !== 'projectType' && (
-                <div className="relative">
+              <div className="relative">
                 {field.type === 'textarea' ? (
                   <textarea
                     id={field.name}
@@ -807,7 +638,6 @@ export function SmartForm({
                   </motion.div>
                 )}
               </div>
-              )}
 
               {/* Password strength indicator */}
               {field.name === 'password' && fieldValue && (
@@ -870,20 +700,6 @@ export function SmartForm({
           );
         })}
 
-        {/* Progressive Disclosure for Advanced Fields */}
-        {showProgressSteps && currentStep >= 3 && (
-          <div>
-            <button
-              type="button"
-              onClick={() => setShowAdvanced(!showAdvanced)}
-              className="flex items-center text-primary-accent hover:text-primary-accent-hover transition-colors text-sm font-medium"
-            >
-              {showAdvanced ? <ChevronUp className="w-4 h-4 mr-1" /> : <ChevronDown className="w-4 h-4 mr-1" />}
-              {showAdvanced ? 'Hide' : 'Show'} additional options
-            </button>
-          </div>
-        )}
-
         {/* reCAPTCHA Status */}
         {recaptchaError && (
           <motion.div
@@ -910,14 +726,14 @@ export function SmartForm({
         {/* Submit button */}
         <motion.button
           type="submit"
-          disabled={isSubmitting || (showProgressSteps && !canProceedToStep(3)) || (executeRecaptcha && !recaptchaReady)}
+          disabled={isSubmitting || (executeRecaptcha && !recaptchaReady)}
           className={`w-full py-4 px-6 rounded-lg font-semibold text-lg transition-all duration-300 ${
-            isSubmitting || (showProgressSteps && !canProceedToStep(3)) || (executeRecaptcha && !recaptchaReady)
+            isSubmitting || (executeRecaptcha && !recaptchaReady)
               ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
               : 'bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white hover:scale-105 focus:scale-105 shadow-lg hover:shadow-xl focus:shadow-xl'
           } focus:outline-none focus:ring-4 focus:ring-amber-500/30`}
-          whileHover={!isSubmitting && (showProgressSteps ? canProceedToStep(3) : true) && (!executeRecaptcha || recaptchaReady) ? { scale: 1.02 } : {}}
-          whileTap={!isSubmitting && (showProgressSteps ? canProceedToStep(3) : true) && (!executeRecaptcha || recaptchaReady) ? { scale: 0.98 } : {}}
+          whileHover={!isSubmitting && (!executeRecaptcha || recaptchaReady) ? { scale: 1.02 } : {}}
+          whileTap={!isSubmitting && (!executeRecaptcha || recaptchaReady) ? { scale: 0.98 } : {}}
         >
           {isSubmitting ? (
             <div className="flex items-center justify-center space-x-2">
