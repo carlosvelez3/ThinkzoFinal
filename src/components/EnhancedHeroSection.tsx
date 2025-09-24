@@ -87,7 +87,7 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
               transition={{ duration: 1, delay: 0.2 }}
             >
               <ParallaxText speed={0.2}>
-                AI-Powered Web Development Solutions for Modern Businesses<motion.span
+                A<AnimatedI />-Powered Web Development Solutions for Modern Businesses<motion.span
                   className="inline-block text-primary-accent"
                   animate={{
                     scale: [1, 1.1, 1],
