@@ -179,7 +179,7 @@ export function AICodeScreen() {
         </div>
 
         {/* Code Display Area - EXPANDED WIDTH AND FIXED HEIGHT */}
-        <div className="bg-terminal-bg-end font-mono text-sm flex-grow overflow-hidden">
+        <div className="bg-terminal-bg-end font-mono text-sm flex-1 overflow-hidden">
           {/* Fixed Header Section */}
           <div className="px-6 pt-6 pb-4">
             <div className="flex items-center space-x-2 text-gray-400">
