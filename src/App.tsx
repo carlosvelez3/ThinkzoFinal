@@ -15,9 +15,6 @@ import { OfflineIndicator } from './components/OfflineIndicator';
 import { ReadingProgressIndicator } from './components/ReadingProgressIndicator';
 import { ScrollToTopButton } from './components/ScrollToTopButton';
 import { SectionProgressIndicator } from './components/SectionProgressIndicator';
-import { ReadingProgressIndicator } from './components/ReadingProgressIndicator';
-import { ScrollToTopButton } from './components/ScrollToTopButton';
-import { SectionProgressIndicator } from './components/SectionProgressIndicator';
 import { useRecaptchaV3 } from './hooks/useRecaptchaV3';
 import { useState } from 'react';
 
