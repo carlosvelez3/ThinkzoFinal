@@ -4,7 +4,6 @@ import { useRef } from 'react';
 import { Search, PenTool, Cog, Rocket, ArrowRight } from 'lucide-react';
 import { ProcessPhaseItem } from './ProcessPhaseItem';
 import { useTypingEffect } from '../hooks/useTypingEffect';
-import { RelatedLinks } from './RelatedLinks';
 import { AnimatedI } from './AnimatedI';
 
 const processPhases = [
