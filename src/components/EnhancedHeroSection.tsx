@@ -69,7 +69,7 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
         className="relative z-10 pt-24 px-4"
         style={{ y: heroY, opacity: heroOpacity, scale: heroScale }}
       >
-        <div className="max-w-7xl mx-auto w-full lg:grid lg:grid-cols-3 lg:gap-8 lg:items-center">
+        <div className="max-w-7xl mx-auto w-full lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
           
           {/* Main Text Content with Enhanced Animations */}
           <div className="text-center lg:text-left text-white lg:col-span-1">
@@ -131,7 +131,7 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
           </div>
         
           {/* AI Terminal with Parallax */}
-          <div className="hidden lg:block mt-8 lg:mt-0 lg:col-span-2">
+          <div className="hidden lg:block mt-8 lg:mt-0 lg:col-span-1">
             <ParallaxText speed={0.1}>
               <AICodeScreen />
             </ParallaxText>
