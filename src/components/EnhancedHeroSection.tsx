@@ -87,24 +87,7 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
               transition={{ duration: 1, delay: 0.2 }}
             >
               <ParallaxText speed={0.2}>
-                A<AnimatedI />-Powered Web Development Solutions for Modern Businesses<motion.span
-                  className="inline-block text-primary-accent"
-                  animate={{
-                    scale: [1, 1.1, 1],
-                    textShadow: [
-                      "0 0 0px rgba(224, 58, 138, 0)",
-                      "0 0 20px rgba(224, 58, 138, 0.8)",
-                      "0 0 0px rgba(224, 58, 138, 0)"
-                    ]
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                >
-                  i
-                </motion.span>
+                A<AnimatedI />-Powered Web Development Solutions for Modern Businesses
               </ParallaxText>
             </motion.h1>
             
