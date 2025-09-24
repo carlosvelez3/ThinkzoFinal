@@ -204,7 +204,7 @@ class ApiClient {
 }
 
 // Create default instance
-export const apiClient = new ApiClient();
+export const apiClient = new ApiClient(import.meta.env.VITE_SUPABASE_URL || '');
 
 // Utility function for handling API calls with automatic error handling
 export async function withApiErrorHandling<T>(
