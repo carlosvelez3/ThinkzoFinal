@@ -14,7 +14,7 @@ const services = [
     description: 'We build fast, secure websites that work perfectly on all devices. Choose from WordPress, Shopify, or custom solutions designed for your business.',
     icon: Code,
     cardBgClass: 'bg-gradient-to-br from-cool-blue-1 to-cool-blue-2',
-    iconBgClass: 'bg-gradient-to-br from-blue-500/20 to-blue-600/20',
+    iconBgClass: 'bg-gray-900',
     hoverBorderClass: 'hover:border-blue-400 focus:border-blue-400',
     detailedContent: {
       overview: 'We create custom web solutions that perfectly align with your business objectives and technical requirements.',
@@ -36,7 +36,7 @@ const services = [
     description: 'Integrate AI‑powered search, recommendation engines and automation tools to enhance user experience and efficiency.',
     icon: Brain,
     cardBgClass: 'bg-gradient-to-br from-secondary-purple to-indigo-700',
-    iconBgClass: 'bg-gradient-to-br from-purple-500/20 to-indigo-600/20',
+    iconBgClass: 'bg-gray-900',
     hoverBorderClass: 'hover:border-purple-400 focus:border-purple-400',
     detailedContent: {
       overview: 'We help you save time and money with smart AI tools. Automate repetitive tasks and give your customers better experiences.',
@@ -58,7 +58,7 @@ const services = [
     description: 'Connect all your business systems together. Get real-time data from your CRM, inventory, and other tools in one place.',
     icon: Settings,
     cardBgClass: 'bg-gradient-to-br from-cool-teal-1 to-cool-teal-2',
-    iconBgClass: 'bg-gradient-to-br from-teal-500/20 to-emerald-600/20',
+    iconBgClass: 'bg-gray-900',
     hoverBorderClass: 'hover:border-teal-400 focus:border-teal-400',
     detailedContent: {
       overview: 'Seamlessly connect all your business systems for unified data management and improved operational efficiency.',
@@ -80,7 +80,7 @@ const services = [
     description: 'Keep your website running smoothly with our ongoing support. We handle updates, security, and backups so you can focus on your business.',
     icon: Shield,
     cardBgClass: 'bg-gradient-to-br from-amber-600 to-orange-600',
-    iconBgClass: 'bg-gradient-to-br from-amber-500/20 to-orange-600/20',
+    iconBgClass: 'bg-gray-900',
     hoverBorderClass: 'hover:border-amber-400 focus:border-amber-400',
     detailedContent: {
       overview: 'Ensure your digital infrastructure remains secure, updated, and performing at its best with our ongoing support services.',
