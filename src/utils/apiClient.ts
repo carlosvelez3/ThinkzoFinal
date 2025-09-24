@@ -106,7 +106,7 @@ class ApiClient {
         );
       
       case 401:
-        throw new ErrorHandler.createAPIError(
+        throw ErrorHandler.createAPIError(
           errorData.message || 'Unauthorized',
           401,
           context
