@@ -13,12 +13,12 @@ type FluidWaveProps = {
 };
 
 export function FluidWave({
-  scrollSpeed = 0.25,
-  colorScrollSpeed = 0.08,
-  waveStrength = 1.2,
-  frequency = 0.28,
-  secondaryFrequency = 0.52,
-  staticYScale = 0.22,
+  scrollSpeed = 0.4,
+  colorScrollSpeed = 0.12,
+  waveStrength = 2.0,
+  frequency = 0.4,
+  secondaryFrequency = 0.7,
+  staticYScale = 0.3,
   animated = true,
 }: FluidWaveProps = {}) {
   const meshRef = useRef<THREE.Mesh>(null);
@@ -145,12 +145,12 @@ type FluidWaveLayerProps = {
 };
 
 export function FluidWaveLayer({
-  scrollSpeed = 0.22,
-  colorScrollSpeed = 0.08,
-  waveStrength = 0.9,
-  frequency = 0.32,
-  secondaryFrequency = 0.58,
-  staticYScale = 0.18,
+  scrollSpeed = 0.35,
+  colorScrollSpeed = 0.12,
+  waveStrength = 1.5,
+  frequency = 0.45,
+  secondaryFrequency = 0.75,
+  staticYScale = 0.25,
   animated = true,
 }: FluidWaveLayerProps = {}) {
   const meshRef = useRef<THREE.Mesh>(null);

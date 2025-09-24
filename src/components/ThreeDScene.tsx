@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
 import { FluidWave, FluidWaveLayer } from './FluidWave';
 
-const WAVE_SCROLL_SPEED = 0.25;
-const WAVE_COLOR_SCROLL_SPEED = 0.08;
+const WAVE_SCROLL_SPEED = 0.4;
+const WAVE_COLOR_SCROLL_SPEED = 0.12;
 
 // Responsive Camera Controller
 function ResponsiveCamera() {
