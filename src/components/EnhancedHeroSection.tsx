@@ -114,7 +114,7 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
               transition={{ duration: 0.8, delay: 1.5 }}
             >
               <ScrollRevealText className="text-lg md:text-xl lg:text-2xl mb-8 leading-relaxed opacity-95 font-normal cursor-default text-white max-w-4xl mx-auto">
-                We create smart websites that help your business grow. With cutting-edge AI, we propel your online presence and maximize your business impact.
+                We create smart websites that help your business grow. Our AI-powered solutions boost your online presence and drive real results.
               </ScrollRevealText>
             </motion.div>
             
