@@ -154,6 +154,7 @@
   display: flex;
   align-items: center;
   will-change: transform;
+  white-space: nowrap;
 }
 
 .companies-scroll-container:hover .companies-scroll-track {
@@ -163,6 +164,6 @@
 /* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
   .companies-scroll-track {
-    animation: scroll-left 0.01ms linear infinite;
+    animation-play-state: paused;
   }
 }
