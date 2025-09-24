@@ -135,9 +135,36 @@ async function verifyRecaptchaToken(token: string, clientIp?: string): Promise<{
     
     const score = result.score
     const minimumScore = 0.5 // Adjust this threshold based on your needs (0.0 = likely bot, 1.0 = likely human)
+    const suspiciousThreshold = 0.7 // Log scores between minimumScore and this threshold for analysis
 
+    // Log suspicious activity for scores that pass but are still concerning
+    if (score >= minimumScore && score < suspiciousThreshold) {
+      console.warn('⚠️ Suspicious reCAPTCHA v3 activity detected:', {
+        score: score,
+        threshold: suspiciousThreshold,
+        minimumScore: minimumScore,
+        clientIp: clientIp || 'unknown',
+        action: result.action,
+        hostname: result.hostname,
+        timestamp: new Date().toISOString(),
+        message: `Score ${score} is above minimum (${minimumScore}) but below suspicious threshold (${suspiciousThreshold})`
+      })
+    }
+
+    // Log very low scores that fail verification for pattern analysis
     if (score < minimumScore) {
-      console.error('reCAPTCHA v3 score too low:', score)
+      console.error('🚨 reCAPTCHA v3 score below minimum threshold:', {
+        score: score,
+        minimumScore: minimumScore,
+        clientIp: clientIp || 'unknown',
+        action: result.action,
+        hostname: result.hostname,
+        timestamp: new Date().toISOString(),
+        errorCodes: result['error-codes'],
+        message: `Potential bot activity detected - score ${score} below minimum ${minimumScore}`
+      })
+    }
+    if (score < minimumScore) {
       return { success: false, error: `Security verification failed (score: ${score})` }
     }
     
@@ -147,7 +174,28 @@ async function verifyRecaptchaToken(token: string, clientIp?: string): Promise<{
       return { success: false, error: 'reCAPTCHA v3 action mismatch' }
     }
 
-    console.log('reCAPTCHA v3 verification successful:', { score, action: result.action })
+    // Enhanced logging for successful verifications with score analysis
+    if (score >= suspiciousThreshold) {
+      console.log('✅ reCAPTCHA v3 verification successful (high confidence):', {
+        score: score,
+        action: result.action,
+        hostname: result.hostname,
+        clientIp: clientIp || 'unknown',
+        timestamp: new Date().toISOString(),
+        confidence: 'high'
+      })
+    } else {
+      console.log('✅ reCAPTCHA v3 verification successful (moderate confidence):', {
+        score: score,
+        action: result.action,
+        hostname: result.hostname,
+        clientIp: clientIp || 'unknown',
+        timestamp: new Date().toISOString(),
+        confidence: 'moderate',
+        note: `Score ${score} is above minimum but below high-confidence threshold`
+      })
+    }
+
     return { success: true, score }
 
   } catch (error) {
