@@ -33,17 +33,11 @@ export function ScrollRevealText({
             [start, end],
             [0.7, 1]
           );
-          
-          const y = useTransform(
-            scrollYProgress,
-            [start, end],
-            [20, 0]
-          );
 
           return (
             <motion.span
               key={index}
-              style={{ opacity, y }}
+              style={{ opacity }}
               className="inline-block will-change-transform"
             >
               {word}{index < words.length - 1 ? ' ' : ''}
@@ -83,17 +77,11 @@ export function ScrollRevealLines({
           [start, end],
           [0, 1]
         );
-        
-        const x = useTransform(
-          scrollYProgress,
-          [start, end],
-          [-50, 0]
-        );
 
         return (
           <motion.div
             key={index}
-            style={{ opacity, x }}
+            style={{ opacity }}
             className="will-change-transform"
           >
             {line}
