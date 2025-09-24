@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Brain, Cpu, Zap, Bot, Sparkles, Layers, Network, Code, Database, Globe, Feather, Gem, Book, MessageCircle, Cloud, Smile, Lightbulb, Atom } from 'lucide-react';
+import { Brain, Cpu, Zap, Bot, Sparkles, Layers, Network, Code, Database, Globe } from 'lucide-react';
 
 // Placeholder AI companies with generic names and icons
 const aiCompanies = [
@@ -15,16 +15,7 @@ const aiCompanies = [
   { name: 'CodeAI', icon: Code, color: 'text-orange-500' },
   { name: 'GlobalAI', icon: Globe, color: 'text-cyan-500' },
   { name: 'SmartCore', icon: Brain, color: 'text-violet-500' },
-  { name: 'TechFlow', icon: Cpu, color: 'text-emerald-500' },
-  // AI LLM Providers
-  { name: 'OpenAI', icon: Feather, color: 'text-green-400' },
-  { name: 'Google Gemini', icon: Gem, color: 'text-blue-400' },
-  { name: 'Anthropic', icon: Book, color: 'text-orange-400' },
-  { name: 'Meta AI', icon: MessageCircle, color: 'text-blue-600' },
-  { name: 'Azure AI', icon: Cloud, color: 'text-sky-500' },
-  { name: 'Hugging Face', icon: Smile, color: 'text-yellow-400' },
-  { name: 'Cohere', icon: Lightbulb, color: 'text-purple-400' },
-  { name: 'Stability AI', icon: Atom, color: 'text-rose-500' }
+  { name: 'TechFlow', icon: Cpu, color: 'text-emerald-500' }
 ];
 
 export function MovingCompaniesSection() {
