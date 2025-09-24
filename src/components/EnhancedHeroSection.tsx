@@ -75,7 +75,7 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
           <div className="text-center lg:text-left text-white">
             <motion.h1 
               id="hero-heading"
-              className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-8 leading-tight cursor-default font-montserrat text-white"
+              className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-8 leading-tight cursor-default font-montserrat text-white"
               aria-describedby="hero-description"
               style={{
                 lineHeight: '1.1',
