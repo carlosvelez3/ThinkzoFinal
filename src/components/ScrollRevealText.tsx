@@ -31,7 +31,7 @@ export function ScrollRevealText({
           const opacity = useTransform(
             scrollYProgress,
             [start, end],
-            [0.3, 1]
+            [0.7, 1]
           );
           
           const y = useTransform(
