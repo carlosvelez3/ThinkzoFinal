@@ -71,8 +71,15 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
       >
         <div className="max-w-7xl mx-auto w-full lg:grid lg:grid-cols-3 lg:gap-8 lg:items-center">
           
+          {/* AI Terminal with Parallax */}
+          <div className="hidden lg:block mt-8 lg:mt-0 lg:col-span-2">
+            <ParallaxText speed={0.1}>
+              <AICodeScreen />
+            </ParallaxText>
+          </div>
+        
           {/* Main Text Content with Enhanced Animations */}
-          <div className="text-center lg:text-left text-white">
+          <div className="text-center lg:text-left text-white lg:col-span-1">
             <motion.h1 
               id="hero-heading"
               className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-8 leading-tight cursor-default font-montserrat text-white"
@@ -130,12 +137,6 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
             </motion.button>
           </div>
         
-          {/* AI Terminal with Parallax */}
-          <div className="hidden lg:block mt-8 lg:mt-0 lg:col-span-2">
-            <ParallaxText speed={0.1}>
-              <AICodeScreen />
-            </ParallaxText>
-          </div>
         </div>
       </motion.div>
 
