@@ -25,9 +25,6 @@ function ResponsiveCamera() {
 
 // Main 3D Scene Component
 export function ThreeDScene() {
-  // Check for reduced motion preference
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
   return (
     <div className="absolute inset-0 z-0">
       <Canvas
@@ -54,27 +51,16 @@ export function ThreeDScene() {
         />
 
         {/* 3D Elements */}
-        {!prefersReducedMotion && (
-          <>
-            <FluidWave
-              scrollSpeed={WAVE_SCROLL_SPEED}
-              colorScrollSpeed={WAVE_COLOR_SCROLL_SPEED}
-            />
-            <FluidWaveLayer
-              scrollSpeed={WAVE_SCROLL_SPEED}
-              colorScrollSpeed={WAVE_COLOR_SCROLL_SPEED}
-            />
-          </>
-        )}
-
-        {/* Fallback for reduced motion */}
-        {prefersReducedMotion && (
-          <FluidWave
-            scrollSpeed={WAVE_SCROLL_SPEED}
-            colorScrollSpeed={WAVE_COLOR_SCROLL_SPEED}
-            animated={false}
-          />
-        )}
+        <FluidWave
+          scrollSpeed={WAVE_SCROLL_SPEED}
+          colorScrollSpeed={WAVE_COLOR_SCROLL_SPEED}
+          animated={true}
+        />
+        <FluidWaveLayer
+          scrollSpeed={WAVE_SCROLL_SPEED}
+          colorScrollSpeed={WAVE_COLOR_SCROLL_SPEED}
+          animated={true}
+        />
 
         {/* Responsive Camera */}
         <ResponsiveCamera />
