@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, AlertCircle, Eye, EyeOff, Info, X, CheckCircle } from 'lucide-react';
+import { Check, AlertCircle, Eye, EyeOff, Info, X, CheckCircle, Clock, DollarSign, Zap, ChevronDown, ChevronUp } from 'lucide-react';
 import { useErrorHandler } from '../../hooks/useErrorHandler';
 import { RetryButton } from '../RetryButton';
+import { AnimatedI } from '../AnimatedI';
 
 // Types for form validation
 interface ValidationRule {
@@ -25,6 +26,28 @@ interface FormField {
   autoComplete?: string;
 }
 
+interface ProjectType {
+  id: string;
+  name: string;
+  icon: string;
+  timeline: string;
+  budget: string;
+}
+
+interface SmartFormProps {
+  formFields?: FormField[];
+  onSuccess?: (data: FormData) => void;
+  onSubmit?: (data: FormData) => Promise<void>;
+  executeRecaptcha?: (action: string) => Promise<string | null>;
+  recaptchaReady?: boolean;
+  recaptchaError?: string | null;
+  title?: string;
+  description?: string;
+  submitButtonText?: string;
+  projectTypes?: ProjectType[];
+  showProgressSteps?: boolean;
+}
+
 interface FormData {
   [key: string]: string;
 }
@@ -38,7 +61,19 @@ interface FieldStatus {
 }
 
 // Smart Form Component with Advanced Validation
-export function SmartForm() {
+export function SmartForm({
+  formFields: customFormFields,
+  onSuccess,
+  onSubmit,
+  executeRecaptcha,
+  recaptchaReady = true,
+  recaptchaError,
+  title = "Get Started",
+  description = "Tell us about your project and we'll get back to you with a custom proposal.",
+  submitButtonText = "Submit Project Request",
+  projectTypes,
+  showProgressSteps = false
+}: SmartFormProps) {
   const [formData, setFormData] = useState<FormData>({});
   const [errors, setErrors] = useState<FormErrors>({});
   const [fieldStatus, setFieldStatus] = useState<FieldStatus>({});
@@ -47,133 +82,31 @@ export function SmartForm() {
   const [showPassword, setShowPassword] = useState<{ [key: string]: boolean }>({});
   const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const validationTimeouts = useRef<{ [key: string]: NodeJS.Timeout }>({});
 
   const { handleAsyncError } = useErrorHandler();
 
-  // Form configuration
-  const formFields: FormField[] = [
-    {
-      name: 'firstName',
-      label: 'First Name',
-      type: 'text',
-      placeholder: 'Enter your first name',
-      autoComplete: 'given-name',
-      validation: {
-        required: true,
-        minLength: 2,
-        maxLength: 50,
-        pattern: /^[a-zA-Z\s'-]+$/,
-        custom: (value) => {
-          if (value && value.trim().length < 2) return 'First name must be at least 2 characters';
-          if (value && !/^[a-zA-Z\s'-]+$/.test(value)) return 'First name can only contain letters, spaces, hyphens, and apostrophes';
-          return null;
-        }
-      },
-      helpText: 'Enter your legal first name as it appears on official documents'
-    },
-    {
-      name: 'lastName',
-      label: 'Last Name',
-      type: 'text',
-      placeholder: 'Enter your last name',
-      autoComplete: 'family-name',
-      validation: {
-        required: true,
-        minLength: 2,
-        maxLength: 50,
-        pattern: /^[a-zA-Z\s'-]+$/,
-        custom: (value) => {
-          if (value && value.trim().length < 2) return 'Last name must be at least 2 characters';
-          if (value && !/^[a-zA-Z\s'-]+$/.test(value)) return 'Last name can only contain letters, spaces, hyphens, and apostrophes';
-          return null;
-        }
-      }
-    },
+  // Default form configuration (can be overridden by props)
+  const defaultFormFields: FormField[] = [
     {
       name: 'email',
       label: 'Email Address',
       type: 'email',
-      placeholder: 'Enter your email address',
+      placeholder: 'your@email.com',
       autoComplete: 'email',
       validation: {
         required: true,
         pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
         custom: (value) => {
-          if (!value) return 'Email address is required';
+          if (!value) return 'Email is required to send you project updates';
           if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Please enter a valid email address';
           if (value.length > 254) return 'Email address is too long';
           return null;
         }
       },
       helpText: 'We\'ll use this to send you important updates and confirmations'
-    },
-    {
-      name: 'phone',
-      label: 'Phone Number',
-      type: 'tel',
-      placeholder: '(555) 123-4567',
-      autoComplete: 'tel',
-      validation: {
-        required: true,
-        pattern: /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/,
-        custom: (value) => {
-          if (!value) return 'Phone number is required';
-          const cleaned = value.replace(/\D/g, '');
-          if (cleaned.length !== 10) return 'Phone number must be 10 digits';
-          if (!/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(value)) {
-            return 'Please enter a valid phone number (e.g., (555) 123-4567)';
-          }
-          return null;
-        }
-      },
-      helpText: 'Include area code for faster service'
-    },
-    {
-      name: 'password',
-      label: 'Password',
-      type: 'password',
-      placeholder: 'Create a secure password',
-      autoComplete: 'new-password',
-      validation: {
-        required: true,
-        minLength: 8,
-        custom: (value) => {
-          if (!value) return 'Password is required';
-          if (value.length < 8) return 'Password must be at least 8 characters long';
-          if (!/(?=.*[a-z])/.test(value)) return 'Password must contain at least one lowercase letter';
-          if (!/(?=.*[A-Z])/.test(value)) return 'Password must contain at least one uppercase letter';
-          if (!/(?=.*\d)/.test(value)) return 'Password must contain at least one number';
-          if (!/(?=.*[@$!%*?&])/.test(value)) return 'Password must contain at least one special character (@$!%*?&)';
-          return null;
-        }
-      },
-      helpText: 'Must be 8+ characters with uppercase, lowercase, number, and special character'
-    },
-    {
-      name: 'confirmPassword',
-      label: 'Confirm Password',
-      type: 'password',
-      placeholder: 'Confirm your password',
-      autoComplete: 'new-password',
-      validation: {
-        required: true,
-        dependencies: ['password'],
-        custom: (value) => {
-          if (!value) return 'Please confirm your password';
-          return null;
-        }
-      }
-    },
-    {
-      name: 'company',
-      label: 'Company',
-      type: 'text',
-      placeholder: 'Enter your company name (optional)',
-      autoComplete: 'organization',
-      validation: {
-        maxLength: 100
-      }
     },
     {
       name: 'projectType',
@@ -184,14 +117,62 @@ export function SmartForm() {
       },
       options: [
         { value: '', label: 'Select project type' },
-        { value: 'website', label: 'New Website' },
-        { value: 'redesign', label: 'Website Redesign' },
+        { value: 'landing-page', label: 'Landing Page' },
+        { value: 'business-website', label: 'Business Website' },
         { value: 'ecommerce', label: 'E-commerce Store' },
-        { value: 'webapp', label: 'Web Application' },
-        { value: 'mobile', label: 'Mobile App' },
-        { value: 'other', label: 'Other' }
+        { value: 'web-app', label: 'Web Application' },
+        { value: 'ai-integration', label: 'AI Integration' },
+        { value: 'other', label: 'Other/Custom' }
       ],
       helpText: 'This helps us understand your needs better'
+    },
+    {
+      name: 'name',
+      label: 'Name',
+      type: 'text',
+      placeholder: 'Your name',
+      autoComplete: 'name',
+      validation: {
+        required: true,
+        minLength: 2,
+        maxLength: 100,
+        pattern: /^[a-zA-Z\s'-]+$/,
+        custom: (value) => {
+          if (value && value.trim().length < 2) return 'Name must be at least 2 characters';
+          if (value && !/^[a-zA-Z\s'-]+$/.test(value)) return 'Name can only contain letters, spaces, hyphens, and apostrophes';
+          return null;
+        }
+      },
+      helpText: 'We\'d love to know what to call you'
+    },
+    {
+      name: 'phone',
+      label: 'Phone (optional)',
+      type: 'tel',
+      placeholder: '(555) 123-4567',
+      autoComplete: 'tel',
+      validation: {
+        custom: (value) => {
+          if (value && value.trim()) {
+            const cleaned = value.replace(/\D/g, '');
+            if (cleaned.length !== 10) return 'Phone number must be 10 digits';
+            if (!/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(value)) {
+              return 'Please enter a valid phone number (e.g., (555) 123-4567)';
+            }
+          }
+          return null;
+        }
+      }
+    },
+    {
+      name: 'company',
+      label: 'Company (optional)',
+      type: 'text',
+      placeholder: 'Your company name',
+      autoComplete: 'organization',
+      validation: {
+        maxLength: 100
+      }
     },
     {
       name: 'message',
@@ -212,6 +193,21 @@ export function SmartForm() {
       helpText: 'The more details you provide, the better we can help you'
     }
   ];
+
+  // Use custom form fields or default ones
+  const formFields = customFormFields || defaultFormFields;
+
+  // Default project types for contact form
+  const defaultProjectTypes: ProjectType[] = [
+    { id: 'landing-page', name: 'Landing Page', icon: '🎯', timeline: '1-2 weeks', budget: '$495' },
+    { id: 'business-website', name: 'Business Website', icon: '🏢', timeline: '2-4 weeks', budget: '$800-$1,500' },
+    { id: 'ecommerce', name: 'E-commerce Store', icon: '🛒', timeline: '4-8 weeks', budget: '$1,500-$3,500' },
+    { id: 'web-app', name: 'Web Application', icon: '⚡', timeline: '6-12 weeks', budget: '$3,500+' },
+    { id: 'ai-integration', name: 'AI Integration', icon: '🤖', timeline: '4-10 weeks', budget: '$2,000+' },
+    { id: 'other', name: 'Other/Custom', icon: '💡', timeline: 'Varies', budget: 'Custom Quote' }
+  ];
+
+  const activeProjectTypes = projectTypes || defaultProjectTypes;
 
   // Validation function
   const validateField = (fieldName: string, value: string, allData: FormData = formData): string | null => {
@@ -262,6 +258,20 @@ export function SmartForm() {
     return null;
   };
 
+  // Check if we can proceed to next step
+  const canProceedToStep = (step: number): boolean => {
+    if (!showProgressSteps) return true;
+    
+    switch (step) {
+      case 2:
+        return formData.email && !errors.email;
+      case 3:
+        return formData.projectType && formData.email && !errors.email;
+      default:
+        return true;
+    }
+  };
+
   // Real-time validation with debouncing
   const handleFieldChange = (fieldName: string, value: string) => {
     setFormData(prev => ({ ...prev, [fieldName]: value }));
@@ -296,6 +306,16 @@ export function SmartForm() {
           }));
         }
       }
+
+      // Auto-advance logic for progressive forms
+      if (showProgressSteps) {
+        if (fieldName === 'email' && !error && currentStep === 1) {
+          setTimeout(() => setCurrentStep(2), 500);
+        }
+        if (fieldName === 'projectType' && value && currentStep === 2) {
+          setTimeout(() => setCurrentStep(3), 300);
+        }
+      }
     }, 300);
   };
 
@@ -325,6 +345,20 @@ export function SmartForm() {
       return formatted;
     }
     return value;
+  };
+
+  // Handle project type selection for card-based UI
+  const handleProjectTypeSelect = (projectTypeId: string) => {
+    const projectType = activeProjectTypes.find(p => p.id === projectTypeId);
+    setFormData(prev => ({
+      ...prev,
+      projectType: projectTypeId,
+      // Smart defaults based on project type
+      timeline: projectType?.timeline || '2-3-months'
+    }));
+    if (showProgressSteps && currentStep === 2) {
+      setCurrentStep(3);
+    }
   };
 
   // Handle input change with formatting
@@ -398,18 +432,34 @@ export function SmartForm() {
     setIsSubmitting(true);
     
     const result = await handleAsyncError(async () => {
-      await submitFormData();
+      // Get reCAPTCHA token if available
+      let recaptchaToken: string | null = null;
+      if (executeRecaptcha) {
+        recaptchaToken = await executeRecaptcha('contact_form_submit');
+        if (!recaptchaToken) {
+          throw new Error('reCAPTCHA verification failed. Please try again.');
+        }
+      }
+
+      // Add reCAPTCHA token to form data
+      const submissionData = { ...formData };
+      if (recaptchaToken) {
+        submissionData.recaptchaToken = recaptchaToken;
+      }
+
+      if (onSubmit) {
+        await onSubmit(submissionData);
+      } else {
+        await submitFormData();
+      }
+      
       setSubmitSuccess(true);
       setSubmitError(null);
       
-      // Reset form after success
-      setTimeout(() => {
-        setFormData({});
-        setErrors({});
-        setFieldStatus({});
-        setTouchedFields(new Set());
-        setSubmitSuccess(false);
-      }, 3000);
+      // Call success callback
+      if (onSuccess) {
+        onSuccess(submissionData);
+      }
     }, { formData, action: 'smart_form_submit' });
     
     if (!result) {
@@ -425,6 +475,10 @@ export function SmartForm() {
   };
 
   const submitFormData = async () => {
+    // Default submission logic (can be overridden by onSubmit prop)
+    console.log('Form submitted:', formData);
+    
+    // Simulate API call
     // Simulate API call with potential failure
     await new Promise(resolve => setTimeout(resolve, 2000));
     
@@ -432,8 +486,6 @@ export function SmartForm() {
     if (Math.random() < 0.3) {
       throw new Error('Network error: Failed to submit form');
     }
-    
-    console.log('Form submitted:', formData);
   };
 
   // Cleanup timeouts
@@ -448,46 +500,67 @@ export function SmartForm() {
   // Success state
   if (submitSuccess) {
     return (
-      <motion.div
-        className="max-w-2xl mx-auto p-8 bg-white rounded-xl shadow-lg"
-        initial={{ opacity: 0, scale: 0.9 }}
+      <motion.div 
+        className="text-center py-8"
+        initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="text-center">
-          <motion.div
-            className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-          >
-            <CheckCircle className="w-8 h-8 text-green-600" />
-          </motion.div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Success!</h2>
-          <p className="text-gray-600 mb-6">
-            Your form has been submitted successfully. We'll get back to you within 24 hours.
-          </p>
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <h3 className="font-semibold text-green-800 mb-2">What happens next?</h3>
-            <ul className="text-sm text-green-700 space-y-1">
-              <li>• You'll receive a confirmation email shortly</li>
-              <li>• Our team will review your project details</li>
-              <li>• We'll schedule a consultation call within 24 hours</li>
-            </ul>
-          </div>
+        <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+          <Check className="w-8 h-8 text-green-400" />
+        </div>
+        <h3 className="text-2xl font-bold text-white mb-4 font-montserrat">
+          Thank You{formData.name ? `, ${formData.name}` : ''}!
+        </h3>
+        <p className="text-gray-300 mb-6 font-poppins">
+          We've received your project inquiry. We'll review your requirements and get back to you within 24 hours.
+        </p>
+        <div className="bg-gray-700 rounded-lg p-4">
+          <h4 className="text-white font-semibold mb-2">What's Next?</h4>
+          <ul className="text-sm text-gray-300 space-y-1 text-left">
+            <li>• We'll review your project details</li>
+            <li>• Schedule a discovery call within 24 hours</li>
+            <li>• Provide a detailed proposal and timeline</li>
+          </ul>
         </div>
       </motion.div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-8 bg-white rounded-xl shadow-lg">
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Get Started</h2>
-        <p className="text-gray-600">
-          Tell us about your project and we'll get back to you with a custom proposal.
+    <div className="space-y-8">
+      <div className="text-center">
+        <h3 className="text-2xl font-bold text-white mb-4 font-montserrat">
+          {title}
+        </h3>
+        <p className="text-gray-300 font-poppins">
+          {description}
         </p>
       </div>
+
+      {/* Progress Indicator */}
+      {showProgressSteps && (
+        <div className="flex justify-center">
+          <div className="flex items-center space-x-2">
+            {[1, 2, 3].map((step) => (
+              <div key={step} className="flex items-center">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
+                  currentStep >= step 
+                    ? 'bg-primary-accent text-white' 
+                    : 'bg-gray-700 text-gray-400'
+                }`}>
+                  {currentStep > step ? <Check className="w-4 h-4" /> : step}
+                </div>
+                {step < 3 && (
+                  <div className={`w-8 h-0.5 mx-2 transition-all duration-300 ${
+                    currentStep > step ? 'bg-primary-accent' : 'bg-gray-700'
+                  }`} />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} noValidate className="space-y-6">
         {formFields.map((field) => {
@@ -498,19 +571,133 @@ export function SmartForm() {
           const showError = fieldError && (isFieldTouched || status === 'invalid');
           const showSuccess = !fieldError && fieldValue && status === 'valid';
 
+          // Skip fields based on step progression
+          if (showProgressSteps && field.name === 'projectType' && currentStep < 2) return null;
+          if (showProgressSteps && !['email', 'projectType'].includes(field.name) && currentStep < 3) return null;
+
           return (
             <div key={field.name} className="space-y-2">
-              <label
-                htmlFor={field.name}
-                className="block text-sm font-medium text-gray-700"
-              >
-                {field.label}
-                {field.validation.required && (
-                  <span className="text-red-500 ml-1">*</span>
-                )}
-              </label>
+              {/* Special rendering for project type with cards */}
+              {field.name === 'projectType' && projectTypes ? (
+                <div className="space-y-4">
+                  <label className="block text-sm font-bold text-white mb-4 font-poppins">
+                    What type of project do you have in mind? <span className="text-primary-accent">*</span>
+                  </label>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                    {activeProjectTypes.map((project) => (
+                      <motion.button
+                        key={project.id}
+                        type="button"
+                        onClick={() => handleProjectTypeSelect(project.id)}
+                        className={`group relative p-6 rounded-xl border-2 text-left transition-all duration-300 transform hover:scale-105 focus:scale-105 overflow-hidden ${
+                          formData.projectType === project.id
+                            ? 'border-primary-accent bg-gradient-to-br from-primary-accent/20 to-secondary-purple/20 shadow-lg shadow-primary-accent/25'
+                            : 'border-gray-600 hover:border-primary-accent/50 bg-gradient-to-br from-gray-700/50 to-gray-800/50 hover:from-gray-600/50 hover:to-gray-700/50'
+                        } focus:outline-none focus:ring-2 focus:ring-primary-accent/50 focus:ring-offset-2 focus:ring-offset-transparent`}
+                        whileHover={{ 
+                          scale: 1.05,
+                          boxShadow: formData.projectType === project.id 
+                            ? "0 20px 40px rgba(6, 182, 212, 0.3)" 
+                            : "0 10px 30px rgba(0, 0, 0, 0.3)"
+                        }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        {/* Selection Indicator */}
+                        <AnimatePresence>
+                          {formData.projectType === project.id && (
+                            <motion.div
+                              className="absolute top-3 right-3 w-6 h-6 bg-primary-accent rounded-full flex items-center justify-center"
+                              initial={{ scale: 0, rotate: -180 }}
+                              animate={{ scale: 1, rotate: 0 }}
+                              exit={{ scale: 0, rotate: 180 }}
+                              transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                            >
+                              <Check className="w-4 h-4 text-white" />
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                        
+                        {/* Content */}
+                        <div className="relative z-10">
+                          <div className="flex items-center mb-3">
+                            <span className="text-3xl mr-3">{project.icon}</span>
+                            <span className={`font-bold text-lg transition-colors duration-300 ${
+                              formData.projectType === project.id 
+                                ? 'text-white' 
+                                : 'text-white group-hover:text-primary-accent'
+                            }`}>
+                              {project.name}
+                            </span>
+                          </div>
+                          
+                          <div className="space-y-2 mb-4">
+                            <div className="flex items-center text-sm text-gray-300 group-hover:text-gray-200 transition-colors duration-300">
+                              <Clock className="w-4 h-4 mr-2 text-primary-accent" />
+                              <span className="font-medium">Timeline: {project.timeline}</span>
+                            </div>
+                            <div className="flex items-center text-sm text-gray-300 group-hover:text-gray-200 transition-colors duration-300">
+                              <DollarSign className="w-4 h-4 mr-2 text-cta-yellow" />
+                              <span className="font-medium">Starting at: {project.budget}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </motion.button>
+                    ))}
+                  </div>
+                  
+                  {/* Selection Summary */}
+                  <AnimatePresence>
+                    {formData.projectType && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -20, height: 0 }}
+                        animate={{ opacity: 1, y: 0, height: 'auto' }}
+                        exit={{ opacity: 0, y: -20, height: 0 }}
+                        transition={{ duration: 0.4, ease: "easeOut" }}
+                        className="bg-gradient-to-r from-primary-accent/10 to-secondary-purple/10 border border-primary-accent/30 rounded-lg p-4 mb-4"
+                      >
+                        <div className="flex items-center">
+                          <div className="w-8 h-8 bg-primary-accent/20 rounded-full flex items-center justify-center mr-3">
+                            <Check className="w-4 h-4 text-primary-accent" />
+                          </div>
+                          <div>
+                            <p className="text-white font-semibold">
+                              Great choice! You've selected: <span className="text-primary-accent">{activeProjectTypes.find(p => p.id === formData.projectType)?.name}</span>
+                            </p>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  
+                  {errors.projectType && (
+                    <motion.div 
+                      className="flex items-center mt-2 text-red-400 text-sm"
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                    >
+                      <AlertCircle className="w-4 h-4 mr-2" />
+                      {errors.projectType}
+                    </motion.div>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <label
+                    htmlFor={field.name}
+                    className="block text-sm font-bold text-white mb-2 font-poppins"
+                  >
+                    {field.label}
+                    {field.validation.required && (
+                      <span className="text-primary-accent ml-1">*</span>
+                    )}
+                  </label>
+                </>
+              )}
 
-              <div className="relative">
+              {/* Regular form fields */}
+              {field.name !== 'projectType' && (
+                <div className="relative">
                 {field.type === 'textarea' ? (
                   <textarea
                     id={field.name}
@@ -520,9 +707,9 @@ export function SmartForm() {
                     onBlur={() => handleFieldBlur(field.name)}
                     placeholder={field.placeholder}
                     rows={4}
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 resize-y ${
+                    className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all duration-200 resize-y ${
                       showError
-                        ? 'border-red-500 focus:ring-red-500/20 bg-red-50'
+                        ? 'border-red-500 focus:ring-red-500/20'
                         : showSuccess
                         ? 'border-green-500 focus:ring-green-500/20 bg-green-50'
                         : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500/20'
@@ -535,12 +722,12 @@ export function SmartForm() {
                     value={fieldValue}
                     onChange={handleInputChange}
                     onBlur={() => handleFieldBlur(field.name)}
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 ${
+                    className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white focus:outline-none focus:ring-2 transition-all duration-200 ${
                       showError
-                        ? 'border-red-500 focus:ring-red-500/20 bg-red-50'
+                        ? 'border-red-500 focus:ring-red-500/20'
                         : showSuccess
-                        ? 'border-green-500 focus:ring-green-500/20 bg-green-50'
-                        : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500/20'
+                        ? 'border-green-500 focus:ring-green-500/20'
+                        : 'border-gray-600 focus:border-primary-accent focus:ring-primary-accent/20'
                     }`}
                   >
                     {field.options?.map((option) => (
@@ -559,14 +746,14 @@ export function SmartForm() {
                     onBlur={() => handleFieldBlur(field.name)}
                     placeholder={field.placeholder}
                     autoComplete={field.autoComplete}
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 ${
+                    className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all duration-200 ${
                       field.type === 'password' ? 'pr-12' : ''
                     } ${
                       showError
-                        ? 'border-red-500 focus:ring-red-500/20 bg-red-50'
+                        ? 'border-red-500 focus:ring-red-500/20'
                         : showSuccess
-                        ? 'border-green-500 focus:ring-green-500/20 bg-green-50'
-                        : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500/20'
+                        ? 'border-green-500 focus:ring-green-500/20'
+                        : 'border-gray-600 focus:border-primary-accent focus:ring-primary-accent/20'
                     }`}
                   />
                 )}
@@ -579,7 +766,7 @@ export function SmartForm() {
                       ...prev, 
                       [field.name]: !prev[field.name] 
                     }))}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200"
                   >
                     {showPassword[field.name] ? (
                       <EyeOff className="w-5 h-5" />
@@ -620,6 +807,7 @@ export function SmartForm() {
                   </motion.div>
                 )}
               </div>
+              )}
 
               {/* Password strength indicator */}
               {field.name === 'password' && fieldValue && (
@@ -649,7 +837,10 @@ export function SmartForm() {
               {/* Character count for textarea */}
               {field.type === 'textarea' && field.validation.maxLength && (
                 <div className="text-right text-sm text-gray-500">
-                  {fieldValue.length}/{field.validation.maxLength}
+                  <span className={fieldValue.length > (field.validation.maxLength * 0.9) ? 'text-orange-400' : 'text-gray-400'}>
+                    {fieldValue.length}
+                  </span>
+                  /{field.validation.maxLength}
                 </div>
               )}
 
@@ -660,7 +851,7 @@ export function SmartForm() {
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="flex items-start space-x-2 text-red-600 text-sm"
+                    className="flex items-start space-x-2 text-red-400 text-sm"
                   >
                     <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                     <span>{fieldError}</span>
@@ -670,7 +861,7 @@ export function SmartForm() {
 
               {/* Help text */}
               {field.helpText && !showError && (
-                <div className="flex items-start space-x-2 text-gray-500 text-sm">
+                <div className="flex items-start space-x-2 text-gray-400 text-sm">
                   <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
                   <span>{field.helpText}</span>
                 </div>
@@ -679,17 +870,54 @@ export function SmartForm() {
           );
         })}
 
+        {/* Progressive Disclosure for Advanced Fields */}
+        {showProgressSteps && currentStep >= 3 && (
+          <div>
+            <button
+              type="button"
+              onClick={() => setShowAdvanced(!showAdvanced)}
+              className="flex items-center text-primary-accent hover:text-primary-accent-hover transition-colors text-sm font-medium"
+            >
+              {showAdvanced ? <ChevronUp className="w-4 h-4 mr-1" /> : <ChevronDown className="w-4 h-4 mr-1" />}
+              {showAdvanced ? 'Hide' : 'Show'} additional options
+            </button>
+          </div>
+        )}
+
+        {/* reCAPTCHA Status */}
+        {recaptchaError && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center justify-center text-red-400 text-sm bg-red-500/10 border border-red-500/20 rounded-lg p-3"
+          >
+            <AlertCircle className="w-4 h-4 mr-2" />
+            <span>Security verification unavailable. Please refresh the page.</span>
+          </motion.div>
+        )}
+        
+        {recaptchaReady && !recaptchaError && executeRecaptcha && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center justify-center text-green-400 text-sm bg-green-500/10 border border-green-500/20 rounded-lg p-3"
+          >
+            <Check className="w-4 h-4 mr-2" />
+            <span>🛡️ Protected by reCAPTCHA v3 - No interaction required</span>
+          </motion.div>
+        )}
+
         {/* Submit button */}
         <motion.button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || (showProgressSteps && !canProceedToStep(3)) || (executeRecaptcha && !recaptchaReady)}
           className={`w-full py-4 px-6 rounded-lg font-semibold text-lg transition-all duration-300 ${
-            isSubmitting
-              ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-blue-600 hover:bg-blue-700 focus:bg-blue-700 shadow-lg hover:shadow-xl'
-          } text-white focus:outline-none focus:ring-4 focus:ring-blue-500/30`}
-          whileHover={!isSubmitting ? { scale: 1.02 } : {}}
-          whileTap={!isSubmitting ? { scale: 0.98 } : {}}
+            isSubmitting || (showProgressSteps && !canProceedToStep(3)) || (executeRecaptcha && !recaptchaReady)
+              ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+              : 'bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white hover:scale-105 focus:scale-105 shadow-lg hover:shadow-xl focus:shadow-xl'
+          } focus:outline-none focus:ring-4 focus:ring-amber-500/30`}
+          whileHover={!isSubmitting && (showProgressSteps ? canProceedToStep(3) : true) && (!executeRecaptcha || recaptchaReady) ? { scale: 1.02 } : {}}
+          whileTap={!isSubmitting && (showProgressSteps ? canProceedToStep(3) : true) && (!executeRecaptcha || recaptchaReady) ? { scale: 0.98 } : {}}
         >
           {isSubmitting ? (
             <div className="flex items-center justify-center space-x-2">
@@ -700,45 +928,52 @@ export function SmartForm() {
               />
               <span>Submitting...</span>
             </div>
+          ) : executeRecaptcha && !recaptchaReady ? (
+            'Loading security verification...'
+          ) : executeRecaptcha && recaptchaError ? (
+            'Security verification failed - Please refresh'
           ) : (
-            'Submit Project Request'
+            <div className="flex items-center justify-center">
+              <Zap className="w-5 h-5 mr-2" />
+              {submitButtonText}
+            </div>
           )}
         </motion.button>
-          
-          {/* Error state with retry */}
-          {submitError && (
-            <motion.div
-              className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <div className="flex items-start space-x-3">
-                <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-                <div className="flex-1">
-                  <p className="text-red-700 text-sm mb-3">{submitError}</p>
-                  <RetryButton
-                    onRetry={handleRetrySubmit}
-                    className="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1"
-                  >
-                    Try Again
-                  </RetryButton>
-                </div>
+        
+        {/* Error state with retry */}
+        {submitError && (
+          <motion.div
+            className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <div className="flex items-start space-x-3">
+              <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-red-700 text-sm mb-3">{submitError}</p>
+                <RetryButton
+                  onRetry={handleRetrySubmit}
+                  className="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1"
+                >
+                  Try Again
+                </RetryButton>
               </div>
-            </motion.div>
-          )}
+            </div>
+          </motion.div>
+        )}
 
-        {/* Form footer */}
-        <div className="text-center text-sm text-gray-500">
+        <div className="text-center space-y-2">
           <p>
-            By submitting this form, you agree to our{' '}
-            <a href="#" className="text-blue-600 hover:underline">
-              Terms of Service
-            </a>{' '}
-            and{' '}
-            <a href="#" className="text-blue-600 hover:underline">
-              Privacy Policy
-            </a>
+            {!recaptchaReady && executeRecaptcha
+              ? "Initializing security verification..."
+              : "We'll respond within 24 hours with next steps"
+            }
           </p>
+          {executeRecaptcha && (
+            <p className="text-xs text-gray-500 text-center">
+              This site is protected by reCAPTCHA v3 for enhanced security without interruption.
+            </p>
+          )}
         </div>
       </form>
     </div>

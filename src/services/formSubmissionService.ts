@@ -8,7 +8,7 @@ export interface FormSubmissionData {
   company?: string;
   projectType?: string;
   message: string;
-    recaptchaToken?: string;
+  recaptchaToken?: string;
 }
 
 export interface FormSubmissionResponse {
