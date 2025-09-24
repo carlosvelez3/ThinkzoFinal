@@ -195,18 +195,16 @@ export function AICodeScreen() {
           </div>
 
           {/* Fixed Code Content Area */}
-          <div className="px-6 pb-6 flex-grow overflow-hidden">
-            <div className="h-full overflow-y-auto">
-              <pre className="text-gray-300 leading-relaxed whitespace-pre-wrap m-0 p-0">
-                <code className="block font-mono">
-                  {displayedCode}
-                  <span
-                    className="inline-block w-2 bg-primary-accent ml-1 animate-pulse"
-                    style={{ height: '1.625em' }}
-                  />
-                </code>
-              </pre>
-            </div>
+          <div className="px-6 pb-6 flex-1 overflow-y-auto">
+            <pre className="text-gray-300 leading-relaxed whitespace-pre-wrap m-0 p-0">
+              <code className="block font-mono">
+                {displayedCode}
+                <span
+                  className="inline-block w-2 bg-primary-accent ml-1 animate-pulse"
+                  style={{ height: '1.625em' }}
+                />
+              </code>
+            </pre>
           </div>
         </div>
 
