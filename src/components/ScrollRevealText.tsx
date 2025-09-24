@@ -35,15 +35,13 @@ export function ScrollRevealText({
           );
 
           return (
-            <React.Fragment key={index}>
-              <motion.span
-                style={{ opacity }}
-                className="inline-block will-change-transform"
-              >
-                {word}
-              </motion.span>
-              {index < words.length - 1 && ' '}
-            </React.Fragment>
+            <motion.span
+              key={index}
+              style={{ opacity }}
+              className={`inline-block will-change-transform ${index < words.length - 1 ? 'mr-2' : ''}`}
+            >
+              {word}
+            </motion.span>
           );
         })}
       </div>
