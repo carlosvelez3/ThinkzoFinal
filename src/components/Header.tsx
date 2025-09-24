@@ -126,15 +126,17 @@ export function Header({ onOpenContactModal }: HeaderProps) {
           
           {/* Logo Section */}
           <div className="flex flex-col">
-            <motion.div 
-              className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold font-montserrat drop-shadow-lg flex items-center space-x-2 cursor-pointer"
-              role="heading"
-              aria-level={1}
+            <motion.button 
+              onClick={() => scrollToSection('main-content')}
+              onKeyDown={(e) => handleKeyDown(e, 'main-content')}
+              className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold font-montserrat drop-shadow-lg flex items-center space-x-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent rounded-lg p-1 transition-all duration-300"
+              aria-label="Go to top of page"
               whileHover={{ 
                 scale: 1.05,
                 textShadow: "0 0 25px rgba(224, 58, 138, 0.9)",
                 transition: { duration: 0.3 }
               }}
+              whileTap={{ scale: 0.95 }}
               style={{
                 background: 'linear-gradient(135deg, #06B6D4 0%, #6366F1 30%, #0EA5E9 60%, #06B6D4 100%)',
                 WebkitBackgroundClip: 'text',
@@ -157,11 +159,10 @@ export function Header({ onOpenContactModal }: HeaderProps) {
               >
                 <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-primary-accent drop-shadow-lg" />
               </motion.div>
-            </motion.div>
+            </motion.button>
             
             <motion.p 
               className="text-xs md:text-sm font-poppins font-light text-gray-200 mt-1 tracking-wide"
-              role="text"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
