@@ -60,16 +60,16 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
 
   return (
     <section 
-      className="min-h-screen relative overflow-hidden" 
+      className="h-screen relative overflow-hidden" 
       role="main" 
       aria-labelledby="hero-heading"
     >
       {/* Parallax Hero Content */}
       <motion.div 
-        className="relative z-10 pt-24 px-4 h-full"
+        className="relative z-10 pt-24 px-4 h-[calc(100%-6rem)]"
         style={{ y: heroY, opacity: heroOpacity, scale: heroScale }}
       >
-        <div className="max-w-7xl mx-auto w-full lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center h-full">
+        <div className="max-w-7xl mx-auto w-full lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center h-full flex flex-col">
           
           {/* Main Text Content with Enhanced Animations */}
           <div className="text-center lg:text-left text-white">
@@ -131,7 +131,7 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
           </div>
         
           {/* AI Terminal with Parallax */}
-          <div className="hidden lg:block mt-8 lg:mt-0 h-full">
+          <div className="hidden lg:block mt-8 lg:mt-0 flex-1">
             <ParallaxText speed={0.1} containerClassName="h-full">
               <AICodeScreen />
             </ParallaxText>

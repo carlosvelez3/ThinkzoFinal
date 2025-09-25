@@ -29,10 +29,10 @@ export function ParallaxText({
   );
 
   return (
-    <div ref={ref} className={`relative ${className}`}>
+    <div ref={ref} className={`relative h-full ${className}`}>
       <motion.div
         style={{ y }}
-        className={`will-change-transform ${containerClassName}`}
+        className={`will-change-transform h-full ${containerClassName}`}
       >
         {children}
       </motion.div>
