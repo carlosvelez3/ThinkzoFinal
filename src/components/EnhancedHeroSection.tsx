@@ -160,3 +160,5 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
 }
   )
 }
+  )
+}
