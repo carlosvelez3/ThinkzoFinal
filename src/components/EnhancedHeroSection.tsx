@@ -148,11 +148,17 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
         </div>
         
         {/* AI Terminal with Parallax */}
-        <div className="hidden lg:block mt-8 lg:mt-0 flex-1">
-          <ParallaxText speed={0.1} containerClassName="h-full">
-            <AICodeScreen />
-          </ParallaxText>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.2 }}
+        >
+          <div className="hidden lg:block mt-8 lg:mt-0 flex-1 max-h-[80vh]">
+            <ParallaxText speed={0.1} containerClassName="h-full">
+              <AICodeScreen />
+            </ParallaxText>
+          </div>
+        </motion.div>
       </div>
     
       {/* Floating Elements with Scroll-Based Animation */}
