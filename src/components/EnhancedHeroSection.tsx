@@ -76,24 +76,20 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
   }, [onOpenContactModal]);
 
   return (
-    <section 
-      className="h-screen relative overflow-hidden" 
+    <motion.section 
+      className="relative overflow-hidden min-h-[calc(100vh-6rem)] flex items-stretch" 
       role="main" 
       aria-labelledby="hero-heading"
+      style={{ 
+        y: heroY, 
+        opacity: heroOpacity, 
+        scale: heroScale 
+      }}
     >
-      {/* Parallax Hero Content */}
-      <motion.div 
-        className="relative z-10 pt-24 px-4 h-[calc(100%-6rem)]"
-        style={{ 
-          y: heroY, 
-          opacity: heroOpacity, 
-          scale: heroScale 
-        }}
-      >
-        <div className="max-w-7xl mx-auto w-full lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center h-full flex flex-col">
+      <div className="relative z-10 pt-24 px-4 max-w-7xl mx-auto w-full lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center h-full flex flex-col">
           
-          {/* Main Text Content with Enhanced Animations */}
-          <div className="text-center lg:text-left text-white">
+        {/* Main Text Content with Enhanced Animations */}
+        <div className="text-center lg:text-left text-white">
             <motion.h1 
               id="hero-heading"
               className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-8 leading-tight cursor-default font-montserrat text-white"
@@ -146,13 +142,12 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
             </motion.button>
           </div>
         
-          {/* AI Terminal with Parallax */}
-          <div className="hidden lg:block mt-8 lg:mt-0 flex-1">
+        {/* AI Terminal with Parallax */}
+        <div className="hidden lg:block mt-8 lg:mt-0 flex-1">
             <ParallaxText speed={0.1} containerClassName="h-full">
               <AICodeScreen />
             </ParallaxText>
           </div>
-        </div>
       </motion.div>
       
       {/* Floating Elements with Scroll-Based Animation */}
@@ -161,6 +156,6 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
         style={{ y: floatingY, x: floatingX }}
       />
 
-    </section>
+    </motion.section>
   );
 }
