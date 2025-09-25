@@ -11,6 +11,7 @@ declare global {
 
 const RECAPTCHA_V3_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY || '6LeH0tIrAAAAAFRQ0NklcGxc-l35nhiEpaRvbHcB';
 const IS_LOCALHOST = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const SHOULD_LOAD_RECAPTCHA = import.meta.env.VITE_ENABLE_RECAPTCHA === 'true';
 
 export function useRecaptchaV3() {
   const [isReady, setIsReady] = useState(false);
@@ -18,8 +19,8 @@ export function useRecaptchaV3() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Skip reCAPTCHA initialization on localhost
-    if (IS_LOCALHOST) {
+    // Skip reCAPTCHA initialization when disabled or on localhost
+    if (!SHOULD_LOAD_RECAPTCHA || IS_LOCALHOST) {
       setIsReady(true);
       setIsLoading(false);
       setError(null);
@@ -58,12 +59,12 @@ export function useRecaptchaV3() {
       
       return () => clearTimeout(timeout);
     }
-  }, [isReady, IS_LOCALHOST]);
+  }, [isReady, IS_LOCALHOST, SHOULD_LOAD_RECAPTCHA]);
 
   const executeRecaptcha = useCallback(async (action: string): Promise<string | null> => {
-    // Return a mock token for localhost development
-    if (IS_LOCALHOST) {
-      console.log('reCAPTCHA bypassed for localhost development');
+    // Return a mock token when reCAPTCHA is disabled or on localhost
+    if (!SHOULD_LOAD_RECAPTCHA || IS_LOCALHOST) {
+      console.log('reCAPTCHA bypassed for development');
       return 'localhost-development-token';
     }
 
@@ -82,7 +83,7 @@ export function useRecaptchaV3() {
       console.error('reCAPTCHA execution error:', err);
       return null;
     }
-  }, [isReady, IS_LOCALHOST]);
+  }, [isReady, IS_LOCALHOST, SHOULD_LOAD_RECAPTCHA]);
 
   return {
     isReady,
