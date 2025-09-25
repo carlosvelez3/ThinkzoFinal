@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, useCallback } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { Header } from './components/Header';
 import { EnhancedHeroSection } from './components/EnhancedHeroSection';
@@ -15,7 +15,6 @@ import { OfflineIndicator } from './components/OfflineIndicator';
 import { ReadingProgressIndicator } from './components/ReadingProgressIndicator';
 import { ScrollToTopButton } from './components/ScrollToTopButton';
 import { useRecaptchaV3 } from './hooks/useRecaptchaV3';
-import { useState } from 'react';
 
 function App() {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
@@ -23,16 +22,21 @@ function App() {
   // Initialize reCAPTCHA v3 globally
   const { isReady: recaptchaReady, error: recaptchaError } = useRecaptchaV3();
 
-  const openContactModal = () => setIsContactModalOpen(true);
-  const closeContactModal = () => setIsContactModalOpen(false);
+  // Show error if reCAPTCHA fails to load
+  if (recaptchaError) {
+    console.error('reCAPTCHA failed to load:', recaptchaError);
+  }
 
-  const skipToMain = () => {
+  const openContactModal = useCallback(() => setIsContactModalOpen(true), []);
+  const closeContactModal = useCallback(() => setIsContactModalOpen(false), []);
+
+  const skipToMain = useCallback(() => {
     const mainContent = document.getElementById('main-content');
     if (mainContent) {
       mainContent.focus();
       mainContent.scrollIntoView({ behavior: 'smooth' });
     }
-  };
+  }, []);
 
   return (
     <ErrorBoundary>
@@ -62,10 +66,10 @@ function App() {
           <Header onOpenContactModal={openContactModal} />
           <main id="main-content" tabIndex={-1} role="main" className="h-full">
             <EnhancedHeroSection onOpenContactModal={openContactModal} />
+            <ServicesSection onOpenContactModal={openContactModal} />
+            <ProcessSection onOpenContactModal={openContactModal} />
+            <PricingSection onOpenContactModal={openContactModal} />
           </main>
-          <ServicesSection onOpenContactModal={openContactModal} />
-          <ProcessSection onOpenContactModal={openContactModal} />
-          <PricingSection onOpenContactModal={openContactModal} />
           <Footer onOpenContactModal={openContactModal} />
         </div>
 
@@ -107,6 +111,9 @@ function App() {
                 secondary: '#fff',
               },
             },
+          }}
+          containerStyle={{
+            zIndex: 9999,
           }}
         />
       </div>
