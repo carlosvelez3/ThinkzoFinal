@@ -56,14 +56,12 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
   // Parallax effects for hero content
   const { scrollY } = useScroll();
   
-  // Memoize transform calculations to prevent recreation on each render
-  const parallaxTransforms = useMemo(() => ({
-    heroY: useTransform(scrollY, [0, 800], [0, -200]),
-    heroOpacity: useTransform(scrollY, [0, 400], [1, 0.3]),
-    heroScale: useTransform(scrollY, [0, 400], [1, 0.95]),
-    floatingY: useTransform(scrollY, [0, 1000], [0, -200]),
-    floatingX: useTransform(scrollY, [0, 1000], [0, -150])
-  }), [scrollY]);
+  // Transform calculations - hooks must be at top level
+  const heroY = useTransform(scrollY, [0, 800], [0, -200]);
+  const heroOpacity = useTransform(scrollY, [0, 400], [1, 0.3]);
+  const heroScale = useTransform(scrollY, [0, 400], [1, 0.95]);
+  const floatingY = useTransform(scrollY, [0, 1000], [0, -200]);
+  const floatingX = useTransform(scrollY, [0, 1000], [0, -150]);
 
   // Memoize button click handler
   const handleContactClick = useCallback(() => {
@@ -87,9 +85,9 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
       <motion.div 
         className="relative z-10 pt-24 px-4 h-[calc(100%-6rem)]"
         style={{ 
-          y: parallaxTransforms.heroY, 
-          opacity: parallaxTransforms.heroOpacity, 
-          scale: parallaxTransforms.heroScale 
+          y: heroY, 
+          opacity: heroOpacity, 
+          scale: heroScale 
         }}
       >
         <div className="max-w-7xl mx-auto w-full lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center h-full flex flex-col">
@@ -160,10 +158,7 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
       {/* Floating Elements with Scroll-Based Animation */}
       <motion.div
         className="absolute top-1/3 right-20 w-32 h-32 bg-gradient-to-r from-cta-yellow/20 to-primary-accent/20 rounded-full blur-2xl"
-        style={{ 
-          y: parallaxTransforms.floatingY, 
-          x: parallaxTransforms.floatingX 
-        }}
+        style={{ y: floatingY, x: floatingX }}
       />
 
     </section>
