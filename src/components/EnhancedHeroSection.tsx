@@ -132,7 +132,7 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
         
           {/* AI Terminal with Parallax */}
           <div className="hidden lg:block mt-8 lg:mt-0 h-full">
-            <ParallaxText speed={0.1}>
+            <ParallaxText speed={0.1} containerClassName="h-full">
               <AICodeScreen />
             </ParallaxText>
           </div>

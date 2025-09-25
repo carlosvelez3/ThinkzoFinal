@@ -5,6 +5,7 @@ interface ParallaxTextProps {
   children: React.ReactNode;
   speed?: number;
   className?: string;
+  containerClassName?: string;
   direction?: 'up' | 'down';
 }
 
@@ -12,6 +13,7 @@ export function ParallaxText({
   children, 
   speed = 0.5, 
   className = '',
+  containerClassName = '',
   direction = 'up'
 }: ParallaxTextProps) {
   const ref = useRef<HTMLDivElement>(null);
@@ -30,7 +32,7 @@ export function ParallaxText({
     <div ref={ref} className={`relative ${className}`}>
       <motion.div
         style={{ y }}
-        className="will-change-transform"
+        className={`will-change-transform ${containerClassName}`}
       >
         {children}
       </motion.div>
