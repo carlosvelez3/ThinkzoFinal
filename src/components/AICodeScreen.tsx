@@ -148,7 +148,7 @@ export function AICodeScreen() {
   return (
     <div className="relative w-full">
       {/* Computer Screen Frame */}
-      <div className="relative bg-gradient-to-br from-terminal-bg-start to-terminal-bg-end rounded-2xl shadow-2xl border border-gray-700 overflow-hidden flex flex-col h-full max-h-[80vh] min-h-[400px]">
+      <div className="relative bg-gradient-to-br from-terminal-bg-start to-terminal-bg-end rounded-2xl shadow-2xl border border-gray-700 overflow-hidden flex flex-col max-h-[80vh] min-h-[400px]">
         {/* Screen Header */}
         <div className="bg-terminal-bg-end px-2 py-3 flex items-center justify-between border-b border-gray-700">
           <div className="flex items-center space-x-3">
@@ -179,7 +179,7 @@ export function AICodeScreen() {
         </div>
 
         {/* Code Display Area - EXPANDED WIDTH AND FIXED HEIGHT */}
-        <div className="bg-terminal-bg-end font-mono text-sm flex-1 overflow-hidden">
+        <div className="bg-terminal-bg-end font-mono text-sm flex-1 flex flex-col">
           {/* Fixed Header Section */}
           <div className="px-6 pt-6 pb-4">
             <div className="flex items-center space-x-2 text-gray-400">
@@ -195,18 +195,16 @@ export function AICodeScreen() {
           </div>
 
           {/* Fixed Code Content Area */}
-          <div className="px-6 pb-6 flex-grow overflow-hidden">
-            <div className="h-full overflow-y-auto">
-              <pre className="text-gray-300 leading-relaxed whitespace-pre-wrap m-0 p-0">
-                <code className="block font-mono">
-                  {displayedCode}
-                  <span
-                    className="inline-block w-2 bg-primary-accent ml-1 animate-pulse"
-                    style={{ height: '1.625em' }}
-                  />
-                </code>
-              </pre>
-            </div>
+          <div className="px-6 pb-6 flex-1 overflow-y-auto min-h-0">
+            <pre className="text-gray-300 leading-relaxed whitespace-pre-wrap m-0 p-0">
+              <code className="block font-mono">
+                {displayedCode}
+                <span
+                  className="inline-block w-2 bg-primary-accent ml-1 animate-pulse"
+                  style={{ height: '1.625em' }}
+                />
+              </code>
+            </pre>
           </div>
         </div>
 
