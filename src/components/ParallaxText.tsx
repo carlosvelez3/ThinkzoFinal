@@ -30,18 +30,6 @@ export function ParallaxText({
   const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1.1, 1, 1.1]);
 
   return (
-    <div ref={ref} className={`relative overflow-hidden ${className}`}>
-      <motion.img
-        src={src}
-        alt={alt}
-        style={{ y, scale }}
-        className="w-full h-full object-cover will-change-transform"
-        loading="lazy"
-      />
-    </div>
-  );
-
-  return (
     <div ref={ref} className={`relative h-full ${className}`}>
       <motion.div
         style={{ y }}
