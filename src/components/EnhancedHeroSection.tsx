@@ -121,16 +121,10 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
             >
               <ScrollRevealText className="text-lg md:text-xl lg:text-2xl mb-8 leading-relaxed opacity-95 font-normal cursor-default text-white max-w-4xl mx-auto">
                 We create smart websites that help your business grow. Our AI-powered solutions boost your online presence and drive real results.
-              onClick={onOpenContactModal}
-            >
-              {displayedTexts[0] || ''} {displayedTexts[1] || ''}
-              {!isComplete && (
-                <span 
-                  className="inline-block w-3 ml-1 bg-white/80 animate-pulse" 
-                  style={{ height: '1em' }}
-                  aria-hidden="true"
-                />
-              )}
+              </ScrollRevealText>
+            </motion.div>
+
+            <motion.button
               onClick={handleContactClick}
               onKeyDown={handleKeyDown}
               className="group relative bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white px-8 py-4 rounded-xl font-bold text-lg md:text-xl transition-all duration-300 transform hover:scale-105 focus:scale-105 shadow-2xl hover:shadow-amber-500/50 focus:shadow-amber-500/50 focus:outline-none focus:ring-4 focus:ring-amber-500/30 focus:ring-offset-2 focus:ring-offset-transparent"
@@ -160,15 +154,12 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
               <AICodeScreen />
             </ParallaxText>
           </div>
-        
+        </div>
       </motion.div>
+      
       {/* Floating Elements with Scroll-Based Animation */}
       <motion.div
         className="absolute top-1/3 right-20 w-32 h-32 bg-gradient-to-r from-cta-yellow/20 to-primary-accent/20 rounded-full blur-2xl"
-        style={{
-          y: useTransform(scrollY, [0, 1000], [0, -200]),
-          x: useTransform(scrollY, [0, 1000], [0, -150])
-        }}
         style={{ 
           y: parallaxTransforms.floatingY, 
           x: parallaxTransforms.floatingX 
