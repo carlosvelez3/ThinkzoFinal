@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { AICodeScreen } from './AICodeScreen';
 import { ParallaxText } from './ParallaxText';
@@ -9,54 +9,73 @@ interface EnhancedHeroSectionProps {
   onOpenContactModal: () => void;
 }
 
+// Custom hook for typing animation
+function useTypingAnimation(texts: string[], speed: number = 80) {
+  const [displayedTexts, setDisplayedTexts] = useState<string[]>([]);
+  const [currentTextIndex, setCurrentTextIndex] = useState(0);
+  const [currentCharIndex, setCurrentCharIndex] = useState(0);
+  const [isComplete, setIsComplete] = useState(false);
+
+  useEffect(() => {
+    if (currentTextIndex >= texts.length) {
+      setIsComplete(true);
+      return;
+    }
+
+    const currentText = texts[currentTextIndex];
+    
+    if (currentCharIndex < currentText.length) {
+      const timer = setTimeout(() => {
+        setDisplayedTexts(prev => {
+          const newTexts = [...prev];
+          newTexts[currentTextIndex] = currentText.slice(0, currentCharIndex + 1);
+          return newTexts;
+        });
+        setCurrentCharIndex(prev => prev + 1);
+      }, speed);
+
+      return () => clearTimeout(timer);
+    } else {
+      // Move to next text after a pause
+      const pauseTimer = setTimeout(() => {
+        setCurrentTextIndex(prev => prev + 1);
+        setCurrentCharIndex(0);
+      }, 200);
+
+      return () => clearTimeout(pauseTimer);
+    }
+  }, [texts, speed, currentTextIndex, currentCharIndex]);
+
+  return { displayedTexts, isComplete };
+}
+
 export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionProps) {
-  const [displayedNextGen, setDisplayedNextGen] = useState('');
-  const [displayedAISolutions, setDisplayedAISolutions] = useState('');
-  
-  const fullNextGenText = 'Next-Generation';
-  const fullAISolutionsText = 'AI Solutions';
+  const typingTexts = ['Next-Generation', 'AI Solutions'];
+  const { displayedTexts, isComplete } = useTypingAnimation(typingTexts);
 
   // Parallax effects for hero content
   const { scrollY } = useScroll();
-  const heroY = useTransform(scrollY, [0, 800], [0, -200]);
-  const heroOpacity = useTransform(scrollY, [0, 400], [1, 0.3]);
-  const heroScale = useTransform(scrollY, [0, 400], [1, 0.95]);
+  
+  // Memoize transform calculations to prevent recreation on each render
+  const parallaxTransforms = useMemo(() => ({
+    heroY: useTransform(scrollY, [0, 800], [0, -200]),
+    heroOpacity: useTransform(scrollY, [0, 400], [1, 0.3]),
+    heroScale: useTransform(scrollY, [0, 400], [1, 0.95]),
+    floatingY: useTransform(scrollY, [0, 1000], [0, -200]),
+    floatingX: useTransform(scrollY, [0, 1000], [0, -150])
+  }), [scrollY]);
 
-  useEffect(() => {
-    const typingSpeed = 80;
-    let nextGenIndex = 0;
-    let aiSolutionsIndex = 0;
-    let nextGenTimer: NodeJS.Timeout | undefined;
-    let aiSolutionsTimer: NodeJS.Timeout | undefined;
+  // Memoize button click handler
+  const handleContactClick = useCallback(() => {
+    onOpenContactModal();
+  }, [onOpenContactModal]);
 
-    const typeNextGen = (): void => {
-      if (nextGenIndex < fullNextGenText.length) {
-        setDisplayedNextGen(fullNextGenText.slice(0, nextGenIndex + 1));
-        nextGenIndex++;
-        nextGenTimer = setTimeout(typeNextGen, typingSpeed);
-      } else {
-        // Start typing AI Solutions after a brief pause
-        setTimeout(typeAISolutions, 200);
-      }
-    };
-
-    const typeAISolutions = (): void => {
-      if (aiSolutionsIndex < fullAISolutionsText.length) {
-        setDisplayedAISolutions(fullAISolutionsText.slice(0, aiSolutionsIndex + 1));
-        aiSolutionsIndex++;
-        aiSolutionsTimer = setTimeout(typeAISolutions, typingSpeed);
-      }
-    };
-
-    // Start the typing animation
-    typeNextGen();
-
-    // Cleanup function
-    return (): void => {
-      if (nextGenTimer) clearTimeout(nextGenTimer);
-      if (aiSolutionsTimer) clearTimeout(aiSolutionsTimer);
-    };
-  }, []);
+  const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onOpenContactModal();
+    }
+  }, [onOpenContactModal]);
 
   return (
     <section 
@@ -67,7 +86,11 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
       {/* Parallax Hero Content */}
       <motion.div 
         className="relative z-10 pt-24 px-4 h-[calc(100%-6rem)]"
-        style={{ y: heroY, opacity: heroOpacity, scale: heroScale }}
+        style={{ 
+          y: parallaxTransforms.heroY, 
+          opacity: parallaxTransforms.heroOpacity, 
+          scale: parallaxTransforms.heroScale 
+        }}
       >
         <div className="max-w-7xl mx-auto w-full lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center h-full flex flex-col">
           
@@ -98,17 +121,18 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
             >
               <ScrollRevealText className="text-lg md:text-xl lg:text-2xl mb-8 leading-relaxed opacity-95 font-normal cursor-default text-white max-w-4xl mx-auto">
                 We create smart websites that help your business grow. Our AI-powered solutions boost your online presence and drive real results.
-              </ScrollRevealText>
-            </motion.div>
-            
-            <motion.button
               onClick={onOpenContactModal}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                  event.preventDefault();
-                  onOpenContactModal();
-                }
-              }}
+            >
+              {displayedTexts[0] || ''} {displayedTexts[1] || ''}
+              {!isComplete && (
+                <span 
+                  className="inline-block w-3 ml-1 bg-white/80 animate-pulse" 
+                  style={{ height: '1em' }}
+                  aria-hidden="true"
+                />
+              )}
+              onClick={handleContactClick}
+              onKeyDown={handleKeyDown}
               className="group relative bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white px-8 py-4 rounded-xl font-bold text-lg md:text-xl transition-all duration-300 transform hover:scale-105 focus:scale-105 shadow-2xl hover:shadow-amber-500/50 focus:shadow-amber-500/50 focus:outline-none focus:ring-4 focus:ring-amber-500/30 focus:ring-offset-2 focus:ring-offset-transparent"
               aria-label="Start your AI journey - Open contact form"
               initial={{ opacity: 0, y: 30 }}
@@ -137,9 +161,7 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
             </ParallaxText>
           </div>
         
-        </div>
       </motion.div>
-
       {/* Floating Elements with Scroll-Based Animation */}
       <motion.div
         className="absolute top-1/3 right-20 w-32 h-32 bg-gradient-to-r from-cta-yellow/20 to-primary-accent/20 rounded-full blur-2xl"
@@ -147,7 +169,10 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
           y: useTransform(scrollY, [0, 1000], [0, -200]),
           x: useTransform(scrollY, [0, 1000], [0, -150])
         }}
-        aria-hidden="true"
+        style={{ 
+          y: parallaxTransforms.floatingY, 
+          x: parallaxTransforms.floatingX 
+        }}
       />
 
     </section>
