@@ -22,6 +22,7 @@ export function useRecaptchaV3() {
     if (IS_LOCALHOST) {
       setIsReady(true);
       setIsLoading(false);
+      setError(null);
       return;
     }
 
