@@ -25,10 +25,7 @@ export function ParallaxText({
   const y = useTransform(
     scrollYProgress,
     [0, 1],
-    direction === 'up' ? [100 * speed, -100 * speed] : [-100 * speed, 100 * speed]
-  );
-
-  return (
+    [50 * speed, -50 * speed]
     <div ref={ref} className={`relative h-full ${className}`}>
       <motion.div
         style={{ y }}
