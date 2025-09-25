@@ -36,7 +36,7 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <div className="relative min-h-screen">
+      <div className="relative">
         {/* Skip to main content link for keyboard users */}
         <a 
           href="#main-content" 
@@ -58,9 +58,9 @@ function App() {
         <ReadingProgressIndicator />
 
         {/* Main Content */}
-        <div className="relative h-full">
+        <div className="relative">
           <Header onOpenContactModal={openContactModal} />
-          <main id="main-content" tabIndex={-1} role="main" className="h-full">
+          <main id="main-content" tabIndex={-1} role="main">
             <EnhancedHeroSection onOpenContactModal={openContactModal} />
           </main>
           <ServicesSection onOpenContactModal={openContactModal} />
