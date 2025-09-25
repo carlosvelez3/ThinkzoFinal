@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+
 import { AICodeScreen } from './AICodeScreen';
 import { ParallaxText } from './ParallaxText';
 import { ScrollRevealText } from './ScrollRevealText';
@@ -34,7 +35,9 @@ function useTypingAnimation(texts: string[], speed: number = 80) {
         setCurrentCharIndex(prev => prev + 1);
       }, speed);
 
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(timer);
+      };
     } else {
       // Move to next text after a pause
       const pauseTimer = setTimeout(() => {
@@ -42,7 +45,9 @@ function useTypingAnimation(texts: string[], speed: number = 80) {
         setCurrentCharIndex(0);
       }, 200);
 
-      return () => clearTimeout(pauseTimer);
+      return () => {
+        clearTimeout(pauseTimer);
+      };
     }
   }, [texts, speed, currentTextIndex, currentCharIndex]);
 
@@ -90,75 +95,71 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
           
         {/* Main Text Content with Enhanced Animations */}
         <div className="text-center lg:text-left text-white">
-            <motion.h1 
-              id="hero-heading"
-              className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-8 leading-tight cursor-default font-montserrat text-white"
-              aria-describedby="hero-description"
-              style={{
-                lineHeight: '1.1',
-                letterSpacing: '0.025em',
-                textShadow: '0 2px 4px rgba(0,0,0,0.3)'
-              }}
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.2 }}
-            >
-              <ParallaxText speed={0.2}>
-                A<AnimatedI />-Powered Web Development Solutions for Modern Businesses
-              </ParallaxText>
-            </motion.h1>
-            
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.5 }}
-            >
-              <ScrollRevealText className="text-lg md:text-xl lg:text-2xl mb-8 leading-relaxed opacity-95 font-normal cursor-default text-white max-w-4xl mx-auto">
-                We create smart websites that help your business grow. Our AI-powered solutions boost your online presence and drive real results.
-              </ScrollRevealText>
-            </motion.div>
+          <motion.h1 
+            id="hero-heading"
+            className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-8 leading-tight cursor-default font-montserrat text-white"
+            aria-describedby="hero-description"
+            style={{
+              lineHeight: '1.1',
+              letterSpacing: '0.025em',
+              textShadow: '0 2px 4px rgba(0,0,0,0.3)'
+            }}
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.2 }}
+          <div className="hidden lg:block mt-8 lg:mt-0 flex-1 max-h-[80vh]">
+            <ParallaxText speed={0.2}>
+              A<AnimatedI />-Powered Web Development Solutions for Modern Businesses
+            </ParallaxText>
+          </motion.h1>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.5 }}
+          >
+            <ScrollRevealText className="text-lg md:text-xl lg:text-2xl mb-8 leading-relaxed opacity-95 font-normal cursor-default text-white max-w-4xl mx-auto">
+              We create smart websites that help your business grow. Our AI-powered solutions boost your online presence and drive real results.
+            </ScrollRevealText>
+          </motion.div>
 
-            <motion.button
-              onClick={handleContactClick}
-              onKeyDown={handleKeyDown}
-              className="group relative bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white px-8 py-4 rounded-xl font-bold text-lg md:text-xl transition-all duration-300 transform hover:scale-105 focus:scale-105 shadow-2xl hover:shadow-amber-500/50 focus:shadow-amber-500/50 focus:outline-none focus:ring-4 focus:ring-amber-500/30 focus:ring-offset-2 focus:ring-offset-transparent"
-              aria-label="Start your AI journey - Open contact form"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 2.4 }}
-              whileHover={{ 
-                scale: 1.05,
-                boxShadow: "0 20px 40px rgba(217, 119, 6, 0.4)",
-                textShadow: "0 0 20px rgba(255, 255, 255, 0.9)"
-              }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <span className="relative z-10">Launch Your AI Journey</span>
-              <motion.div 
-                className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                aria-hidden="true"
-                initial={false}
-              />
-            </motion.button>
-          </div>
+          <motion.button
+            onClick={handleContactClick}
+            onKeyDown={handleKeyDown}
+            className="group relative bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white px-8 py-4 rounded-xl font-bold text-lg md:text-xl transition-all duration-300 transform hover:scale-105 focus:scale-105 shadow-2xl hover:shadow-amber-500/50 focus:shadow-amber-500/50 focus:outline-none focus:ring-4 focus:ring-amber-500/30 focus:ring-offset-2 focus:ring-offset-transparent"
+            aria-label="Start your AI journey - Open contact form"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 2.4 }}
+            whileHover={{ 
+              scale: 1.05,
+              boxShadow: "0 20px 40px rgba(217, 119, 6, 0.4)",
+              textShadow: "0 0 20px rgba(255, 255, 255, 0.9)"
+            }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <span className="relative z-10">Launch Your AI Journey</span>
+            <motion.div 
+              className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              aria-hidden="true"
+              initial={false}
+            />
+          </motion.button>
+        </div>
         
         {/* AI Terminal with Parallax */}
         <div className="hidden lg:block mt-8 lg:mt-0 flex-1">
-            <ParallaxText speed={0.1} containerClassName="h-full">
-              <AICodeScreen />
-            </ParallaxText>
-          </div>
-      
+          <ParallaxText speed={0.1} containerClassName="h-full">
+            <AICodeScreen />
+          </ParallaxText>
+        </div>
+      </div>
+    
       {/* Floating Elements with Scroll-Based Animation */}
       <motion.div
         className="absolute top-1/3 right-20 w-32 h-32 bg-gradient-to-r from-cta-yellow/20 to-primary-accent/20 rounded-full blur-2xl"
         style={{ y: floatingY, x: floatingX }}
       />
-
     </motion.section>
   );
-}
-  )
-}
-  )
 }
