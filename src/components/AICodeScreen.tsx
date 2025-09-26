@@ -193,7 +193,7 @@ export function AICodeScreen() {
         </div>
 
         {/* Code Content Area */}
-        <div className="px-6 pb-6 flex-1 overflow-y-auto min-h-0 bg-terminal-bg-end">
+        <div className="px-6 pb-6 flex-1 overflow-y-auto min-h-0">
           <pre className="text-gray-300 leading-relaxed whitespace-pre-wrap m-0 p-0 font-mono text-sm">
             <code className="block font-mono">
               {displayedCode}
