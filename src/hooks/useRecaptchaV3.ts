@@ -9,7 +9,7 @@ declare global {
   }
 }
 
-const RECAPTCHA_V3_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY || '6LeH0tIrAAAAAFRQ0NklcGxc-l35nhiEpaRvbHcB';
+const RECAPTCHA_V3_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY || '6LcsWtYrAAAAABDzceOtGIJhWApw_oHluZ5Z4P3k';
 const IS_LOCALHOST = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 const SHOULD_LOAD_RECAPTCHA = import.meta.env.VITE_ENABLE_RECAPTCHA === 'true';
 
