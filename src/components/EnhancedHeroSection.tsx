@@ -107,7 +107,7 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.2 }}
-          <div className="hidden lg:block mt-8 lg:mt-0 flex-1 max-h-[80vh]">
+          >
             <ParallaxText speed={0.2}>
               A<AnimatedI />-Powered Web Development Solutions for Modern Businesses
             </ParallaxText>
