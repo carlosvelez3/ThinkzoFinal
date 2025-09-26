@@ -146,7 +146,7 @@ export function AICodeScreen() {
   const currentSnippetData = codeSnippets[currentSnippet];
 
   return (
-    <div className="relative w-full h-full flex flex-col">
+    <div className="relative h-full flex flex-col">
       {/* Computer Screen Frame */}
       <div className="relative bg-gradient-to-br from-terminal-bg-start to-terminal-bg-end rounded-2xl shadow-2xl border border-gray-700 overflow-hidden flex flex-col h-full min-h-[400px]">
         {/* Screen Header */}
