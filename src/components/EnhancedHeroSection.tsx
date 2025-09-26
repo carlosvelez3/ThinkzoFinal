@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
-import { AICodeScreen } from './AICodeScreen';
+import AICodeScreen from './AICodeScreen';
 import { ParallaxText } from './ParallaxText';
 import { ScrollRevealText } from './ScrollRevealText';
 import { AnimatedI } from './AnimatedI';
