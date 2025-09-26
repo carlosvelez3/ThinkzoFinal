@@ -154,7 +154,11 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
           transition={{ duration: 1, delay: 0.2 }}
         >
           <div className="hidden lg:block mt-8 lg:mt-0 flex-1 max-h-[80vh] min-h-[400px]">
-            <AICodeScreen />
+            <ParallaxText speed={0.1} containerClassName="h-full">
+              <div className="h-full">
+                <AICodeScreen />
+              </div>
+            </ParallaxText>
           </div>
         </motion.div>
       </div>
