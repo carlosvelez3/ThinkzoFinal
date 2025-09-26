@@ -81,8 +81,11 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
   }, [onOpenContactModal]);
 
   return (
-    <motion.section 
-      className="relative overflow-hidden min-h-[calc(100vh-6rem)] flex items-stretch" 
+    <motion.section
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1, delay: 0.2 }}
+      className="relative w-full h-[calc(100vh-6rem)] flex items-center overflow-hidden"
       role="main" 
       aria-labelledby="hero-heading"
       style={{ 
@@ -91,13 +94,13 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
         scale: heroScale 
       }}
     >
-      <div className="relative z-10 pt-24 px-4 max-w-7xl mx-auto w-full lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center h-full flex flex-col">
-          
-        {/* Main Text Content with Enhanced Animations */}
-        <div className="text-center lg:text-left text-white">
+      <div className="max-w-7xl mx-auto w-full h-full lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center flex flex-col px-4">
+        
+        {/* Left Content */}
+        <div className="flex flex-col justify-center text-center lg:text-left text-white">
           <motion.h1 
             id="hero-heading"
-            className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-8 leading-tight cursor-default font-montserrat text-white"
+            className="text-4xl md:text-5xl lg:text-6xl font-bold mb-8 leading-tight cursor-default font-montserrat text-white"
             aria-describedby="hero-description"
             style={{
               lineHeight: '1.1',
@@ -109,7 +112,7 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
             transition={{ duration: 1, delay: 0.2 }}
           >
             <ParallaxText speed={0.2}>
-              A<AnimatedI />-Powered Web Development Solutions for Modern Businesses
+              A<AnimatedI />-Powered Web Development Solutions
             </ParallaxText>
           </motion.h1>
           
@@ -118,8 +121,8 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1.5 }}
           >
-            <ScrollRevealText className="text-lg md:text-xl lg:text-2xl mb-8 leading-relaxed opacity-95 font-normal cursor-default text-white max-w-4xl mx-auto">
-              We create smart websites that help your business grow. Our AI-powered solutions boost your online presence and drive real results.
+            <ScrollRevealText className="text-lg md:text-xl lg:text-2xl mb-8 leading-relaxed opacity-95 font-normal cursor-default text-white max-w-4xl mx-auto lg:mx-0">
+              Next-generation solutions for modern businesses. We create smart websites that help your business grow.
             </ScrollRevealText>
           </motion.div>
 
@@ -147,20 +150,12 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
           </motion.button>
         </div>
         
-        {/* AI Terminal with Parallax */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.2 }}
-        >
-          <div className="hidden lg:block mt-8 lg:mt-0 flex-1 max-h-[80vh] min-h-[400px]">
-            <ParallaxText speed={0.1} containerClassName="h-full">
-              <div className="h-full">
-                <AICodeScreen />
-              </div>
-            </ParallaxText>
-          </div>
-        </motion.div>
+        {/* Right Side — Terminal */}
+        <div className="hidden lg:flex items-center justify-center mt-8 lg:mt-0 flex-1 max-h-[80vh] min-h-[400px] h-full">
+          <ParallaxText speed={0.1} containerClassName="h-full w-full">
+            <AICodeScreen />
+          </ParallaxText>
+        </div>
       </div>
     
       {/* Floating Elements with Scroll-Based Animation */}
