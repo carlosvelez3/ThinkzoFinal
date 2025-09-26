@@ -167,5 +167,4 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
         style={{ y: floatingY, x: floatingX }}
       />
     </motion.section>
-  );
 }
