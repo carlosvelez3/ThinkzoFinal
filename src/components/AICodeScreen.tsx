@@ -148,7 +148,7 @@ export function AICodeScreen() {
   return (
     <div className="relative h-full flex flex-col">
       {/* Computer Screen Frame */}
-      <div className="relative bg-gradient-to-br from-terminal-bg-start to-terminal-bg-end rounded-2xl shadow-2xl border border-gray-700 overflow-hidden flex flex-col h-full min-h-[400px]">
+      <div className="relative bg-gradient-to-br from-terminal-bg-start to-terminal-bg-end rounded-2xl shadow-2xl border border-gray-700 overflow-hidden flex flex-col h-full">
         {/* Screen Header */}
         <div className="bg-terminal-bg-end px-2 py-3 flex items-center justify-between border-b border-gray-700">
           <div className="flex items-center space-x-3">
@@ -178,34 +178,31 @@ export function AICodeScreen() {
           </div>
         </div>
 
-        {/* Code Display Area - EXPANDED WIDTH AND FIXED HEIGHT */}
-        <div className="bg-terminal-bg-end font-mono text-sm flex-1 flex flex-col">
-          {/* Fixed Header Section */}
-          <div className="px-6 pt-6 pb-4">
-            <div className="flex items-center space-x-2 text-gray-400">
-              <Play className="w-4 h-4 text-secondary-blue" />
-              <span>Executing A<AnimatedI /> algorithms...</span>
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-              >
-                <Zap className="w-4 h-4 text-primary-accent" />
-              </motion.div>
-            </div>
+        {/* Fixed Header Section */}
+        <div className="bg-terminal-bg-end px-6 pt-6 pb-4">
+          <div className="flex items-center space-x-2 text-gray-400">
+            <Play className="w-4 h-4 text-secondary-blue" />
+            <span>Executing A<AnimatedI /> algorithms...</span>
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            >
+              <Zap className="w-4 h-4 text-primary-accent" />
+            </motion.div>
           </div>
+        </div>
 
-          {/* Fixed Code Content Area */}
-          <div className="px-6 pb-6 flex-1 overflow-y-auto min-h-0">
-            <pre className="text-gray-300 leading-relaxed whitespace-pre-wrap m-0 p-0">
-              <code className="block font-mono">
-                {displayedCode}
-                <span
-                  className="inline-block w-2 bg-primary-accent ml-1 animate-pulse"
-                  style={{ height: '1.625em' }}
-                />
-              </code>
-            </pre>
-          </div>
+        {/* Code Content Area */}
+        <div className="px-6 pb-6 flex-1 overflow-y-auto min-h-0 bg-terminal-bg-end">
+          <pre className="text-gray-300 leading-relaxed whitespace-pre-wrap m-0 p-0 font-mono text-sm">
+            <code className="block font-mono">
+              {displayedCode}
+              <span
+                className="inline-block w-2 bg-primary-accent ml-1 animate-pulse"
+                style={{ height: '1.625em' }}
+              />
+            </code>
+          </pre>
         </div>
 
         {/* Status Bar */}
