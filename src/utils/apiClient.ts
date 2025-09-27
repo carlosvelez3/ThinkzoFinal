@@ -206,6 +206,11 @@ class ApiClient {
 // Create default instance
 export const apiClient = new ApiClient(import.meta.env.VITE_SUPABASE_URL || '');
 
+// Set the Supabase anonymous key as the authorization header
+if (import.meta.env.VITE_SUPABASE_ANON_KEY) {
+  apiClient.setAuthToken(import.meta.env.VITE_SUPABASE_ANON_KEY);
+}
+
 // Utility function for handling API calls with automatic error handling
 export async function withApiErrorHandling<T>(
   apiCall: () => Promise<ApiResponse<T>>,
