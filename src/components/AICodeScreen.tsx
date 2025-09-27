@@ -130,11 +130,11 @@ export default function AICodeScreen({ children }: AICodeScreenProps) {
   return (
     <div
       className="
-        relative 
+        relative w-full max-w-none
         bg-gradient-to-br from-terminal-bg-start to-terminal-bg-end 
         rounded-2xl shadow-2xl border border-gray-600 
         overflow-hidden flex flex-col 
-        max-h-[80vh] min-h-[400px] h-full w-full
+        max-h-[80vh] min-h-[500px] h-full
         backdrop-blur-sm
       "
     >
@@ -157,10 +157,15 @@ export default function AICodeScreen({ children }: AICodeScreenProps) {
       {/* Terminal Body — scrollable */}
       <div
         className="
-          flex-1 overflow-y-auto h-full 
+          flex-1 overflow-y-scroll h-full 
           px-4 py-3 font-mono text-sm leading-relaxed 
           text-white
+          scrollbar-gutter-stable
         "
+        style={{
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#4B5563 #374151'
+        }}
       >
         {children || (
           <div className="space-y-1">

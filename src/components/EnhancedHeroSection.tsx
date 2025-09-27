@@ -151,7 +151,7 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
         </div>
         
         {/* Right Side — Terminal */}
-        <div className="hidden lg:flex items-center justify-center mt-8 lg:mt-0 flex-1 max-h-[80vh] min-h-[400px] h-full">
+        <div className="hidden lg:flex items-start justify-end mt-8 lg:mt-0 flex-1 max-h-[80vh] min-h-[500px] h-full w-full">
           <ParallaxText speed={0.1} containerClassName="h-full w-full">
             <AICodeScreen />
           </ParallaxText>

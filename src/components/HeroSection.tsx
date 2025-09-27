@@ -145,7 +145,7 @@ export function HeroSection({ onOpenContactModal }: HeroSectionProps) {
           </div>
         
           {/* AI Terminal - Grid Column */}
-          <div className="hidden lg:block mt-8 lg:mt-0">
+          <div className="hidden lg:block mt-8 lg:mt-0 w-full">
             <AICodeScreen />
           </div>
         </div>
