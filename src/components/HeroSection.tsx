@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { AICodeScreen } from './AICodeScreen';
+import AICodeScreen from './AICodeScreen';
 
 interface HeroSectionProps {
   onOpenContactModal: () => void;
