@@ -58,9 +58,10 @@ export function HeroSection({ onOpenContactModal }: HeroSectionProps) {
       {/* Main Content Grid */}
       <div className="relative z-10 pt-24 px-4">
         <div className="max-w-7xl mx-auto w-full lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
+      <div className="max-w-7xl mx-auto w-full lg:grid lg:grid-cols-3 lg:gap-8 lg:items-start">
           
           {/* Main Text Content */}
-          <div className="text-center lg:text-left text-white">
+          <div className="text-center lg:text-left text-white lg:col-span-1">
             <h1 
               id="hero-heading"
               className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-8 leading-tight cursor-default font-montserrat text-white"
@@ -145,7 +146,7 @@ export function HeroSection({ onOpenContactModal }: HeroSectionProps) {
           </div>
         
           {/* AI Terminal - Grid Column */}
-          <div className="hidden lg:block mt-8 lg:mt-0 w-full">
+          <div className="hidden lg:block mt-8 lg:mt-0 w-full lg:col-span-2">
             <AICodeScreen />
           </div>
         </div>

@@ -95,9 +95,10 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
       }}
     >
       <div className="max-w-7xl mx-auto w-full h-full lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center flex flex-col px-4">
+      <div className="max-w-7xl mx-auto w-full h-full lg:grid lg:grid-cols-3 lg:gap-8 lg:items-start flex flex-col px-4">
         
         {/* Left Content */}
-        <div className="flex flex-col justify-center text-center lg:text-left text-white">
+        <div className="flex flex-col justify-center text-center lg:text-left text-white lg:col-span-1">
           <motion.h1 
             id="hero-heading"
             className="text-4xl md:text-5xl lg:text-6xl font-bold mb-8 leading-tight cursor-default font-montserrat text-white"
@@ -151,7 +152,7 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
         </div>
         
         {/* Right Side — Terminal */}
-        <div className="hidden lg:flex items-start justify-end mt-8 lg:mt-0 flex-1 max-h-[80vh] min-h-[500px] h-full w-full">
+        <div className="hidden lg:flex items-start justify-end mt-8 lg:mt-0 flex-1 max-h-[80vh] min-h-[500px] h-full w-full lg:col-span-2">
           <ParallaxText speed={0.1} containerClassName="h-full w-full">
             <AICodeScreen />
           </ParallaxText>
