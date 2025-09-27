@@ -92,7 +92,7 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
       <div className="max-w-7xl mx-auto w-full h-full lg:grid lg:grid-cols-3 lg:gap-8 lg:items-start flex flex-col px-4">
         
           {/* Left Content */}
-          <div className="flex flex-col justify-center text-center lg:text-left text-white lg:col-span-1">
+          <div className="flex flex-col justify-center text-center lg:text-left text-white lg:col-span-2">
             <motion.h1 
               id="hero-heading"
               className="text-4xl md:text-5xl lg:text-6xl font-bold mb-8 leading-tight cursor-default font-montserrat text-white"
@@ -146,7 +146,7 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
           </div>
         
           {/* Right Side — Terminal */}
-          <div className="hidden lg:flex items-center justify-center mt-8 lg:mt-0 flex-1 lg:col-span-2">
+          <div className="hidden lg:flex items-center justify-center mt-8 lg:mt-0 flex-1 lg:col-span-3">
             <AICodeScreen />
           </div>
       </div>
