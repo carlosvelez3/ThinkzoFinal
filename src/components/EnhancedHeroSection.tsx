@@ -95,7 +95,6 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
       }}
     >
       <div className="max-w-7xl mx-auto w-full h-full lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center flex flex-col px-4">
-      <div className="max-w-7xl mx-auto w-full h-full lg:grid lg:grid-cols-3 lg:gap-8 lg:items-start flex flex-col px-4">
         
         {/* Left Content */}
         <div className="flex flex-col justify-center text-center lg:text-left text-white lg:col-span-1">
@@ -152,11 +151,12 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
         </div>
         
         {/* Right Side — Terminal */}
-        <div className="hidden lg:flex items-start justify-end mt-8 lg:mt-0 flex-1 max-h-[80vh] min-h-[500px] h-full w-full lg:col-span-2">
+        <div className="hidden lg:flex items-start justify-end mt-8 lg:mt-0 flex-1 max-h-[80vh] min-h-[500px] h-full w-full">
           <ParallaxText speed={0.1} containerClassName="h-full w-full">
             <AICodeScreen />
           </ParallaxText>
         </div>
+      </div>
       </div>
     
       {/* Floating Elements with Scroll-Based Animation */}
@@ -165,7 +165,5 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
         style={{ y: floatingY, x: floatingX }}
       />
     </motion.section>
-  )
-}
   )
 }
