@@ -1,4 +1,3 @@
-```typescript
 import React, { useState, useEffect } from "react";
 
 interface AICodeScreenProps {
@@ -181,4 +180,3 @@ export default function AICodeScreen({ children }: AICodeScreenProps) {
     </div>
   );
 }
-```
