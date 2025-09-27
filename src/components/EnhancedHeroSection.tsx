@@ -157,7 +157,6 @@ export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionP
           </ParallaxText>
         </div>
       </div>
-      </div>
     
       {/* Floating Elements with Scroll-Based Animation */}
       <motion.div
