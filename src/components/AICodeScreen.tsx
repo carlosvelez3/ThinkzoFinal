@@ -91,18 +91,18 @@ export default function AICodeScreen({ children }: AICodeScreenProps) {
     <div
       className="
         relative 
-        bg-cream-100 
-        rounded-2xl shadow-2xl border border-gray-300
+        bg-gradient-to-br from-terminal-bg-start to-terminal-bg-end 
+        rounded-2xl shadow-2xl border border-gray-700 
         overflow-hidden flex flex-col 
         max-h-[80vh] min-h-[400px] h-full w-full
       "
     >
       {/* Terminal Header */}
-      <div className="flex items-center space-x-2 bg-gray-200 px-3 py-2 border-b border-gray-300">
+      <div className="flex items-center space-x-2 bg-gray-800/80 px-3 py-2 border-b border-gray-700">
         <span className="w-3 h-3 rounded-full bg-red-500" />
         <span className="w-3 h-3 rounded-full bg-yellow-500" />
         <span className="w-3 h-3 rounded-full bg-green-500" />
-        <span className="ml-3 text-sm text-gray-800 font-medium">AI Terminal</span>
+        <span className="ml-3 text-sm text-gray-300 font-medium">AI Terminal</span>
       </div>
 
       {/* Terminal Body — scrollable */}
@@ -110,8 +110,7 @@ export default function AICodeScreen({ children }: AICodeScreenProps) {
         className="
           flex-1 overflow-y-auto h-full 
           px-4 py-3 font-mono text-sm leading-relaxed 
-          text-gray-900
-          bg-[#FFFDF5]
+          text-green-400
         "
       >
         {children || (
@@ -121,7 +120,7 @@ export default function AICodeScreen({ children }: AICodeScreenProps) {
                 <span className="whitespace-pre-wrap break-words">
                   {line}
                   {index === currentLineIndex && showCursor && (
-                    <span className="inline-block w-2 h-4 bg-gray-900 ml-1 animate-pulse" />
+                    <span className="inline-block w-2 h-4 bg-green-400 ml-1 animate-pulse" />
                   )}
                 </span>
               </div>
