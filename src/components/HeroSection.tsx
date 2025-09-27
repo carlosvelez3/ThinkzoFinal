@@ -155,3 +155,5 @@ export function HeroSection({ onOpenContactModal }: HeroSectionProps) {
     </section>
   );
 }
+  )
+}
