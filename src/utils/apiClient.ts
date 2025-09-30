@@ -31,6 +31,7 @@ class ApiClient {
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseURL}${endpoint}`;
+    console.log('[API Client] Request:', { url, method: options.method || 'GET', baseURL: this.baseURL, endpoint });
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
@@ -43,6 +44,8 @@ class ApiClient {
         },
         signal: controller.signal,
       });
+
+      console.log('[API Client] Response:', { status: response.status, statusText: response.statusText, url });
 
       clearTimeout(timeoutId);
 
@@ -60,6 +63,8 @@ class ApiClient {
       clearTimeout(timeoutId);
 
       if (error instanceof Error) {
+        console.error('[API Client] Error:', error);
+
         if (error.name === 'AbortError') {
           throw ErrorHandler.createAPIError(
             'Request timeout',
@@ -68,10 +73,10 @@ class ApiClient {
           );
         }
 
-        if (error.message.includes('fetch')) {
+        if (error.message.includes('fetch') || error.message.includes('Failed to fetch')) {
           throw ErrorHandler.createNetworkError(
-            'Network connection failed',
-            { endpoint, originalError: error.message }
+            'Network connection failed. Cannot reach the server.',
+            { endpoint, url, originalError: error.message }
           );
         }
       }
