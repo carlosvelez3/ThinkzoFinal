@@ -1,6 +1,5 @@
 import React from 'react';
 import { SmartForm } from './FormValidation/SmartForm';
-import { useRecaptchaV3 } from '../hooks/useRecaptchaV3';
 import { submitContactForm, FormSubmissionData } from '../services/formSubmissionService';
 import { useErrorHandler } from '../hooks/useErrorHandler';
 import { useOfflineStatus } from '../hooks/useOfflineStatus';
@@ -20,7 +19,6 @@ const PROJECT_TYPES = [
 ];
 
 export function ContactForm({ onCloseModal }: ContactFormProps) {
-  const { executeRecaptcha, isReady: recaptchaReady, error: recaptchaError } = useRecaptchaV3();
   const { handleAsyncError, createValidationError } = useErrorHandler();
   const { isOnline, addToOfflineQueue } = useOfflineStatus();
 
@@ -74,9 +72,6 @@ export function ContactForm({ onCloseModal }: ContactFormProps) {
       showProgressSteps={true}
       onSubmit={handleSubmit}
       onSuccess={handleSuccess}
-      executeRecaptcha={executeRecaptcha}
-      recaptchaReady={recaptchaReady}
-      recaptchaError={recaptchaError}
     />
   );
 }

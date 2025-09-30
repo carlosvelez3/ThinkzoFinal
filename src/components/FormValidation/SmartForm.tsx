@@ -38,9 +38,6 @@ interface SmartFormProps {
   formFields?: FormField[];
   onSuccess?: (data: FormData) => void;
   onSubmit?: (data: FormData) => Promise<void>;
-  executeRecaptcha?: (action: string) => Promise<string | null>;
-  recaptchaReady?: boolean;
-  recaptchaError?: string | null;
   title?: string;
   description?: string;
   submitButtonText?: string;
@@ -65,9 +62,6 @@ export function SmartForm({
   formFields: customFormFields,
   onSuccess,
   onSubmit,
-  executeRecaptcha,
-  recaptchaReady = true,
-  recaptchaError,
   title = "Get Started",
   description = "Tell us about your project and we'll get back to you with a custom proposal.",
   submitButtonText = "Submit Project Request",
@@ -399,20 +393,7 @@ export function SmartForm({
     setIsSubmitting(true);
     
     const result = await handleAsyncError(async () => {
-      // Get reCAPTCHA token if available
-      let recaptchaToken: string | null = null;
-      if (executeRecaptcha) {
-        recaptchaToken = await executeRecaptcha('contact_form_submit');
-        if (!recaptchaToken) {
-          throw new Error('reCAPTCHA verification failed. Please try again.');
-        }
-      }
-
-      // Add reCAPTCHA token to form data
       const submissionData = { ...formData };
-      if (recaptchaToken) {
-        submissionData.recaptchaToken = recaptchaToken;
-      }
 
       if (onSubmit) {
         await onSubmit(submissionData);
@@ -754,17 +735,7 @@ export function SmartForm({
         )}
 
         <div className="text-center space-y-2">
-          <p>
-            {!recaptchaReady && executeRecaptcha
-              ? "Initializing security verification..."
-              : "We'll respond within 24 hours with next steps"
-            }
-          </p>
-          {executeRecaptcha && (
-            <p className="text-xs text-gray-500 text-center">
-              This site is protected by reCAPTCHA v3 for enhanced security without interruption.
-            </p>
-          )}
+          <p>We'll respond within 24 hours with next steps</p>
         </div>
       </form>
     </div>

@@ -13,19 +13,10 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { OfflineIndicator } from './components/OfflineIndicator';
 import { ReadingProgressIndicator } from './components/ReadingProgressIndicator';
 import { ScrollToTopButton } from './components/ScrollToTopButton';
-import { useRecaptchaV3 } from './hooks/useRecaptchaV3';
 
 function App() {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   
-  // Initialize reCAPTCHA v3 globally
-  const { isReady: recaptchaReady, error: recaptchaError } = useRecaptchaV3();
-
-  // Show error if reCAPTCHA fails to load
-  if (recaptchaError) {
-    console.error('reCAPTCHA failed to load:', recaptchaError);
-  }
-
   const openContactModal = useCallback(() => setIsContactModalOpen(true), []);
   const closeContactModal = useCallback(() => setIsContactModalOpen(false), []);
 
