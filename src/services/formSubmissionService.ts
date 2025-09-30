@@ -36,7 +36,7 @@ class FormSubmissionService {
   private readonly endpoint = '/functions/v1/submit-form';
 
   /**
-   * Submit form data directly to Supabase
+   * Submit form data directly to Supabase and send email
    */
   async submitForm(data: FormSubmissionData): Promise<FormSubmissionResponse> {
     try {
@@ -66,11 +66,66 @@ class FormSubmissionService {
         throw new Error('No submission data returned');
       }
 
+      let emailSent = false;
+
+      // Send email via edge function
+      try {
+        const emailResponse = await fetch(
+          `${supabaseUrl}/functions/v1/resend-email`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${supabaseAnonKey}`
+            },
+            body: JSON.stringify({
+              name: data.name,
+              email: data.email,
+              phone: data.phone,
+              company: data.company,
+              projectType: data.projectType,
+              message: data.message,
+              submissionId: submission.id
+            })
+          }
+        );
+
+        if (emailResponse.ok) {
+          emailSent = true;
+          // Update email status to sent
+          await supabase
+            .from('form_submissions')
+            .update({ email_sent_status: 'sent' })
+            .eq('id', submission.id);
+        } else {
+          const errorData = await emailResponse.json().catch(() => ({ error: 'Unknown error' }));
+          console.error('Email send failed:', errorData);
+          // Update email status to failed with error log
+          await supabase
+            .from('form_submissions')
+            .update({
+              email_sent_status: 'failed',
+              email_error_log: errorData.error || errorData.details || 'Email send failed'
+            })
+            .eq('id', submission.id);
+        }
+      } catch (emailError) {
+        console.error('Email send error:', emailError);
+        // Update email status to failed
+        await supabase
+          .from('form_submissions')
+          .update({
+            email_sent_status: 'failed',
+            email_error_log: emailError instanceof Error ? emailError.message : 'Email send failed'
+          })
+          .eq('id', submission.id);
+      }
+
       return {
         success: true,
         message: 'Form submitted successfully',
         submissionId: submission.id,
-        emailSent: false // Email will be sent via separate process
+        emailSent
       };
     } catch (error) {
       console.error('Form submission error:', error);
