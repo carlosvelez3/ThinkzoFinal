@@ -9,7 +9,6 @@ import { Modal } from './components/Modal';
 import { ContactForm } from './components/ContactForm';
 import { Footer } from './components/Footer';
 import { ThreeDScene } from './components/ThreeDScene';
-import { AccessibilityPanel } from './components/AccessibilitySettings';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { OfflineIndicator } from './components/OfflineIndicator';
 import { ReadingProgressIndicator } from './components/ReadingProgressIndicator';
@@ -85,7 +84,6 @@ function App() {
         
         {/* Global Components */}
         <OfflineIndicator />
-        <AccessibilityPanel />
         <ScrollToTopButton />
         
         {/* Toast Notifications */}
