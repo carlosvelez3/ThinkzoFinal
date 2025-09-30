@@ -1,5 +1,14 @@
 // Form submission service for frontend integration
-import { apiClient, withApiErrorHandling } from '../utils/apiClient';
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('Missing Supabase environment variables');
+}
+
+const supabase = createClient(supabaseUrl || '', supabaseAnonKey || '');
 
 export interface FormSubmissionData {
   name: string;
@@ -27,29 +36,58 @@ class FormSubmissionService {
   private readonly endpoint = '/functions/v1/submit-form';
 
   /**
-   * Submit form data to the backend API
+   * Submit form data directly to Supabase
    */
   async submitForm(data: FormSubmissionData): Promise<FormSubmissionResponse> {
-    const response = await apiClient.post<FormSubmissionResponse>(this.endpoint, data);
-    
-    if (!response.success) {
-      throw new Error(response.message || 'Form submission failed');
+    try {
+      // Insert form submission into database
+      const { data: submission, error } = await supabase
+        .from('form_submissions')
+        .insert([
+          {
+            name: data.name,
+            email: data.email,
+            phone: data.phone || null,
+            company: data.company || null,
+            project_type: data.projectType || null,
+            message: data.message,
+            email_sent_status: 'pending'
+          }
+        ])
+        .select('id')
+        .single();
+
+      if (error) {
+        console.error('Supabase error:', error);
+        throw new Error(error.message || 'Failed to save submission');
+      }
+
+      if (!submission) {
+        throw new Error('No submission data returned');
+      }
+
+      return {
+        success: true,
+        message: 'Form submitted successfully',
+        submissionId: submission.id,
+        emailSent: false // Email will be sent via separate process
+      };
+    } catch (error) {
+      console.error('Form submission error:', error);
+      throw error;
     }
-    
-    return response.data;
   }
 
   /**
    * Submit form with automatic error handling
    */
   async submitFormWithErrorHandling(data: FormSubmissionData): Promise<FormSubmissionResponse | null> {
-    return withApiErrorHandling(
-      () => this.submitForm(data),
-      { 
-        action: 'form_submission',
-        formData: { ...data, message: data.message.substring(0, 100) + '...' } // Truncate for logging
-      }
-    );
+    try {
+      return await this.submitForm(data);
+    } catch (error) {
+      console.error('Form submission failed:', error);
+      return null;
+    }
   }
 
   /**
