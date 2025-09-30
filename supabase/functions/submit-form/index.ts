@@ -1,97 +1,72 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { SmtpClient } from "https://deno.land/x/smtp@v0.7.0/mod.ts"
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from 'npm:@supabase/supabase-js@2';
 
-// CORS headers for cross-origin requests
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-}
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
+};
 
-// SMTP email service configuration
-const SMTP_HOST = Deno.env.get('SMTP_HOST') || 'mail.spacemail.com'
-const SMTP_PORT = parseInt(Deno.env.get('SMTP_PORT') || '465')
-const SMTP_USERNAME = Deno.env.get('SMTP_USERNAME')
-const SMTP_PASSWORD = Deno.env.get('SMTP_PASSWORD')
-const FROM_EMAIL = Deno.env.get('FROM_EMAIL') || 'noreply@thinkzo.ai'
-const COMPANY_NAME = 'Thinkzo.ai'
+const COMPANY_NAME = 'Thinkzo.ai';
 
-// Form submission interface
 interface FormSubmission {
-  name: string
-  email: string
-  phone?: string
-  company?: string
-  projectType?: string
-  message: string
-  recaptchaToken?: string
+  name: string;
+  email: string;
+  phone?: string;
+  company?: string;
+  projectType?: string;
+  message: string;
 }
 
-// reCAPTCHA v3 verification response interface
-interface RecaptchaResponse {
-  success: boolean // whether this request was a valid reCAPTCHA token for your site
-  score: number // the score for this request (0.0 - 1.0)
-  action: string // the action name for this request (important to verify)
-  challenge_ts: string // timestamp of the challenge load (ISO format yyyy-MM-dd'T'HH:mm:ssZ)
-  hostname: string // the hostname of the site where the reCAPTCHA was solved
-  'error-codes'?: string[] // optional; error codes from the API call
-}
-
-// Validation functions
 function validateEmail(email: string): boolean {
-  const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/
-  return emailRegex.test(email)
+  const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+  return emailRegex.test(email);
 }
 
 function validatePhone(phone: string): boolean {
-  if (!phone) return true // Phone is optional
-  const phoneRegex = /^\+?[\d\s\-\(\)]{10,}$/
-  return phoneRegex.test(phone.replace(/\s/g, ''))
+  if (!phone) return true;
+  const phoneRegex = /^\+?[\d\s\-\(\)]{10,}$/;
+  return phoneRegex.test(phone.replace(/\s/g, ''));
 }
 
 function sanitizeInput(input: string): string {
   return input
     .trim()
-    .replace(/[<>]/g, '') // Remove potential HTML tags
-    .substring(0, 2000) // Limit length
+    .replace(/[<>]/g, '')
+    .substring(0, 2000);
 }
 
 function validateFormData(data: any): { isValid: boolean; errors: string[]; sanitized?: FormSubmission } {
-  const errors: string[] = []
-  
-  // Check required fields
+  const errors: string[] = [];
+
   if (!data.name || typeof data.name !== 'string' || data.name.trim().length < 2) {
-    errors.push('Name is required and must be at least 2 characters')
+    errors.push('Name is required and must be at least 2 characters');
   }
-  
+
   if (!data.email || typeof data.email !== 'string' || !validateEmail(data.email)) {
-    errors.push('Valid email address is required')
+    errors.push('Valid email address is required');
   }
-  
+
   if (!data.message || typeof data.message !== 'string' || data.message.trim().length < 10) {
-    errors.push('Message is required and must be at least 10 characters')
+    errors.push('Message is required and must be at least 10 characters');
   }
-  
-  // Validate optional phone
+
   if (data.phone && !validatePhone(data.phone)) {
-    errors.push('Invalid phone number format')
+    errors.push('Invalid phone number format');
   }
-  
-  // Check length limits
+
   if (data.name && data.name.length > 100) {
-    errors.push('Name must be less than 100 characters')
+    errors.push('Name must be less than 100 characters');
   }
-  
+
   if (data.message && data.message.length > 2000) {
-    errors.push('Message must be less than 2000 characters')
+    errors.push('Message must be less than 2000 characters');
   }
-  
+
   if (errors.length > 0) {
-    return { isValid: false, errors }
+    return { isValid: false, errors };
   }
-  
-  // Return sanitized data
+
   const sanitized: FormSubmission = {
     name: sanitizeInput(data.name),
     email: data.email.toLowerCase().trim(),
@@ -99,112 +74,11 @@ function validateFormData(data: any): { isValid: boolean; errors: string[]; sani
     company: data.company ? sanitizeInput(data.company) : undefined,
     projectType: data.projectType ? sanitizeInput(data.projectType) : undefined,
     message: sanitizeInput(data.message)
-  }
-  
-  return { isValid: true, errors: [], sanitized }
+  };
+
+  return { isValid: true, errors: [], sanitized };
 }
 
-// Verify reCAPTCHA v3 token
-async function verifyRecaptchaToken(token: string, clientIp?: string): Promise<{ success: boolean; score?: number; error?: string; }> {
-  const secretKey = Deno.env.get('RECAPTCHA_V3_SECRET_KEY')
-
-  if (!secretKey) {
-    console.error('Missing reCAPTCHA v3 secret key configuration')
-    return { success: false, error: 'reCAPTCHA v3 configuration missing' }
-  }
-
-  try {
-    const response = await fetch(
-      `https://www.google.com/recaptcha/api/siteverify`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `secret=${secretKey}&response=${token}${clientIp ? `&remoteip=${clientIp}` : ''}`,
-      }
-    );
-
-    const result: RecaptchaResponse = await response.json()
-
-    // Check if token is valid
-    if (!result.success) {
-      console.error('Invalid reCAPTCHA v3 token:', result['error-codes'])
-      return { success: false, error: `Invalid reCAPTCHA v3 token: ${result['error-codes']?.join(', ')}` }
-    }
-    
-    const score = result.score
-    const minimumScore = 0.5 // Adjust this threshold based on your needs (0.0 = likely bot, 1.0 = likely human)
-    const suspiciousThreshold = 0.7 // Log scores between minimumScore and this threshold for analysis
-
-    // Log suspicious activity for scores that pass but are still concerning
-    if (score >= minimumScore && score < suspiciousThreshold) {
-      console.warn('⚠️ Suspicious reCAPTCHA v3 activity detected:', {
-        score: score,
-        threshold: suspiciousThreshold,
-        minimumScore: minimumScore,
-        clientIp: clientIp || 'unknown',
-        action: result.action,
-        hostname: result.hostname,
-        timestamp: new Date().toISOString(),
-        message: `Score ${score} is above minimum (${minimumScore}) but below suspicious threshold (${suspiciousThreshold})`
-      })
-    }
-
-    // Log very low scores that fail verification for pattern analysis
-    if (score < minimumScore) {
-      console.error('🚨 reCAPTCHA v3 score below minimum threshold:', {
-        score: score,
-        minimumScore: minimumScore,
-        clientIp: clientIp || 'unknown',
-        action: result.action,
-        hostname: result.hostname,
-        timestamp: new Date().toISOString(),
-        errorCodes: result['error-codes'],
-        message: `Potential bot activity detected - score ${score} below minimum ${minimumScore}`
-      })
-    }
-    if (score < minimumScore) {
-      return { success: false, error: `Security verification failed (score: ${score})` }
-    }
-    
-    // Verify the action name to prevent replay attacks
-    if (result.action !== 'contact_form_submit') {
-      console.error('reCAPTCHA v3 action mismatch:', result.action, 'expected: contact_form_submit')
-      return { success: false, error: 'reCAPTCHA v3 action mismatch' }
-    }
-
-    // Enhanced logging for successful verifications with score analysis
-    if (score >= suspiciousThreshold) {
-      console.log('✅ reCAPTCHA v3 verification successful (high confidence):', {
-        score: score,
-        action: result.action,
-        hostname: result.hostname,
-        clientIp: clientIp || 'unknown',
-        timestamp: new Date().toISOString(),
-        confidence: 'high'
-      })
-    } else {
-      console.log('✅ reCAPTCHA v3 verification successful (moderate confidence):', {
-        score: score,
-        action: result.action,
-        hostname: result.hostname,
-        clientIp: clientIp || 'unknown',
-        timestamp: new Date().toISOString(),
-        confidence: 'moderate',
-        note: `Score ${score} is above minimum but below high-confidence threshold`
-      })
-    }
-
-    return { success: true, score }
-
-  } catch (error) {
-    console.error('reCAPTCHA v3 verification error:', error)
-    return { success: false, error: 'reCAPTCHA v3 verification failed' }
-  }
-}
-
-// Email template
 function generateEmailTemplate(name: string, submissionId: string): string {
   return `
 <!DOCTYPE html>
@@ -226,7 +100,6 @@ function generateEmailTemplate(name: string, submissionId: string): string {
         .contact-info h3 { margin-top: 0; color: #374151; font-size: 18px; }
         .footer { background: #1f2937; color: #9ca3af; padding: 30px; text-align: center; font-size: 14px; }
         .footer a { color: #06B6D4; text-decoration: none; }
-        .button { display: inline-block; background: linear-gradient(135deg, #06B6D4, #6366F1); color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; margin: 20px 0; }
         @media (max-width: 600px) { .container { margin: 0; border-radius: 0; } .header, .content, .contact-info { padding: 20px; } }
     </style>
 </head>
@@ -236,12 +109,12 @@ function generateEmailTemplate(name: string, submissionId: string): string {
             <h1>${COMPANY_NAME}</h1>
             <p style="margin: 10px 0 0 0; opacity: 0.9; font-size: 18px;">AI-Powered Web Development</p>
         </div>
-        
+
         <div class="content">
             <h2>Thank You, ${name}!</h2>
-            
+
             <p>We've successfully received your project inquiry and are excited about the opportunity to work with you.</p>
-            
+
             <div class="highlight-box">
                 <p><strong>What happens next?</strong></p>
                 <ul style="margin: 10px 0; padding-left: 20px;">
@@ -251,19 +124,19 @@ function generateEmailTemplate(name: string, submissionId: string): string {
                     <li>You'll receive a detailed proposal within 48 hours</li>
                 </ul>
             </div>
-            
+
             <p>In the meantime, feel free to explore our portfolio and learn more about our AI-powered development process.</p>
-            
+
             <div class="contact-info">
                 <h3>Contact Information</h3>
                 <p><strong>Email:</strong> <a href="mailto:team@thinkzo.ai">team@thinkzo.ai</a></p>
                 <p><strong>Response Time:</strong> Within 24 hours</p>
                 <p><strong>Submission ID:</strong> ${submissionId}</p>
             </div>
-            
+
             <p>Thank you for choosing ${COMPANY_NAME} for your web development needs. We look forward to bringing your vision to life!</p>
         </div>
-        
+
         <div class="footer">
             <p>&copy; 2024 ${COMPANY_NAME}. All rights reserved.</p>
             <p>This is an automated message. Please do not reply to this email.</p>
@@ -272,119 +145,87 @@ function generateEmailTemplate(name: string, submissionId: string): string {
     </div>
 </body>
 </html>
-  `
+  `;
 }
 
-// Send email using SMTP
-async function sendConfirmationEmail(email: string, name: string, submissionId: string): Promise<{ success: boolean; error?: string }> {
-  if (!SMTP_USERNAME || !SMTP_PASSWORD) {
-    console.error('SMTP credentials not configured')
-    return { success: false, error: 'Email service not configured' }
+async function sendEmailViaResend(email: string, name: string, submissionId: string): Promise<{ success: boolean; error?: string }> {
+  const resendApiKey = Deno.env.get('RESEND_API_KEY');
+
+  if (!resendApiKey) {
+    console.log('Resend API key not configured, skipping email');
+    return { success: false, error: 'Email service not configured' };
   }
-  
+
   try {
-    const client = new SmtpClient()
-    
-    await client.connectTLS({
-      hostname: SMTP_HOST,
-      port: SMTP_PORT,
-      username: SMTP_USERNAME,
-      password: SMTP_PASSWORD,
-    })
-    
-    await client.send({
-      from: FROM_EMAIL,
-      to: email,
-      subject: `Thank you for your inquiry - ${COMPANY_NAME}`,
-      content: generateEmailTemplate(name, submissionId),
-      html: generateEmailTemplate(name, submissionId),
-    })
-    
-    await client.close()
-    
-    console.log('Email sent successfully via SMTP')
-    return { success: true }
-    
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${resendApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: `${COMPANY_NAME} <onboarding@resend.dev>`,
+        to: email,
+        subject: `Thank you for your inquiry - ${COMPANY_NAME}`,
+        html: generateEmailTemplate(name, submissionId),
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Resend API error:', errorData);
+      return { success: false, error: `Email API error: ${errorData.message || 'Unknown error'}` };
+    }
+
+    console.log('Email sent successfully via Resend');
+    return { success: true };
+
   } catch (error) {
-    console.error('SMTP email sending error:', error)
-    return { success: false, error: `SMTP error: ${error.message}` }
+    console.error('Email sending error:', error);
+    return { success: false, error: `Email error: ${error.message}` };
   }
 }
 
-// Main handler function
-serve(async (req) => {
-  // Handle CORS preflight requests
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+Deno.serve(async (req: Request) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, {
+      status: 200,
+      headers: corsHeaders,
+    });
   }
-  
-  // Only allow POST requests
+
   if (req.method !== 'POST') {
     return new Response(
       JSON.stringify({ error: 'Method not allowed' }),
-      { 
-        status: 405, 
+      {
+        status: 405,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
-    )
+    );
   }
-  
+
   try {
-    // Get client IP address for reCAPTCHA verification
-    const clientIp = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip')
-    
-    // Parse request body
-    const requestData = await req.json()
-    
-    // Verify reCAPTCHA Enterprise token
-    if (requestData.recaptchaToken) {
-      const recaptchaResult = await verifyRecaptchaToken(requestData.recaptchaToken, clientIp || undefined)
-      
-      if (!recaptchaResult.success) {
-        return new Response(
-          JSON.stringify({ 
-            error: 'Security verification failed',
-            details: [recaptchaResult.error || 'reCAPTCHA verification failed']
-          }),
-          { 
-            status: 400, 
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-          }
-        )
-      }
-      
-      console.log('reCAPTCHA v3 verification passed with score:', recaptchaResult.score)
-    } else {
-      console.warn('No reCAPTCHA token provided in request')
-      // For production, consider making reCAPTCHA required by uncommenting the following:
-      // return new Response(
-      //   JSON.stringify({ error: 'reCAPTCHA token required' }),
-      //   { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      // )
-    }
-    
-    // Validate form data
-    const validation = validateFormData(requestData)
+    const requestData = await req.json();
+
+    const validation = validateFormData(requestData);
     if (!validation.isValid) {
       return new Response(
-        JSON.stringify({ 
-          error: 'Validation failed', 
-          details: validation.errors 
+        JSON.stringify({
+          error: 'Validation failed',
+          details: validation.errors
         }),
-        { 
-          status: 400, 
+        {
+          status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         }
-      )
+      );
     }
-    
-    // Initialize Supabase client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    
-    const supabase = createClient(supabaseUrl, supabaseServiceKey)
-    
-    // Insert form submission into database
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
     const { data: submission, error: dbError } = await supabase
       .from('form_submissions')
       .insert([{
@@ -396,39 +237,36 @@ serve(async (req) => {
         message: validation.sanitized!.message,
       }])
       .select('id')
-      .single()
-    
+      .single();
+
     if (dbError) {
-      console.error('Database error:', dbError)
+      console.error('Database error:', dbError);
       return new Response(
         JSON.stringify({ error: 'Failed to save submission' }),
-        { 
-          status: 500, 
+        {
+          status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         }
-      )
+      );
     }
-    
-    // Send confirmation email
-    const emailResult = await sendConfirmationEmail(
+
+    const emailResult = await sendEmailViaResend(
       validation.sanitized!.email,
       validation.sanitized!.name,
       submission.id
-    )
-    
-    // Update email status in database
-    const emailStatus = emailResult.success ? 'sent' : 'failed'
-    const emailError = emailResult.success ? null : emailResult.error
-    
+    );
+
+    const emailStatus = emailResult.success ? 'sent' : 'failed';
+    const emailError = emailResult.success ? null : emailResult.error;
+
     await supabase
       .from('form_submissions')
-      .update({ 
+      .update({
         email_sent_status: emailStatus,
         email_error_log: emailError
       })
-      .eq('id', submission.id)
-    
-    // Return success response
+      .eq('id', submission.id);
+
     return new Response(
       JSON.stringify({
         success: true,
@@ -436,20 +274,20 @@ serve(async (req) => {
         submissionId: submission.id,
         emailSent: emailResult.success
       }),
-      { 
-        status: 200, 
+      {
+        status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
-    )
-    
+    );
+
   } catch (error) {
-    console.error('Unexpected error:', error)
+    console.error('Unexpected error:', error);
     return new Response(
       JSON.stringify({ error: 'Internal server error' }),
-      { 
-        status: 500, 
+      {
+        status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
-    )
+    );
   }
-})
+});
