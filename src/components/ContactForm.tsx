@@ -42,13 +42,7 @@ export function ContactForm({ onCloseModal }: ContactFormProps) {
       if (!result.success) {
         throw new Error(result.errors?.join(', ') || 'Form submission failed');
       }
-      
-      console.log('Form submitted successfully:', {
-        submissionId: result.response?.submissionId,
-        emailSent: result.response?.emailSent,
-        submittedAt: new Date().toISOString()
-      });
-      
+
     } catch (error) {
       console.error('Form submission error:', error);
       throw error;

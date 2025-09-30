@@ -424,17 +424,8 @@ export function SmartForm({
 
   const submitFormData = async (): Promise<void> => {
     // Default submission logic (can be overridden by onSubmit prop)
-    // eslint-disable-next-line no-console
-    console.log('Form submitted:', formData);
-    
     // Simulate API call
-    // Simulate API call with potential failure
     await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Simulate random failures for demo
-    if (Math.random() < 0.3) {
-      throw new Error('Network error: Failed to submit form');
-    }
   };
 
   // Cleanup timeouts
