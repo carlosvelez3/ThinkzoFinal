@@ -701,40 +701,18 @@ export function SmartForm({
           );
         })}
 
-        {/* reCAPTCHA Status */}
-        {recaptchaError && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-center text-red-400 text-sm bg-red-500/10 border border-red-500/20 rounded-lg p-3"
-          >
-            <AlertCircle className="w-4 h-4 mr-2" />
-            <span>Security verification unavailable. Please refresh the page.</span>
-          </motion.div>
-        )}
-        
-        {recaptchaReady && !recaptchaError && executeRecaptcha && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-center text-green-400 text-sm bg-green-500/10 border border-green-500/20 rounded-lg p-3"
-          >
-            <Check className="w-4 h-4 mr-2" />
-            <span>🛡️ Protected by reCAPTCHA v3 - No interaction required</span>
-          </motion.div>
-        )}
 
         {/* Submit button */}
         <motion.button
           type="submit"
-          disabled={isSubmitting || (executeRecaptcha && !recaptchaReady)}
+          disabled={isSubmitting}
           className={`w-full py-4 px-6 rounded-lg font-semibold text-lg transition-all duration-300 ${
-            isSubmitting || (executeRecaptcha && !recaptchaReady)
+            isSubmitting
               ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
               : 'bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white hover:scale-105 focus:scale-105 shadow-lg hover:shadow-xl focus:shadow-xl'
           } focus:outline-none focus:ring-4 focus:ring-amber-500/30`}
-          whileHover={!isSubmitting && (!executeRecaptcha || recaptchaReady) ? { scale: 1.02 } : {}}
-          whileTap={!isSubmitting && (!executeRecaptcha || recaptchaReady) ? { scale: 0.98 } : {}}
+          whileHover={!isSubmitting ? { scale: 1.02 } : {}}
+          whileTap={!isSubmitting ? { scale: 0.98 } : {}}
         >
           {isSubmitting ? (
             <div className="flex items-center justify-center space-x-2">
@@ -745,10 +723,6 @@ export function SmartForm({
               />
               <span>Submitting...</span>
             </div>
-          ) : executeRecaptcha && !recaptchaReady ? (
-            'Loading security verification...'
-          ) : executeRecaptcha && recaptchaError ? (
-            'Security verification failed - Please refresh'
           ) : (
             <div className="flex items-center justify-center">
               <Zap className="w-5 h-5 mr-2" />
