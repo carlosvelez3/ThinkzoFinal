@@ -52,8 +52,13 @@ async function sendEmailViaSMTP(
       to: to.join(', '),
       replyTo: replyTo || smtpFromEmail,
       subject: subject,
-      content: html,
-      html: html,
+      content: 'auto',
+      mimeContent: [
+        {
+          contentType: 'text/html; charset=utf-8',
+          content: html,
+        },
+      ],
     });
 
     await client.close();
