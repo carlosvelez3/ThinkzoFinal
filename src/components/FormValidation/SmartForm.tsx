@@ -515,8 +515,8 @@ export function SmartForm({
                       showError
                         ? 'border-red-500 focus:ring-red-500/20'
                         : showSuccess
-                        ? 'border-green-500 focus:ring-green-500/20 bg-green-50'
-                        : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500/20'
+                        ? 'border-green-500 focus:ring-green-500/20'
+                        : 'border-gray-600 focus:border-primary-accent focus:ring-primary-accent/20'
                     }`}
                   />
                 ) : field.type === 'select' ? (
