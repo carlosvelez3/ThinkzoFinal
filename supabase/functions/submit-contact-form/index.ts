@@ -107,11 +107,63 @@ Deno.serve(async (req: Request) => {
       timestamp: new Date().toISOString(),
     });
 
-    // TODO: Send email notification (requires email service setup)
-    // For now, we'll just log it
-    console.log('Email notification would be sent to: team@thinkzo.ai');
-    console.log('Subject: New Project Inquiry:', formData.projectType);
-    console.log('From:', formData.name, '<' + formData.email + '>');
+    // Send email notification using Resend
+    try {
+      const resendApiKey = Deno.env.get('RESEND_API_KEY');
+
+      if (resendApiKey) {
+        const emailResponse = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${resendApiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: 'Thinkzo.ai Contact Form <onboarding@resend.dev>',
+            to: ['team@thinkzo.ai'],
+            reply_to: formData.email,
+            subject: `New Project Inquiry: ${formData.projectType}`,
+            html: `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #06b6d4;">New Project Inquiry</h2>
+                <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                  <p><strong>Name:</strong> ${formData.name}</p>
+                  <p><strong>Email:</strong> ${formData.email}</p>
+                  ${formData.phone ? `<p><strong>Phone:</strong> ${formData.phone}</p>` : ''}
+                  ${formData.company ? `<p><strong>Company:</strong> ${formData.company}</p>` : ''}
+                  <p><strong>Project Type:</strong> ${formData.projectType}</p>
+                </div>
+                <div style="background: #fff; padding: 20px; border-left: 4px solid #06b6d4;">
+                  <h3 style="margin-top: 0;">Message:</h3>
+                  <p style="white-space: pre-wrap;">${formData.message}</p>
+                </div>
+                <div style="margin-top: 20px; padding: 15px; background: #e0f2fe; border-radius: 8px;">
+                  <p style="margin: 0; font-size: 12px; color: #0c4a6e;">
+                    <strong>Metadata:</strong><br>
+                    IP: ${ipAddress}<br>
+                    Submission ID: ${submission.id}<br>
+                    Timestamp: ${new Date().toISOString()}
+                  </p>
+                </div>
+              </div>
+            `,
+          }),
+        });
+
+        if (!emailResponse.ok) {
+          const emailError = await emailResponse.text();
+          console.error('Email send failed:', emailError);
+        } else {
+          const emailResult = await emailResponse.json();
+          console.log('Email sent successfully:', emailResult);
+        }
+      } else {
+        console.warn('RESEND_API_KEY not configured. Email notification skipped.');
+      }
+    } catch (emailError) {
+      console.error('Error sending email:', emailError);
+      // Don't fail the request if email fails
+    }
 
     // Return success response
     return new Response(
