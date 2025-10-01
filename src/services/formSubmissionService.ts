@@ -43,19 +43,17 @@ class FormSubmissionService {
       // Insert form submission into database
       const { data: submission, error } = await supabase
         .from('form_submissions')
-        .insert([
-          {
-            name: data.name,
-            email: data.email,
-            phone: data.phone || null,
-            company: data.company || null,
-            project_type: data.projectType || null,
-            message: data.message,
-            email_sent_status: 'pending'
-          }
-        ])
+        .insert({
+          name: data.name,
+          email: data.email,
+          phone: data.phone || null,
+          company: data.company || null,
+          project_type: data.projectType || null,
+          message: data.message,
+          email_sent_status: 'pending'
+        })
         .select('id')
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error('Supabase error:', error);
