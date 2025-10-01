@@ -12,6 +12,7 @@ import { ThreeDScene } from './components/ThreeDScene';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ReadingProgressIndicator } from './components/ReadingProgressIndicator';
 import { ScrollToTopButton } from './components/ScrollToTopButton';
+import { RecaptchaPopup } from './components/RecaptchaPopup';
 
 function App() {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
@@ -74,7 +75,8 @@ function App() {
         
         {/* Global Components */}
         <ScrollToTopButton />
-        
+        <RecaptchaPopup />
+
         {/* Toast Notifications */}
         <Toaster
           position="top-right"
