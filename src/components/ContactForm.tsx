@@ -19,25 +19,35 @@ const PROJECT_TYPES = [
 export function ContactForm({ onCloseModal }: ContactFormProps) {
   // Handle form submission
   const handleSubmit = async (formData: any) => {
-    // Create mailto link with form data
-    const subject = encodeURIComponent(`New Project Inquiry: ${formData.projectType || 'General'}`);
-    const body = encodeURIComponent(
-      `Name: ${formData.name}\n` +
-      `Email: ${formData.email}\n` +
-      `Phone: ${formData.phone || 'Not provided'}\n` +
-      `Company: ${formData.company || 'Not provided'}\n` +
-      `Project Type: ${formData.projectType || 'Not specified'}\n\n` +
-      `Message:\n${formData.message}`
-    );
+    try {
+      // Get Supabase URL from environment
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const apiUrl = `${supabaseUrl}/functions/v1/submit-contact-form`;
 
-    // Log form submission
-    console.log('Form submitted:', formData);
+      // Submit to edge function
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-    // Open email client
-    window.location.href = `mailto:team@thinkzo.ai?subject=${subject}&body=${body}`;
+      const result = await response.json();
 
-    // Show success message
-    toast.success('Opening your email client...');
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to submit form');
+      }
+
+      // Show success message
+      toast.success('Thank you! Your inquiry has been submitted successfully.');
+
+      return result;
+    } catch (error) {
+      console.error('Form submission error:', error);
+      toast.error('Failed to submit form. Please try again.');
+      throw error;
+    }
   };
 
   // Handle successful submission
