@@ -10,7 +10,6 @@ import { ContactForm } from './components/ContactForm';
 import { Footer } from './components/Footer';
 import { ThreeDScene } from './components/ThreeDScene';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { OfflineIndicator } from './components/OfflineIndicator';
 import { ReadingProgressIndicator } from './components/ReadingProgressIndicator';
 import { ScrollToTopButton } from './components/ScrollToTopButton';
 
@@ -74,7 +73,6 @@ function App() {
         </Modal>
         
         {/* Global Components */}
-        <OfflineIndicator />
         <ScrollToTopButton />
         
         {/* Toast Notifications */}

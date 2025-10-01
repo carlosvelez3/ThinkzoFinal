@@ -1,8 +1,6 @@
 import React from 'react';
 import { SmartForm } from './FormValidation/SmartForm';
-import { submitContactForm, FormSubmissionData } from '../services/formSubmissionService';
-import { useErrorHandler } from '../hooks/useErrorHandler';
-import { useOfflineStatus } from '../hooks/useOfflineStatus';
+import toast from 'react-hot-toast';
 
 interface ContactFormProps {
   onCloseModal: () => void;
@@ -19,34 +17,27 @@ const PROJECT_TYPES = [
 ];
 
 export function ContactForm({ onCloseModal }: ContactFormProps) {
-  const { handleAsyncError, createValidationError } = useErrorHandler();
-  const { isOnline, addToOfflineQueue } = useOfflineStatus();
-
   // Handle form submission
   const handleSubmit = async (formData: any) => {
-    try {
-      // Prepare form data for submission
-      const submissionData: FormSubmissionData = {
-        name: formData.name || '',
-        email: formData.email,
-        phone: formData.phone,
-        company: formData.company,
-        projectType: formData.projectType,
-        message: formData.message,
-        recaptchaToken: formData.recaptchaToken
-      };
-      
-      // Submit form to backend API
-      const result = await submitContactForm(submissionData);
-      
-      if (!result.success) {
-        throw new Error(result.errors?.join(', ') || 'Form submission failed');
-      }
+    // Create mailto link with form data
+    const subject = encodeURIComponent(`New Project Inquiry: ${formData.projectType || 'General'}`);
+    const body = encodeURIComponent(
+      `Name: ${formData.name}\n` +
+      `Email: ${formData.email}\n` +
+      `Phone: ${formData.phone || 'Not provided'}\n` +
+      `Company: ${formData.company || 'Not provided'}\n` +
+      `Project Type: ${formData.projectType || 'Not specified'}\n\n` +
+      `Message:\n${formData.message}`
+    );
 
-    } catch (error) {
-      console.error('Form submission error:', error);
-      throw error;
-    }
+    // Log form submission
+    console.log('Form submitted:', formData);
+
+    // Open email client
+    window.location.href = `mailto:team@thinkzo.ai?subject=${subject}&body=${body}`;
+
+    // Show success message
+    toast.success('Opening your email client...');
   };
 
   // Handle successful submission
