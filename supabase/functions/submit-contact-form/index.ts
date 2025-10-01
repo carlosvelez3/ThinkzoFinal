@@ -205,7 +205,7 @@ Deno.serve(async (req: Request) => {
                             </p>
 
                             <p style="margin: 0 0 30px; color: #334155; font-size: 16px; line-height: 1.6;">
-                              Our team has received your inquiry and will review it carefully. You can expect to hear back from us within <strong>24-48 hours</strong>.
+                              A member of our team will personally reach out to you within the next <strong>24 hours</strong> to discuss your project in detail.
                             </p>
 
                             <!-- Submission Summary -->
@@ -240,15 +240,13 @@ Deno.serve(async (req: Request) => {
                               <h3 style="margin: 0 0 12px; color: #0c4a6e; font-size: 16px; font-weight: 600;">
                                 What Happens Next?
                               </h3>
-                              <ol style="margin: 0; padding-left: 20px; color: #0c4a6e;">
-                                <li style="margin: 8px 0; line-height: 1.6;">Our team will review your project requirements</li>
-                                <li style="margin: 8px 0; line-height: 1.6;">We'll reach out to schedule a discovery call</li>
-                                <li style="margin: 8px 0; line-height: 1.6;">Together, we'll create a custom proposal for your project</li>
-                              </ol>
+                              <p style="margin: 0; padding-left: 0; color: #0c4a6e; line-height: 1.6;">
+                                A team member will contact you directly via email within 24 hours to discuss your project requirements and answer any questions you may have.
+                              </p>
                             </div>
 
                             <p style="margin: 30px 0 20px; color: #334155; font-size: 16px; line-height: 1.6;">
-                              In the meantime, feel free to explore our resources or reach out if you have any questions.
+                              Please keep an eye on your inbox for our email. If you have any urgent questions in the meantime, feel free to reach out to us at <a href="mailto:team@thinkzo.ai" style="color: #06b6d4; text-decoration: none;">team@thinkzo.ai</a>.
                             </p>
 
                             <!-- CTA Button -->
@@ -275,7 +273,7 @@ Deno.serve(async (req: Request) => {
                               Questions? Reply to this email or contact us at <a href="mailto:team@thinkzo.ai" style="color: #06b6d4; text-decoration: none;">team@thinkzo.ai</a>
                             </p>
                             <p style="margin: 15px 0 0; color: #cbd5e1; font-size: 11px; text-align: center;">
-                              This is an automated confirmation email. Please do not reply directly to this message.
+                              This is an automated confirmation. A team member will follow up with you personally within 24 hours.
                             </p>
                           </td>
                         </tr>
