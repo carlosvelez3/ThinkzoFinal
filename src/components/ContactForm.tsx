@@ -30,8 +30,7 @@ export function ContactForm({ onCloseModal }: ContactFormProps) {
           hasUrl: !!supabaseUrl,
           hasKey: !!supabaseAnonKey
         });
-        toast.error('Application configuration error. Please contact support.');
-        throw new Error('Missing Supabase environment variables');
+        throw new Error('Application configuration error. Please contact support.');
       }
 
       const apiUrl = `${supabaseUrl}/functions/v1/submit-contact-form`;
@@ -70,7 +69,6 @@ export function ContactForm({ onCloseModal }: ContactFormProps) {
       if (!response.ok) {
         const errorMessage = result.error || `Server error: ${response.status}`;
         console.error('Submission failed:', errorMessage);
-        toast.error(errorMessage);
         throw new Error(errorMessage);
       }
 
@@ -80,17 +78,6 @@ export function ContactForm({ onCloseModal }: ContactFormProps) {
       return result;
     } catch (error) {
       console.error('Form submission error:', error);
-
-      if (error instanceof Error) {
-        if (error.name === 'AbortError') {
-          toast.error('Request timed out. Please check your connection and try again.');
-        } else if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
-          toast.error('Network error. Please check your internet connection.');
-        } else if (!error.message.includes('Server error')) {
-          toast.error('Failed to submit form. Please try again.');
-        }
-      }
-
       throw error;
     }
   };

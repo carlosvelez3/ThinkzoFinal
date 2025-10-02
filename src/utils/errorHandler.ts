@@ -90,12 +90,31 @@ class ErrorLogger {
   private static instance: ErrorLogger;
   private logs: AppError[] = [];
   private maxLogs = 100;
+  private recentToasts: Map<string, number> = new Map();
+  private toastDebounceMs = 2000;
 
   static getInstance(): ErrorLogger {
     if (!ErrorLogger.instance) {
       ErrorLogger.instance = new ErrorLogger();
     }
     return ErrorLogger.instance;
+  }
+
+  shouldShowToast(message: string): boolean {
+    const now = Date.now();
+    const lastShown = this.recentToasts.get(message);
+
+    if (lastShown && (now - lastShown) < this.toastDebounceMs) {
+      return false;
+    }
+
+    this.recentToasts.set(message, now);
+
+    setTimeout(() => {
+      this.recentToasts.delete(message);
+    }, this.toastDebounceMs);
+
+    return true;
   }
 
   log(error: AppError): void {
@@ -258,6 +277,10 @@ export class ErrorHandler {
   }
 
   private static showUserNotification(error: AppError): void {
+    if (!this.logger.shouldShowToast(error.userMessage)) {
+      return;
+    }
+
     const options = {
       duration: error.severity === ErrorSeverity.CRITICAL ? 8000 : 4000,
       position: 'top-right' as const,
