@@ -214,11 +214,24 @@ export function SmartForm({
 
     const { validation } = field;
 
-    // Special handling for projectDetails
+    // Special handling for projectDetails - check the actual values
     if (fieldName === 'projectDetails') {
-      if (!projectDetailsValid) {
-        return 'Please complete all required project details';
+      const details = value as ProjectDetails;
+
+      // Check required fields for projectDetails
+      if (!details.projectGoals || details.projectGoals.trim().length < 20) {
+        return 'Project goals must be at least 20 characters';
       }
+      if (!details.selectedFeatures || details.selectedFeatures.length === 0) {
+        return 'Please select at least one feature';
+      }
+      if (!details.timeline || details.timeline.trim().length === 0) {
+        return 'Please select a timeline';
+      }
+      if (!details.budgetRange || details.budgetRange.trim().length === 0) {
+        return 'Please select a budget range';
+      }
+
       return null;
     }
 
@@ -377,26 +390,31 @@ export function SmartForm({
   // Form submission
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
-    
+
+    console.log('Form submission started');
+    console.log('Current form data:', formData);
+
     // Mark all fields as touched
     const allFieldNames = formFields.map(f => f.name);
     setTouchedFields(new Set(allFieldNames));
-    
+
     // Validate all fields
     const newErrors: FormErrors = {};
     let hasErrors = false;
-    
+
     for (const field of formFields) {
       const error = validateField(field.name, formData[field.name] || '');
       if (error) {
         newErrors[field.name] = error;
         hasErrors = true;
+        console.error(`Validation error for ${field.name}:`, error);
       }
     }
-    
+
     setErrors(newErrors);
-    
+
     if (hasErrors) {
+      console.error('Form validation failed:', newErrors);
       // Focus first error field
       const firstErrorField = formFields.find(f => newErrors[f.name]);
       if (firstErrorField) {
@@ -406,6 +424,8 @@ export function SmartForm({
       }
       return;
     }
+
+    console.log('Form validation passed, submitting...');
     
     setIsSubmitting(true);
     

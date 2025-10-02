@@ -22,21 +22,56 @@ export function ContactForm({ onCloseModal }: ContactFormProps) {
     try {
       // Get Supabase URL from environment
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+      // Validate environment variables
+      if (!supabaseUrl || !supabaseAnonKey) {
+        console.error('Missing Supabase configuration:', {
+          hasUrl: !!supabaseUrl,
+          hasKey: !!supabaseAnonKey
+        });
+        toast.error('Application configuration error. Please contact support.');
+        throw new Error('Missing Supabase environment variables');
+      }
+
       const apiUrl = `${supabaseUrl}/functions/v1/submit-contact-form`;
 
-      // Submit to edge function
+      console.log('Submitting form to:', apiUrl);
+      console.log('Form data:', { ...formData, email: '***' });
+
+      // Submit to edge function with timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
+
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${supabaseAnonKey}`,
+          'apikey': supabaseAnonKey,
         },
         body: JSON.stringify(formData),
+        signal: controller.signal,
       });
 
-      const result = await response.json();
+      clearTimeout(timeoutId);
+
+      let result;
+      try {
+        result = await response.json();
+      } catch (parseError) {
+        console.error('Failed to parse response:', parseError);
+        throw new Error('Invalid response from server');
+      }
+
+      console.log('Response status:', response.status);
+      console.log('Response data:', result);
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to submit form');
+        const errorMessage = result.error || `Server error: ${response.status}`;
+        console.error('Submission failed:', errorMessage);
+        toast.error(errorMessage);
+        throw new Error(errorMessage);
       }
 
       // Show success message
@@ -45,7 +80,17 @@ export function ContactForm({ onCloseModal }: ContactFormProps) {
       return result;
     } catch (error) {
       console.error('Form submission error:', error);
-      toast.error('Failed to submit form. Please try again.');
+
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          toast.error('Request timed out. Please check your connection and try again.');
+        } else if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+          toast.error('Network error. Please check your internet connection.');
+        } else if (!error.message.includes('Server error')) {
+          toast.error('Failed to submit form. Please try again.');
+        }
+      }
+
       throw error;
     }
   };
