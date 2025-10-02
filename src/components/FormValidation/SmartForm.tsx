@@ -120,9 +120,6 @@ export function SmartForm({
       },
       options: [
         { value: '', label: 'Select project type' },
-        { value: 'landing-page', label: 'Landing Page' },
-        { value: 'business-website', label: 'Business Website' },
-        { value: 'ecommerce', label: 'E-commerce Store' },
         { value: 'web-app', label: 'Web Application' },
         { value: 'ai-integration', label: 'AI Integration' },
         { value: 'other', label: 'Other/Custom' }
@@ -149,35 +146,6 @@ export function SmartForm({
       helpText: 'We\'d love to know what to call you'
     },
     {
-      name: 'phone',
-      label: 'Phone (optional)',
-      type: 'tel',
-      placeholder: '(555) 123-4567',
-      autoComplete: 'tel',
-      validation: {
-        custom: (value) => {
-          if (value && value.trim()) {
-            const cleaned = value.replace(/\D/g, '');
-            if (cleaned.length !== 10) return 'Phone number must be 10 digits';
-            if (!/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(value)) {
-              return 'Please enter a valid phone number (e.g., (555) 123-4567)';
-            }
-          }
-          return null;
-        }
-      }
-    },
-    {
-      name: 'company',
-      label: 'Company (optional)',
-      type: 'text',
-      placeholder: 'Your company name',
-      autoComplete: 'organization',
-      validation: {
-        maxLength: 100
-      }
-    },
-    {
       name: 'projectDetails',
       label: 'Project Details',
       type: 'textarea',
@@ -195,17 +163,7 @@ export function SmartForm({
   // Use custom form fields or default ones
   const formFields = customFormFields || defaultFormFields;
 
-  // Default project types for contact form
-  const defaultProjectTypes: ProjectType[] = [
-    { id: 'landing-page', name: 'Landing Page', icon: '🎯', timeline: '1-2 weeks', budget: '$495' },
-    { id: 'business-website', name: 'Business Website', icon: '🏢', timeline: '2-4 weeks', budget: '$800-$1,500' },
-    { id: 'ecommerce', name: 'E-commerce Store', icon: '🛒', timeline: '4-8 weeks', budget: '$1,500-$3,500' },
-    { id: 'web-app', name: 'Web Application', icon: '⚡', timeline: '6-12 weeks', budget: '$3,500+' },
-    { id: 'ai-integration', name: 'AI Integration', icon: '🤖', timeline: '4-10 weeks', budget: '$2,000+' },
-    { id: 'other', name: 'Other/Custom', icon: '💡', timeline: 'Varies', budget: 'Custom Quote' }
-  ];
-
-  const activeProjectTypes = projectTypes || defaultProjectTypes;
+  const activeProjectTypes = projectTypes || [];
 
   // Validation function
   const validateField = (fieldName: string, value: string | ProjectDetails, allData: FormData = formData): string | null => {

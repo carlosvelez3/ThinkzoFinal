@@ -6,15 +6,6 @@ interface ContactFormProps {
   onCloseModal: () => void;
 }
 
-// Project types for the contact form
-const PROJECT_TYPES = [
-  { id: 'landing-page', name: 'Landing Page', icon: '🎯', timeline: '1-2 weeks', budget: '$495' },
-  { id: 'business-website', name: 'Business Website', icon: '🏢', timeline: '2-4 weeks', budget: '$800-$1,500' },
-  { id: 'ecommerce', name: 'E-commerce Store', icon: '🛒', timeline: '4-8 weeks', budget: '$1,500-$3,500' },
-  { id: 'web-app', name: 'Web Application', icon: '⚡', timeline: '6-12 weeks', budget: '$3,500+' },
-  { id: 'ai-integration', name: 'AI Integration', icon: '🤖', timeline: '4-10 weeks', budget: '$2,000+' },
-  { id: 'other', name: 'Other/Custom', icon: '💡', timeline: 'Varies', budget: 'Custom Quote' }
-];
 
 export function ContactForm({ onCloseModal }: ContactFormProps) {
   // Handle form submission
@@ -95,7 +86,6 @@ export function ContactForm({ onCloseModal }: ContactFormProps) {
       title="Start Your AI Project"
       description="Let's bring your vision to life. Just a few quick questions to get started."
       submitButtonText="Send Project Request"
-      projectTypes={PROJECT_TYPES}
       showProgressSteps={true}
       onSubmit={handleSubmit}
       onSuccess={handleSuccess}

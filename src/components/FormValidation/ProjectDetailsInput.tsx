@@ -54,41 +54,11 @@ interface ProjectDetailsInputProps {
 
 const PROJECT_TEMPLATES: ProjectTemplate[] = [
   {
-    id: 'landing-page',
-    name: 'Landing Page',
-    icon: <Target className="w-5 h-5" />,
-    description: 'High-converting single page to capture leads',
-    suggestedFeatures: ['Responsive Design', 'Contact Form', 'Analytics Integration', 'SEO Optimization'],
-    suggestedGoals: 'Create a high-converting landing page to capture leads and showcase our product/service',
-    timeline: '1-2 weeks',
-    budgetRange: '$495-$800'
-  },
-  {
-    id: 'business-website',
-    name: 'Business Website',
-    icon: <FileText className="w-5 h-5" />,
-    description: 'Professional multi-page website',
-    suggestedFeatures: ['Responsive Design', 'CMS Integration', 'Contact Form', 'Blog', 'SEO Optimization', 'Analytics Integration'],
-    suggestedGoals: 'Build a professional website that establishes credibility and provides information about our business',
-    timeline: '2-4 weeks',
-    budgetRange: '$800-$1,500'
-  },
-  {
-    id: 'ecommerce',
-    name: 'E-commerce Store',
-    icon: <DollarSign className="w-5 h-5" />,
-    description: 'Full online store with payments',
-    suggestedFeatures: ['Product Catalog', 'Shopping Cart', 'Payment Processing', 'User Accounts', 'Order Management', 'Inventory System', 'Admin Dashboard'],
-    suggestedGoals: 'Launch an online store to sell products with secure payment processing and inventory management',
-    timeline: '4-8 weeks',
-    budgetRange: '$1,500-$3,500'
-  },
-  {
     id: 'web-app',
     name: 'Web Application',
     icon: <Zap className="w-5 h-5" />,
     description: 'Custom interactive application',
-    suggestedFeatures: ['User Authentication', 'Database Integration', 'API Development', 'Admin Dashboard', 'Real-time Features', 'User Accounts'],
+    suggestedFeatures: ['User Authentication', 'Database Integration', 'API Development', 'Admin Dashboard'],
     suggestedGoals: 'Develop a custom web application that solves specific business problems with interactive features',
     timeline: '6-12 weeks',
     budgetRange: '$3,500+'
@@ -98,7 +68,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
     name: 'AI Integration',
     icon: <Sparkles className="w-5 h-5" />,
     description: 'AI-powered features and automation',
-    suggestedFeatures: ['AI/ML Integration', 'Natural Language Processing', 'Automated Workflows', 'API Development', 'Data Analytics'],
+    suggestedFeatures: ['AI/ML Integration', 'Natural Language Processing', 'Automated Workflows', 'API Development'],
     suggestedGoals: 'Integrate AI capabilities to automate processes and enhance user experience',
     timeline: '4-10 weeks',
     budgetRange: '$2,000+'
@@ -107,48 +77,29 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
 
 const FEATURE_CATEGORIES: FeatureCategory[] = [
   {
-    name: 'Frontend',
-    icon: <FileText className="w-4 h-4" />,
-    features: ['Responsive Design', 'Custom UI/UX', 'Animations', 'Interactive Elements', 'Mobile-First Design']
-  },
-  {
-    name: 'Backend',
+    name: 'Core Features',
     icon: <Zap className="w-4 h-4" />,
-    features: ['Database Integration', 'API Development', 'User Authentication', 'User Accounts', 'Admin Dashboard']
+    features: ['User Authentication', 'Database Integration', 'API Development', 'Admin Dashboard', 'Responsive Design']
   },
   {
-    name: 'E-commerce',
-    icon: <DollarSign className="w-4 h-4" />,
-    features: ['Product Catalog', 'Shopping Cart', 'Payment Processing', 'Order Management', 'Inventory System']
-  },
-  {
-    name: 'Content',
-    icon: <FileText className="w-4 h-4" />,
-    features: ['CMS Integration', 'Blog', 'Content Management', 'Multi-language Support']
-  },
-  {
-    name: 'Integration',
+    name: 'AI & Automation',
     icon: <Sparkles className="w-4 h-4" />,
-    features: ['AI/ML Integration', 'Third-party APIs', 'Analytics Integration', 'Email Integration', 'Social Media Integration']
+    features: ['AI/ML Integration', 'Natural Language Processing', 'Automated Workflows', 'Data Analytics']
   },
   {
-    name: 'Optimization',
+    name: 'Integrations',
     icon: <Target className="w-4 h-4" />,
-    features: ['SEO Optimization', 'Performance Optimization', 'Security Features', 'Real-time Features', 'Automated Workflows']
+    features: ['Third-party APIs', 'Analytics Integration', 'Email Integration', 'Payment Processing']
   }
 ];
 
 const TIMELINE_OPTIONS = [
-  { value: 'asap', label: 'ASAP (1-2 weeks)', icon: <Zap className="w-4 h-4" /> },
-  { value: '2-4-weeks', label: '2-4 weeks', icon: <Clock className="w-4 h-4" /> },
   { value: '1-2-months', label: '1-2 months', icon: <Clock className="w-4 h-4" /> },
   { value: '2-3-months', label: '2-3 months', icon: <Clock className="w-4 h-4" /> },
-  { value: 'flexible', label: 'Flexible timeline', icon: <Clock className="w-4 h-4" /> }
+  { value: 'flexible', label: 'Flexible', icon: <Clock className="w-4 h-4" /> }
 ];
 
 const BUDGET_RANGES = [
-  { value: 'under-1k', label: 'Under $1,000', range: [0, 1000] },
-  { value: '1k-3k', label: '$1,000 - $3,000', range: [1000, 3000] },
   { value: '3k-5k', label: '$3,000 - $5,000', range: [3000, 5000] },
   { value: '5k-10k', label: '$5,000 - $10,000', range: [5000, 10000] },
   { value: '10k-plus', label: '$10,000+', range: [10000, 100000] }
@@ -162,7 +113,6 @@ export function ProjectDetailsInput({
 }: ProjectDetailsInputProps) {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['templates', 'goals']));
   const [customFeature, setCustomFeature] = useState('');
-  const [showAllFeatures, setShowAllFeatures] = useState(false);
 
   const toggleSection = (section: string) => {
     setExpandedSections(prev => {
@@ -486,7 +436,7 @@ export function ProjectDetailsInput({
 
               {/* Feature Categories */}
               <div className="space-y-3">
-                {FEATURE_CATEGORIES.slice(0, showAllFeatures ? undefined : 3).map((category) => (
+                {FEATURE_CATEGORIES.map((category) => (
                   <div key={category.name} className="space-y-2">
                     <div className="flex items-center space-x-2 text-sm font-semibold text-gray-300">
                       {category.icon}
@@ -521,16 +471,6 @@ export function ProjectDetailsInput({
                   </div>
                 ))}
               </div>
-
-              {!showAllFeatures && FEATURE_CATEGORIES.length > 3 && (
-                <button
-                  type="button"
-                  onClick={() => setShowAllFeatures(true)}
-                  className="text-sm text-primary-accent hover:text-amber-400 transition-colors font-medium"
-                >
-                  Show {FEATURE_CATEGORIES.length - 3} more categories
-                </button>
-              )}
 
               {/* Custom Feature Input */}
               <div className="space-y-2">
