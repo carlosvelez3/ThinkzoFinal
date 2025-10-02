@@ -186,7 +186,22 @@ Deno.serve(async (req: Request) => {
       timestamp: new Date().toISOString(),
     });
 
-    try {
+    // Send response immediately, then send emails asynchronously
+    const responsePromise = new Response(
+      JSON.stringify({
+        success: true,
+        message: 'Your inquiry has been submitted successfully!',
+        submissionId: submission.id,
+      }),
+      {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
+
+    // Send emails in background (non-blocking)
+    Promise.resolve().then(async () => {
+      try {
       const teamEmailHtml = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #06b6d4;">New Project Inquiry</h2>
@@ -381,26 +396,19 @@ Deno.serve(async (req: Request) => {
         'team@thinkzo.ai'
       );
 
-      if (!confirmationEmailResult.success) {
-        console.error('User confirmation email failed:', confirmationEmailResult.error);
-      } else {
-        console.log('User confirmation email sent successfully');
+        if (!confirmationEmailResult.success) {
+          console.error('User confirmation email failed:', confirmationEmailResult.error);
+        } else {
+          console.log('User confirmation email sent successfully');
+        }
+      } catch (emailError) {
+        console.error('Error sending emails in background:', emailError);
       }
-    } catch (emailError) {
-      console.error('Error sending emails:', emailError);
-    }
+    }).catch(err => {
+      console.error('Background email task failed:', err);
+    });
 
-    return new Response(
-      JSON.stringify({
-        success: true,
-        message: 'Your inquiry has been submitted successfully!',
-        submissionId: submission.id,
-      }),
-      {
-        status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
+    return responsePromise;
   } catch (error) {
     console.error('Unexpected error:', error);
     return new Response(

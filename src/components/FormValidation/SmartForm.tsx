@@ -435,30 +435,40 @@ export function SmartForm({
   // Success state
   if (submitSuccess) {
     return (
-      <motion.div 
-        className="text-center py-8"
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Check className="w-8 h-8 text-green-400" />
+      <div className="text-center py-8 animate-fadeIn">
+        <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+          <Check className="w-10 h-10 text-green-400" />
         </div>
         <h3 className="text-2xl font-bold text-white mb-4 font-montserrat">
           Thank You{formData.name ? `, ${formData.name}` : ''}!
         </h3>
-        <p className="text-gray-300 mb-6 font-poppins">
-          We've received your project inquiry. We'll review your requirements and get back to you within 24 hours.
+        <p className="text-gray-300 mb-6 text-lg">
+          We've received your project inquiry and will get back to you within 24 hours.
         </p>
-        <div className="bg-gray-700 rounded-lg p-4">
-          <h4 className="text-white font-semibold mb-2">What's Next?</h4>
-          <ul className="text-sm text-gray-300 space-y-1 text-left">
-            <li>• We'll review your project details</li>
-            <li>• Schedule a discovery call within 24 hours</li>
-            <li>• Provide a detailed proposal and timeline</li>
+        <div className="bg-gray-700/50 border border-gray-600 rounded-lg p-6 max-w-md mx-auto">
+          <h4 className="text-white font-semibold mb-3 flex items-center justify-center space-x-2">
+            <Zap className="w-5 h-5 text-primary-accent" />
+            <span>What's Next?</span>
+          </h4>
+          <ul className="text-sm text-gray-300 space-y-2">
+            <li className="flex items-start space-x-2">
+              <span className="text-primary-accent mt-0.5">→</span>
+              <span>We'll review your project details</span>
+            </li>
+            <li className="flex items-start space-x-2">
+              <span className="text-primary-accent mt-0.5">→</span>
+              <span>Schedule a discovery call within 24 hours</span>
+            </li>
+            <li className="flex items-start space-x-2">
+              <span className="text-primary-accent mt-0.5">→</span>
+              <span>Provide a detailed proposal and timeline</span>
+            </li>
           </ul>
         </div>
-      </motion.div>
+        <p className="text-gray-400 text-sm mt-6">
+          Check your email for confirmation. We sent it to <span className="text-primary-accent font-semibold">{formData.email}</span>
+        </p>
+      </div>
     );
   }
 
@@ -695,18 +705,14 @@ export function SmartForm({
           whileTap={!isSubmitting ? { scale: 0.98 } : {}}
         >
           {isSubmitting ? (
-            <div className="flex items-center justify-center space-x-2">
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
-              />
-              <span>Submitting...</span>
+            <div className="flex items-center justify-center space-x-3">
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span>Sending your request...</span>
             </div>
           ) : (
-            <div className="flex items-center justify-center">
-              <Zap className="w-5 h-5 mr-2" />
-              {submitButtonText}
+            <div className="flex items-center justify-center space-x-2">
+              <Zap className="w-5 h-5" />
+              <span>{submitButtonText}</span>
             </div>
           )}
         </motion.button>
@@ -714,17 +720,17 @@ export function SmartForm({
         {/* Error state with retry */}
         {submitError && (
           <motion.div
-            className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg"
+            className="mt-4 p-4 bg-red-900/20 border border-red-500/30 rounded-lg"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
           >
             <div className="flex items-start space-x-3">
-              <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="text-red-700 text-sm mb-3">{submitError}</p>
+                <p className="text-red-300 text-sm mb-3">{submitError}</p>
                 <RetryButton
                   onRetry={handleRetrySubmit}
-                  className="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1"
+                  className="bg-red-600 hover:bg-red-700 text-white text-sm px-4 py-2 rounded-lg transition-colors"
                 >
                   Try Again
                 </RetryButton>
