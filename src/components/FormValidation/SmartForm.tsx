@@ -4,6 +4,7 @@ import { Check, AlertCircle, Eye, EyeOff, Info, X, CheckCircle, Clock, DollarSig
 import { useErrorHandler } from '../../hooks/useErrorHandler';
 import { RetryButton } from '../RetryButton';
 import { AnimatedI } from '../AnimatedI';
+import { ProjectDetailsInput, ProjectDetails } from './ProjectDetailsInput';
 
 // Types for form validation
 interface ValidationRule {
@@ -46,7 +47,7 @@ interface SmartFormProps {
 }
 
 interface FormData {
-  [key: string]: string;
+  [key: string]: string | ProjectDetails;
 }
 
 interface FormErrors {
@@ -68,7 +69,16 @@ export function SmartForm({
   projectTypes,
   showProgressSteps = false
 }: SmartFormProps) {
-  const [formData, setFormData] = useState<FormData>({});
+  const [formData, setFormData] = useState<FormData>({
+    projectDetails: {
+      projectGoals: '',
+      targetAudience: '',
+      selectedFeatures: [],
+      timeline: '',
+      budgetRange: '',
+      additionalNotes: ''
+    }
+  });
   const [errors, setErrors] = useState<FormErrors>({});
   const [fieldStatus, setFieldStatus] = useState<FieldStatus>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -76,6 +86,7 @@ export function SmartForm({
   const [showPassword, setShowPassword] = useState<{ [key: string]: boolean }>({});
   const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [projectDetailsValid, setProjectDetailsValid] = useState(false);
   const validationTimeouts = useRef<{ [key: string]: NodeJS.Timeout }>({});
 
   const { handleAsyncError } = useErrorHandler();
@@ -167,22 +178,17 @@ export function SmartForm({
       }
     },
     {
-      name: 'message',
+      name: 'projectDetails',
       label: 'Project Details',
       type: 'textarea',
-      placeholder: 'Tell us about your project goals, timeline, and any specific requirements...',
+      placeholder: 'Enhanced project details with interactive components',
       validation: {
         required: true,
-        minLength: 20,
-        maxLength: 1000,
         custom: (value) => {
-          if (!value) return 'Please describe your project';
-          if (value.length < 20) return 'Please provide more details (at least 20 characters)';
-          if (value.length > 1000) return 'Message is too long (maximum 1000 characters)';
           return null;
         }
       },
-      helpText: 'The more details you provide, the better we can help you'
+      helpText: 'Complete all required sections for the best results'
     }
   ];
 
@@ -202,31 +208,42 @@ export function SmartForm({
   const activeProjectTypes = projectTypes || defaultProjectTypes;
 
   // Validation function
-  const validateField = (fieldName: string, value: string, allData: FormData = formData): string | null => {
+  const validateField = (fieldName: string, value: string | ProjectDetails, allData: FormData = formData): string | null => {
     const field = formFields.find(f => f.name === fieldName);
     if (!field) return null;
 
     const { validation } = field;
 
+    // Special handling for projectDetails
+    if (fieldName === 'projectDetails') {
+      if (!projectDetailsValid) {
+        return 'Please complete all required project details';
+      }
+      return null;
+    }
+
     // Required validation
-    if (validation.required && (!value || value.trim() === '')) {
+    if (validation.required && (!value || (typeof value === 'string' && value.trim() === ''))) {
       return `${field.label} is required`;
     }
 
     // Skip other validations if field is empty and not required
-    if (!value || value.trim() === '') return null;
+    if (!value || (typeof value === 'string' && value.trim() === '')) return null;
+
+    // Ensure value is a string for remaining validations
+    const stringValue = String(value);
 
     // Length validations
-    if (validation.minLength && value.length < validation.minLength) {
+    if (validation.minLength && stringValue.length < validation.minLength) {
       return `${field.label} must be at least ${validation.minLength} characters`;
     }
 
-    if (validation.maxLength && value.length > validation.maxLength) {
+    if (validation.maxLength && stringValue.length > validation.maxLength) {
       return `${field.label} must be no more than ${validation.maxLength} characters`;
     }
 
     // Pattern validation
-    if (validation.pattern && !validation.pattern.test(value)) {
+    if (validation.pattern && !validation.pattern.test(stringValue)) {
       return `Please enter a valid ${field.label.toLowerCase()}`;
     }
 
@@ -234,7 +251,7 @@ export function SmartForm({
     if (validation.dependencies) {
       for (const dep of validation.dependencies) {
         if (fieldName === 'confirmPassword' && dep === 'password') {
-          if (value !== allData.password) {
+          if (stringValue !== allData.password) {
             return 'Passwords do not match';
           }
         }
@@ -243,7 +260,7 @@ export function SmartForm({
 
     // Custom validation
     if (validation.custom) {
-      const customError = validation.custom(value);
+      const customError = validation.custom(stringValue);
       if (customError) return customError;
     }
 
@@ -481,6 +498,19 @@ export function SmartForm({
 
       <form onSubmit={handleSubmit} noValidate className="space-y-6">
         {formFields.map((field) => {
+          if (field.name === 'projectDetails') {
+            return (
+              <div key={field.name} className="space-y-2">
+                <ProjectDetailsInput
+                  value={formData.projectDetails as ProjectDetails}
+                  onChange={(value) => setFormData(prev => ({ ...prev, projectDetails: value }))}
+                  onValidationChange={setProjectDetailsValid}
+                  projectType={formData.projectType as string}
+                />
+              </div>
+            );
+          }
+
           const fieldValue = formData[field.name] || '';
           const fieldError = errors[field.name];
           const isFieldTouched = touchedFields.has(field.name);

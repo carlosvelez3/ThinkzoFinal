@@ -6,13 +6,24 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Client-Info, Apikey',
 };
 
+interface ProjectDetails {
+  projectGoals: string;
+  targetAudience: string;
+  selectedFeatures: string[];
+  timeline: string;
+  budgetRange: string;
+  additionalNotes: string;
+  templateUsed?: string;
+}
+
 interface ContactFormData {
   name: string;
   email: string;
   phone?: string;
   company?: string;
   projectType: string;
-  message: string;
+  message?: string;
+  projectDetails?: ProjectDetails;
 }
 
 async function sendEmailViaResend(
@@ -91,9 +102,19 @@ Deno.serve(async (req: Request) => {
 
     const formData: ContactFormData = await req.json();
 
-    if (!formData.name || !formData.email || !formData.projectType || !formData.message) {
+    if (!formData.name || !formData.email || !formData.projectType) {
       return new Response(
         JSON.stringify({ error: 'Missing required fields' }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    if (!formData.message && !formData.projectDetails) {
+      return new Response(
+        JSON.stringify({ error: 'Either message or projectDetails is required' }),
         {
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -119,6 +140,11 @@ Deno.serve(async (req: Request) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    const projectDetails = formData.projectDetails;
+    const legacyMessage = formData.message || (projectDetails ?
+      `Goals: ${projectDetails.projectGoals}\n\nFeatures: ${projectDetails.selectedFeatures.join(', ')}\n\nTimeline: ${projectDetails.timeline}\n\nBudget: ${projectDetails.budgetRange}${projectDetails.targetAudience ? `\n\nTarget Audience: ${projectDetails.targetAudience}` : ''}${projectDetails.additionalNotes ? `\n\nAdditional Notes: ${projectDetails.additionalNotes}` : ''}`
+      : '');
+
     const { data: submission, error: dbError } = await supabase
       .from('contact_submissions')
       .insert({
@@ -127,7 +153,14 @@ Deno.serve(async (req: Request) => {
         phone: formData.phone || null,
         company: formData.company || null,
         project_type: formData.projectType,
-        message: formData.message,
+        message: legacyMessage,
+        project_goals: projectDetails?.projectGoals || null,
+        target_audience: projectDetails?.targetAudience || null,
+        selected_features: projectDetails?.selectedFeatures || [],
+        timeline_preference: projectDetails?.timeline || null,
+        budget_range: projectDetails?.budgetRange || null,
+        additional_notes: projectDetails?.additionalNotes || null,
+        template_used: projectDetails?.templateUsed || null,
         status: 'new',
         ip_address: ipAddress,
         user_agent: userAgent,
@@ -164,10 +197,59 @@ Deno.serve(async (req: Request) => {
             ${formData.company ? `<p><strong>Company:</strong> ${formData.company}</p>` : ''}
             <p><strong>Project Type:</strong> ${formData.projectType}</p>
           </div>
+          ${projectDetails ? `
+          <div style="background: #fff; padding: 20px; border-left: 4px solid #06b6d4; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #0c4a6e;">Project Details:</h3>
+
+            <div style="margin: 15px 0;">
+              <h4 style="color: #0891b2; margin-bottom: 8px;">Project Goals:</h4>
+              <p style="margin: 0; color: #334155;">${projectDetails.projectGoals}</p>
+            </div>
+
+            ${projectDetails.targetAudience ? `
+            <div style="margin: 15px 0;">
+              <h4 style="color: #0891b2; margin-bottom: 8px;">Target Audience:</h4>
+              <p style="margin: 0; color: #334155;">${projectDetails.targetAudience}</p>
+            </div>
+            ` : ''}
+
+            <div style="margin: 15px 0;">
+              <h4 style="color: #0891b2; margin-bottom: 8px;">Selected Features:</h4>
+              <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                ${projectDetails.selectedFeatures.map(f => `<span style="background: #e0f2fe; color: #0c4a6e; padding: 4px 12px; border-radius: 12px; font-size: 14px;">${f}</span>`).join('')}
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0;">
+              <div>
+                <h4 style="color: #0891b2; margin-bottom: 8px;">Timeline:</h4>
+                <p style="margin: 0; color: #334155;">${projectDetails.timeline}</p>
+              </div>
+              <div>
+                <h4 style="color: #0891b2; margin-bottom: 8px;">Budget Range:</h4>
+                <p style="margin: 0; color: #334155;">${projectDetails.budgetRange}</p>
+              </div>
+            </div>
+
+            ${projectDetails.additionalNotes ? `
+            <div style="margin: 15px 0;">
+              <h4 style="color: #0891b2; margin-bottom: 8px;">Additional Notes:</h4>
+              <p style="margin: 0; color: #334155; white-space: pre-wrap;">${projectDetails.additionalNotes}</p>
+            </div>
+            ` : ''}
+
+            ${projectDetails.templateUsed ? `
+            <div style="margin: 15px 0; padding: 10px; background: #f1f5f9; border-radius: 6px;">
+              <p style="margin: 0; font-size: 13px; color: #64748b;"><strong>Template Used:</strong> ${projectDetails.templateUsed}</p>
+            </div>
+            ` : ''}
+          </div>
+          ` : `
           <div style="background: #fff; padding: 20px; border-left: 4px solid #06b6d4;">
             <h3 style="margin-top: 0;">Message:</h3>
-            <p style="white-space: pre-wrap;">${formData.message}</p>
+            <p style="white-space: pre-wrap;">${legacyMessage}</p>
           </div>
+          `}
           <div style="margin-top: 20px; padding: 15px; background: #e0f2fe; border-radius: 8px;">
             <p style="margin: 0; font-size: 12px; color: #0c4a6e;">
               <strong>Metadata:</strong><br>
