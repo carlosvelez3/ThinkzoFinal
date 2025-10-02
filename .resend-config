@@ -1,0 +1,16 @@
+# Resend Configuration Reference
+# This file is for documentation only - DO NOT commit actual API keys
+
+# Required Environment Variables (Set in Supabase Dashboard)
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxxxx
+FROM_EMAIL=team@thinkzo.ai
+FROM_NAME=Thinkzo.ai
+
+# Resend Dashboard: https://resend.com/overview
+# API Documentation: https://resend.com/docs/api-reference/emails/send-email
+# Domain Settings: https://resend.com/domains
+
+# Edge Function Path: supabase/functions/submit-contact-form/index.ts
+# Email Recipients:
+#   - Team Notification: team@thinkzo.ai
+#   - Customer Confirmation: [customer's email from form]

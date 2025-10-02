@@ -1,5 +1,4 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.57.4';
-import { SMTPClient } from 'https://deno.land/x/denomailer@1.6.0/mod.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -16,58 +15,58 @@ interface ContactFormData {
   message: string;
 }
 
-async function sendEmailViaSMTP(
+async function sendEmailViaResend(
   to: string[],
   subject: string,
   html: string,
   replyTo?: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const smtpHost = Deno.env.get('SMTP_HOST') || 'mail.spacemail.com';
-    const smtpPort = parseInt(Deno.env.get('SMTP_PORT') || '465');
-    const smtpUser = Deno.env.get('SMTP_USER') || 'team@thinkzo.ai';
-    const smtpPassword = Deno.env.get('SMTP_PASSWORD');
-    const smtpFromEmail = Deno.env.get('SMTP_FROM_EMAIL') || 'team@thinkzo.ai';
-    const smtpFromName = Deno.env.get('SMTP_FROM_NAME') || 'Thinkzo.ai';
+    const resendApiKey = Deno.env.get('RESEND_API_KEY');
+    const fromEmail = Deno.env.get('FROM_EMAIL') || 'team@thinkzo.ai';
+    const fromName = Deno.env.get('FROM_NAME') || 'Thinkzo.ai';
 
-    if (!smtpPassword) {
-      console.error('SMTP_PASSWORD not configured');
-      return { success: false, error: 'SMTP credentials not configured' };
+    if (!resendApiKey) {
+      console.error('RESEND_API_KEY not configured');
+      return { success: false, error: 'Resend API key not configured' };
     }
 
-    const client = new SMTPClient({
-      connection: {
-        hostname: smtpHost,
-        port: smtpPort,
-        tls: true,
-        auth: {
-          username: smtpUser,
-          password: smtpPassword,
-        },
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${resendApiKey}`,
+        'Content-Type': 'application/json',
       },
+      body: JSON.stringify({
+        from: `${fromName} <${fromEmail}>`,
+        to: to,
+        subject: subject,
+        html: html,
+        reply_to: replyTo || fromEmail,
+      }),
     });
 
-    await client.send({
-      from: `${smtpFromName} <${smtpFromEmail}>`,
-      to: to.join(', '),
-      replyTo: replyTo || smtpFromEmail,
-      subject: subject,
-      content: 'auto',
-      mimeContent: [
-        {
-          contentType: 'text/html; charset=utf-8',
-          content: html,
-        },
-      ],
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      console.error('Resend API error:', responseData);
+      return {
+        success: false,
+        error: responseData.message || `Resend API error: ${response.status}`
+      };
+    }
+
+    console.log(`Email sent successfully via Resend to: ${to.join(', ')}`, {
+      emailId: responseData.id,
     });
 
-    await client.close();
-
-    console.log(`Email sent successfully to: ${to.join(', ')}`);
     return { success: true };
   } catch (error) {
-    console.error('SMTP email error:', error);
-    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    console.error('Resend email error:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    };
   }
 }
 
@@ -180,7 +179,7 @@ Deno.serve(async (req: Request) => {
         </div>
       `;
 
-      const teamEmailResult = await sendEmailViaSMTP(
+      const teamEmailResult = await sendEmailViaResend(
         ['team@thinkzo.ai'],
         `New Project Inquiry: ${formData.projectType}`,
         teamEmailHtml,
@@ -293,7 +292,7 @@ Deno.serve(async (req: Request) => {
         </html>
       `;
 
-      const confirmationEmailResult = await sendEmailViaSMTP(
+      const confirmationEmailResult = await sendEmailViaResend(
         [formData.email],
         'Thank You for Your Project Inquiry - Thinkzo.ai',
         confirmationEmailHtml,
