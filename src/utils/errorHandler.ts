@@ -132,22 +132,10 @@ class ErrorLogger {
       console.warn('Could not save error logs to localStorage');
     }
 
-    // Console logging for development
+    // Console logging for development (minimal)
     if (process.env.NODE_ENV === 'development') {
       // eslint-disable-next-line no-console
-      console.group(`🚨 ${error.severity} Error: ${error.type}`);
-      // eslint-disable-next-line no-console
-      console.error('Message:', error.message);
-      // eslint-disable-next-line no-console
-      console.error('User Message:', error.userMessage);
-      // eslint-disable-next-line no-console
-      console.error('Context:', error.context);
-      // eslint-disable-next-line no-console
-      console.error('Original Error:', error.originalError);
-      // eslint-disable-next-line no-console
-      console.error('Stack:', error.stack);
-      // eslint-disable-next-line no-console
-      console.groupEnd();
+      console.error(`Error: ${error.userMessage || error.message}`);
     }
 
     // Send to external logging service in production
@@ -193,7 +181,7 @@ class ErrorLogger {
 export class ErrorHandler {
   private static logger = ErrorLogger.getInstance();
 
-  static handle(error: unknown, context?: Record<string, any>): AppError {
+  static handle(error: unknown, context?: Record<string, any>, options?: { showToast?: boolean }): AppError {
     let appError: AppError;
 
     if (error instanceof AppError) {
@@ -211,8 +199,10 @@ export class ErrorHandler {
     // Log the error
     this.logger.log(appError);
 
-    // Show user notification
-    this.showUserNotification(appError);
+    // Only show toast if explicitly requested (forms handle their own error display)
+    if (options?.showToast) {
+      this.showUserNotification(appError);
+    }
 
     return appError;
   }

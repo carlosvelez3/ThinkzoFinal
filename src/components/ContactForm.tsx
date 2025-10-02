@@ -17,17 +17,10 @@ export function ContactForm({ onCloseModal }: ContactFormProps) {
 
       // Validate environment variables
       if (!supabaseUrl || !supabaseAnonKey) {
-        console.error('Missing Supabase configuration:', {
-          hasUrl: !!supabaseUrl,
-          hasKey: !!supabaseAnonKey
-        });
-        throw new Error('Application configuration error. Please contact support.');
+        throw new Error('Unable to submit form. Please refresh the page and try again.');
       }
 
       const apiUrl = `${supabaseUrl}/functions/v1/submit-contact-form`;
-
-      console.log('Submitting form to:', apiUrl);
-      console.log('Form data:', { ...formData, email: '***' });
 
       // Submit to edge function with timeout
       const controller = new AbortController();
@@ -46,30 +39,27 @@ export function ContactForm({ onCloseModal }: ContactFormProps) {
 
       clearTimeout(timeoutId);
 
-      let result;
-      try {
-        result = await response.json();
-      } catch (parseError) {
-        console.error('Failed to parse response:', parseError);
-        throw new Error('Invalid response from server');
-      }
-
-      console.log('Response status:', response.status);
-      console.log('Response data:', result);
-
       if (!response.ok) {
-        const errorMessage = result.error || `Server error: ${response.status}`;
-        console.error('Submission failed:', errorMessage);
+        let errorMessage = 'Failed to submit form. Please try again.';
+        try {
+          const result = await response.json();
+          errorMessage = result.error || errorMessage;
+        } catch {
+          // Use default error message if JSON parsing fails
+        }
         throw new Error(errorMessage);
       }
 
-      // Show success message
-      toast.success('Thank you! Your inquiry has been submitted successfully.');
-
+      const result = await response.json();
       return result;
     } catch (error) {
-      console.error('Form submission error:', error);
-      throw error;
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          throw new Error('Request timed out. Please check your connection and try again.');
+        }
+        throw error;
+      }
+      throw new Error('An unexpected error occurred. Please try again.');
     }
   };
 

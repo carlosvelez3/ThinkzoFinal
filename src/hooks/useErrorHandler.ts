@@ -14,7 +14,7 @@ export interface UseErrorHandlerReturn {
 
 export function useErrorHandler(): UseErrorHandlerReturn {
   const handleError = useCallback((error: unknown, context?: Record<string, any>) => {
-    return ErrorHandler.handle(error, context);
+    return ErrorHandler.handle(error, context, { showToast: false });
   }, []);
 
   const handleAsyncError = useCallback(async <T>(
