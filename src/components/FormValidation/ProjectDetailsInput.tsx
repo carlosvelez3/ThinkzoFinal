@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   Check,
   ChevronDown,
@@ -200,11 +199,9 @@ export function ProjectDetailsInput({
           <span className="text-sm font-bold text-primary-accent">{completionPercentage}%</span>
         </div>
         <div className="w-full bg-gray-600 rounded-full h-2">
-          <motion.div
-            className="bg-gradient-to-r from-cta-yellow to-primary-accent h-2 rounded-full"
-            initial={{ width: 0 }}
-            animate={{ width: `${completionPercentage}%` }}
-            transition={{ duration: 0.5 }}
+          <div
+            className="bg-gradient-to-r from-cta-yellow to-primary-accent h-2 rounded-full transition-all duration-500"
+            style={{ width: `${completionPercentage}%` }}
           />
         </div>
         <p className="text-xs text-gray-400 mt-2">
@@ -231,55 +228,43 @@ export function ProjectDetailsInput({
             )}
           </button>
 
-          <AnimatePresence>
-            {expandedSections.has('templates') && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="overflow-hidden"
-              >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
-                  {relevantTemplates.map((template) => (
-                    <motion.button
-                      key={template.id}
-                      type="button"
-                      onClick={() => handleTemplateSelect(template)}
-                      className={`p-4 rounded-lg border-2 text-left transition-all duration-300 ${
-                        value.templateUsed === template.id
-                          ? 'border-primary-accent bg-primary-accent/10'
-                          : 'border-gray-600 bg-gray-700/50 hover:border-gray-500'
-                      }`}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <div className="flex items-start space-x-3">
-                        <div className="text-primary-accent mt-1">{template.icon}</div>
-                        <div className="flex-1">
-                          <h5 className="font-semibold text-white mb-1">{template.name}</h5>
-                          <p className="text-xs text-gray-400 mb-2">{template.description}</p>
-                          <div className="flex items-center space-x-3 text-xs text-gray-400">
-                            <span className="flex items-center space-x-1">
-                              <Clock className="w-3 h-3" />
-                              <span>{template.timeline}</span>
-                            </span>
-                            <span className="flex items-center space-x-1">
-                              <DollarSign className="w-3 h-3" />
-                              <span>{template.budgetRange}</span>
-                            </span>
-                          </div>
-                        </div>
-                        {value.templateUsed === template.id && (
-                          <CheckCircle2 className="w-5 h-5 text-primary-accent flex-shrink-0" />
-                        )}
+          {expandedSections.has('templates') && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 animate-fadeIn">
+              {relevantTemplates.map((template) => (
+                <button
+                  key={template.id}
+                  type="button"
+                  onClick={() => handleTemplateSelect(template)}
+                  className={`p-4 rounded-lg border-2 text-left transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
+                    value.templateUsed === template.id
+                      ? 'border-primary-accent bg-primary-accent/10'
+                      : 'border-gray-600 bg-gray-700/50 hover:border-gray-500'
+                  }`}
+                >
+                  <div className="flex items-start space-x-3">
+                    <div className="text-primary-accent mt-1">{template.icon}</div>
+                    <div className="flex-1">
+                      <h5 className="font-semibold text-white mb-1">{template.name}</h5>
+                      <p className="text-xs text-gray-400 mb-2">{template.description}</p>
+                      <div className="flex items-center space-x-3 text-xs text-gray-400">
+                        <span className="flex items-center space-x-1">
+                          <Clock className="w-3 h-3" />
+                          <span>{template.timeline}</span>
+                        </span>
+                        <span className="flex items-center space-x-1">
+                          <DollarSign className="w-3 h-3" />
+                          <span>{template.budgetRange}</span>
+                        </span>
                       </div>
-                    </motion.button>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                    </div>
+                    {value.templateUsed === template.id && (
+                      <CheckCircle2 className="w-5 h-5 text-primary-accent flex-shrink-0" />
+                    )}
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -306,34 +291,26 @@ export function ProjectDetailsInput({
           )}
         </button>
 
-        <AnimatePresence>
-          {expandedSections.has('goals') && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="overflow-hidden space-y-2"
-            >
-              <textarea
-                value={value.projectGoals}
-                onChange={(e) => onChange({ ...value, projectGoals: e.target.value })}
-                placeholder="What are your main goals for this project? What problem are you trying to solve?"
-                rows={4}
-                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-accent/20 focus:border-primary-accent transition-all duration-200 resize-y"
-              />
-              <div className="flex items-center justify-between text-xs">
-                <div className="flex items-center space-x-1 text-gray-400">
-                  <Info className="w-3 h-3" />
-                  <span>Minimum 20 characters</span>
-                </div>
-                <span className={`${value.projectGoals.length > 500 ? 'text-orange-400' : 'text-gray-400'}`}>
-                  {value.projectGoals.length}/1000
-                </span>
+        {expandedSections.has('goals') && (
+          <div className="space-y-2 animate-fadeIn">
+            <textarea
+              value={value.projectGoals}
+              onChange={(e) => onChange({ ...value, projectGoals: e.target.value })}
+              placeholder="What are your main goals for this project? What problem are you trying to solve?"
+              rows={4}
+              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-accent/20 focus:border-primary-accent transition-all duration-200 resize-y"
+            />
+            <div className="flex items-center justify-between text-xs">
+              <div className="flex items-center space-x-1 text-gray-400">
+                <Info className="w-3 h-3" />
+                <span>Minimum 20 characters</span>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              <span className={`${value.projectGoals.length > 500 ? 'text-orange-400' : 'text-gray-400'}`}>
+                {value.projectGoals.length}/1000
+              </span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Target Audience */}
@@ -357,25 +334,17 @@ export function ProjectDetailsInput({
           )}
         </button>
 
-        <AnimatePresence>
-          {expandedSections.has('audience') && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="overflow-hidden"
-            >
-              <textarea
-                value={value.targetAudience}
-                onChange={(e) => onChange({ ...value, targetAudience: e.target.value })}
-                placeholder="Who will use this project? (e.g., small business owners, tech-savvy millennials, enterprise clients)"
-                rows={3}
-                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-accent/20 focus:border-primary-accent transition-all duration-200 resize-y"
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {expandedSections.has('audience') && (
+          <div className="animate-fadeIn">
+            <textarea
+              value={value.targetAudience}
+              onChange={(e) => onChange({ ...value, targetAudience: e.target.value })}
+              placeholder="Who will use this project? (e.g., small business owners, tech-savvy millennials, enterprise clients)"
+              rows={3}
+              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-accent/20 focus:border-primary-accent transition-all duration-200 resize-y"
+            />
+          </div>
+        )}
       </div>
 
       {/* Features */}
@@ -401,103 +370,92 @@ export function ProjectDetailsInput({
           )}
         </button>
 
-        <AnimatePresence>
-          {expandedSections.has('features') && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="overflow-hidden space-y-4"
-            >
-              {/* Selected Features Tags */}
-              {value.selectedFeatures.length > 0 && (
-                <div className="flex flex-wrap gap-2 p-3 bg-gray-700/50 rounded-lg border border-gray-600">
-                  {value.selectedFeatures.map((feature) => (
-                    <motion.span
-                      key={feature}
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      exit={{ scale: 0 }}
-                      className="inline-flex items-center space-x-1 px-3 py-1 bg-primary-accent/20 text-primary-accent rounded-full text-sm font-medium border border-primary-accent/30"
+        {expandedSections.has('features') && (
+          <div className="space-y-4 animate-fadeIn">
+            {/* Selected Features Tags */}
+            {value.selectedFeatures.length > 0 && (
+              <div className="flex flex-wrap gap-2 p-3 bg-gray-700/50 rounded-lg border border-gray-600">
+                {value.selectedFeatures.map((feature) => (
+                  <span
+                    key={feature}
+                    className="inline-flex items-center space-x-1 px-3 py-1 bg-primary-accent/20 text-primary-accent rounded-full text-sm font-medium border border-primary-accent/30"
+                  >
+                    <span>{feature}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveFeature(feature)}
+                      className="hover:text-white transition-colors"
                     >
-                      <span>{feature}</span>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveFeature(feature)}
-                        className="hover:text-white transition-colors"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </motion.span>
-                  ))}
-                </div>
-              )}
-
-              {/* Feature Categories */}
-              <div className="space-y-3">
-                {FEATURE_CATEGORIES.map((category) => (
-                  <div key={category.name} className="space-y-2">
-                    <div className="flex items-center space-x-2 text-sm font-semibold text-gray-300">
-                      {category.icon}
-                      <span>{category.name}</span>
-                    </div>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                      {category.features.map((feature) => {
-                        const isSelected = value.selectedFeatures.includes(feature);
-                        return (
-                          <button
-                            key={feature}
-                            type="button"
-                            onClick={() => handleFeatureToggle(feature)}
-                            className={`px-3 py-2 rounded-lg text-sm transition-all duration-200 text-left ${
-                              isSelected
-                                ? 'bg-primary-accent/20 text-primary-accent border-2 border-primary-accent'
-                                : 'bg-gray-700 text-gray-300 border-2 border-gray-600 hover:border-gray-500'
-                            }`}
-                          >
-                            <div className="flex items-center space-x-2">
-                              {isSelected ? (
-                                <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
-                              ) : (
-                                <Circle className="w-4 h-4 flex-shrink-0" />
-                              )}
-                              <span className="truncate">{feature}</span>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
                 ))}
               </div>
+            )}
 
-              {/* Custom Feature Input */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-gray-300">Add Custom Feature</label>
-                <div className="flex space-x-2">
-                  <input
-                    type="text"
-                    value={customFeature}
-                    onChange={(e) => setCustomFeature(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddCustomFeature())}
-                    placeholder="Enter a custom feature..."
-                    className="flex-1 px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-accent/20 focus:border-primary-accent transition-all duration-200"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleAddCustomFeature}
-                    disabled={!customFeature.trim()}
-                    className="px-4 py-2 bg-primary-accent text-white rounded-lg hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center space-x-1"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span className="hidden sm:inline">Add</span>
-                  </button>
+            {/* Feature Categories */}
+            <div className="space-y-3">
+              {FEATURE_CATEGORIES.map((category) => (
+                <div key={category.name} className="space-y-2">
+                  <div className="flex items-center space-x-2 text-sm font-semibold text-gray-300">
+                    {category.icon}
+                    <span>{category.name}</span>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    {category.features.map((feature) => {
+                      const isSelected = value.selectedFeatures.includes(feature);
+                      return (
+                        <button
+                          key={feature}
+                          type="button"
+                          onClick={() => handleFeatureToggle(feature)}
+                          className={`px-3 py-2 rounded-lg text-sm transition-all duration-200 text-left ${
+                            isSelected
+                              ? 'bg-primary-accent/20 text-primary-accent border-2 border-primary-accent'
+                              : 'bg-gray-700 text-gray-300 border-2 border-gray-600 hover:border-gray-500'
+                          }`}
+                        >
+                          <div className="flex items-center space-x-2">
+                            {isSelected ? (
+                              <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+                            ) : (
+                              <Circle className="w-4 h-4 flex-shrink-0" />
+                            )}
+                            <span className="truncate">{feature}</span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
+              ))}
+            </div>
+
+            {/* Custom Feature Input */}
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-300">Add Custom Feature</label>
+              <div className="flex space-x-2">
+                <input
+                  type="text"
+                  value={customFeature}
+                  onChange={(e) => setCustomFeature(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddCustomFeature())}
+                  placeholder="Enter a custom feature..."
+                  className="flex-1 px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-accent/20 focus:border-primary-accent transition-all duration-200"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddCustomFeature}
+                  disabled={!customFeature.trim()}
+                  className="px-4 py-2 bg-primary-accent text-white rounded-lg hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center space-x-1"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span className="hidden sm:inline">Add</span>
+                </button>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Timeline */}
@@ -523,37 +481,29 @@ export function ProjectDetailsInput({
           )}
         </button>
 
-        <AnimatePresence>
-          {expandedSections.has('timeline') && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="overflow-hidden"
-            >
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                {TIMELINE_OPTIONS.map((option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    onClick={() => onChange({ ...value, timeline: option.label })}
-                    className={`p-3 rounded-lg border-2 transition-all duration-200 ${
-                      value.timeline === option.label
-                        ? 'border-primary-accent bg-primary-accent/10 text-white'
-                        : 'border-gray-600 bg-gray-700/50 text-gray-300 hover:border-gray-500'
-                    }`}
-                  >
-                    <div className="flex items-center justify-center space-x-2">
-                      {option.icon}
-                      <span className="text-sm font-medium">{option.label}</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {expandedSections.has('timeline') && (
+          <div className="animate-fadeIn">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              {TIMELINE_OPTIONS.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => onChange({ ...value, timeline: option.label })}
+                  className={`p-3 rounded-lg border-2 transition-all duration-200 ${
+                    value.timeline === option.label
+                      ? 'border-primary-accent bg-primary-accent/10 text-white'
+                      : 'border-gray-600 bg-gray-700/50 text-gray-300 hover:border-gray-500'
+                  }`}
+                >
+                  <div className="flex items-center justify-center space-x-2">
+                    {option.icon}
+                    <span className="text-sm font-medium">{option.label}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Budget Range */}
@@ -579,39 +529,31 @@ export function ProjectDetailsInput({
           )}
         </button>
 
-        <AnimatePresence>
-          {expandedSections.has('budget') && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="overflow-hidden"
-            >
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {BUDGET_RANGES.map((budget) => (
-                  <button
-                    key={budget.value}
-                    type="button"
-                    onClick={() => onChange({ ...value, budgetRange: budget.label })}
-                    className={`p-4 rounded-lg border-2 transition-all duration-200 ${
-                      value.budgetRange === budget.label
-                        ? 'border-primary-accent bg-primary-accent/10 text-white'
-                        : 'border-gray-600 bg-gray-700/50 text-gray-300 hover:border-gray-500'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">{budget.label}</span>
-                      {value.budgetRange === budget.label && (
-                        <CheckCircle2 className="w-5 h-5 text-primary-accent" />
-                      )}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {expandedSections.has('budget') && (
+          <div className="animate-fadeIn">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {BUDGET_RANGES.map((budget) => (
+                <button
+                  key={budget.value}
+                  type="button"
+                  onClick={() => onChange({ ...value, budgetRange: budget.label })}
+                  className={`p-4 rounded-lg border-2 transition-all duration-200 ${
+                    value.budgetRange === budget.label
+                      ? 'border-primary-accent bg-primary-accent/10 text-white'
+                      : 'border-gray-600 bg-gray-700/50 text-gray-300 hover:border-gray-500'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">{budget.label}</span>
+                    {value.budgetRange === budget.label && (
+                      <CheckCircle2 className="w-5 h-5 text-primary-accent" />
+                    )}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Additional Notes */}
@@ -632,25 +574,17 @@ export function ProjectDetailsInput({
           )}
         </button>
 
-        <AnimatePresence>
-          {expandedSections.has('notes') && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="overflow-hidden"
-            >
-              <textarea
-                value={value.additionalNotes}
-                onChange={(e) => onChange({ ...value, additionalNotes: e.target.value })}
-                placeholder="Any other details, specific requirements, or questions you'd like to share..."
-                rows={4}
-                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-accent/20 focus:border-primary-accent transition-all duration-200 resize-y"
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {expandedSections.has('notes') && (
+          <div className="animate-fadeIn">
+            <textarea
+              value={value.additionalNotes}
+              onChange={(e) => onChange({ ...value, additionalNotes: e.target.value })}
+              placeholder="Any other details, specific requirements, or questions you'd like to share..."
+              rows={4}
+              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-accent/20 focus:border-primary-accent transition-all duration-200 resize-y"
+            />
+          </div>
+        )}
       </div>
     </div>
   );
