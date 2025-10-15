@@ -11,13 +11,31 @@ interface RecaptchaRequest {
   token: string;
 }
 
-interface GoogleRecaptchaResponse {
-  success: boolean;
-  challenge_ts?: string;
-  hostname?: string;
-  score?: number;
-  action?: string;
-  "error-codes"?: string[];
+interface GoogleRecaptchaEnterpriseResponse {
+  tokenProperties?: {
+    valid: boolean;
+    hostname?: string;
+    action?: string;
+    createTime?: string;
+    invalidReason?: string;
+  };
+  riskAnalysis?: {
+    score?: number;
+    reasons?: string[];
+  };
+  event?: {
+    token?: string;
+    siteKey?: string;
+    userAgent?: string;
+    userIpAddress?: string;
+    expectedAction?: string;
+  };
+  name?: string;
+  error?: {
+    code?: number;
+    message?: string;
+    status?: string;
+  };
 }
 
 interface RateLimitResult {
@@ -31,33 +49,43 @@ interface RateLimitResult {
 async function verifyRecaptchaWithGoogle(
   token: string,
   remoteIp?: string
-): Promise<GoogleRecaptchaResponse> {
-  const secretKey = Deno.env.get("RECAPTCHA_SECRET_KEY");
+): Promise<GoogleRecaptchaEnterpriseResponse> {
+  const apiKey = Deno.env.get("RECAPTCHA_ENTERPRISE_API_KEY");
+  const projectId = Deno.env.get("RECAPTCHA_ENTERPRISE_PROJECT_ID");
 
-  if (!secretKey) {
-    throw new Error("RECAPTCHA_SECRET_KEY not configured");
+  if (!apiKey) {
+    throw new Error("RECAPTCHA_ENTERPRISE_API_KEY not configured");
   }
 
-  const verifyUrl = "https://www.google.com/recaptcha/api/siteverify";
-  const params = new URLSearchParams({
-    secret: secretKey,
-    response: token,
-  });
+  if (!projectId) {
+    throw new Error("RECAPTCHA_ENTERPRISE_PROJECT_ID not configured");
+  }
+
+  const verifyUrl = `https://recaptchaenterprise.googleapis.com/v1/projects/${projectId}/assessments?key=${apiKey}`;
+
+  const requestBody: any = {
+    event: {
+      token: token,
+      siteKey: Deno.env.get("RECAPTCHA_SITE_KEY"),
+      expectedAction: "verify_identity"
+    }
+  };
 
   if (remoteIp) {
-    params.append("remoteip", remoteIp);
+    requestBody.event.userIpAddress = remoteIp;
   }
 
   const response = await fetch(verifyUrl, {
     method: "POST",
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
+      "Content-Type": "application/json",
     },
-    body: params.toString(),
+    body: JSON.stringify(requestBody),
   });
 
   if (!response.ok) {
-    throw new Error(`Google reCAPTCHA API error: ${response.status}`);
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(`Google reCAPTCHA Enterprise API error: ${response.status} - ${JSON.stringify(errorData)}`);
   }
 
   return await response.json();
@@ -142,9 +170,11 @@ Deno.serve(async (req: Request) => {
       ipAddress
     );
 
+    const isTokenValid = googleResult.tokenProperties?.valid === true;
+    const score = googleResult.riskAnalysis?.score;
     const minimumScore = 0.5;
-    const isScoreAcceptable = googleResult.score !== undefined && googleResult.score >= minimumScore;
-    const verificationStatus = googleResult.success && isScoreAcceptable ? "verified" : "failed";
+    const isScoreAcceptable = score !== undefined && score >= minimumScore;
+    const verificationStatus = isTokenValid && isScoreAcceptable ? "verified" : "failed";
 
     const { data: verification, error: dbError } = await supabase
       .from("captcha_verifications")
@@ -153,13 +183,13 @@ Deno.serve(async (req: Request) => {
         ip_address: ipAddress,
         user_agent: userAgent,
         verification_status: verificationStatus,
-        score: googleResult.score || null,
-        challenge_ts: googleResult.challenge_ts || null,
-        hostname: googleResult.hostname || null,
-        error_codes: googleResult["error-codes"]
-          ? JSON.stringify(googleResult["error-codes"])
-          : null,
-        verified_at: googleResult.success && isScoreAcceptable ? new Date().toISOString() : null,
+        score: score || null,
+        challenge_ts: googleResult.tokenProperties?.createTime || null,
+        hostname: googleResult.tokenProperties?.hostname || null,
+        error_codes: googleResult.tokenProperties?.invalidReason
+          ? JSON.stringify([googleResult.tokenProperties.invalidReason])
+          : (googleResult.riskAnalysis?.reasons ? JSON.stringify(googleResult.riskAnalysis.reasons) : null),
+        verified_at: isTokenValid && isScoreAcceptable ? new Date().toISOString() : null,
       })
       .select()
       .single();
@@ -168,18 +198,19 @@ Deno.serve(async (req: Request) => {
       console.error("Database error:", dbError);
     }
 
-    if (!googleResult.success) {
+    if (!isTokenValid) {
       const errorMessage =
-        googleResult["error-codes"]?.join(", ") ||
-        "reCAPTCHA verification failed";
+        googleResult.tokenProperties?.invalidReason ||
+        googleResult.error?.message ||
+        "reCAPTCHA Enterprise verification failed";
 
       return new Response(
         JSON.stringify({
           success: false,
           error: "verification_failed",
           message: `Verification failed: ${errorMessage}`,
-          error_codes: googleResult["error-codes"],
-          score: googleResult.score,
+          error_codes: googleResult.tokenProperties?.invalidReason ? [googleResult.tokenProperties.invalidReason] : [],
+          score: score,
           attempts_remaining: rateLimitData.attempts_remaining - 1,
         }),
         {
@@ -190,10 +221,11 @@ Deno.serve(async (req: Request) => {
     }
 
     if (!isScoreAcceptable) {
-      console.log("reCAPTCHA score too low", {
+      console.log("reCAPTCHA Enterprise score too low", {
         ip: ipAddress,
-        score: googleResult.score,
+        score: score,
         minimum_required: minimumScore,
+        reasons: googleResult.riskAnalysis?.reasons,
       });
 
       return new Response(
@@ -201,7 +233,8 @@ Deno.serve(async (req: Request) => {
           success: false,
           error: "score_too_low",
           message: "Verification score is too low. This request appears suspicious.",
-          score: googleResult.score,
+          score: score,
+          reasons: googleResult.riskAnalysis?.reasons,
           attempts_remaining: rateLimitData.attempts_remaining - 1,
         }),
         {
@@ -211,12 +244,13 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    console.log("reCAPTCHA v3 verification successful", {
+    console.log("reCAPTCHA Enterprise verification successful", {
       ip: ipAddress,
-      hostname: googleResult.hostname,
-      score: googleResult.score,
-      action: googleResult.action,
+      hostname: googleResult.tokenProperties?.hostname,
+      score: score,
+      action: googleResult.tokenProperties?.action,
       verification_id: verification?.id,
+      assessment_name: googleResult.name,
     });
 
     return new Response(
@@ -224,9 +258,10 @@ Deno.serve(async (req: Request) => {
         success: true,
         message: "Verification successful",
         verification_id: verification?.id,
-        score: googleResult.score,
-        hostname: googleResult.hostname,
-        action: googleResult.action,
+        score: score,
+        hostname: googleResult.tokenProperties?.hostname,
+        action: googleResult.tokenProperties?.action,
+        assessment_name: googleResult.name,
         attempts_remaining: rateLimitData.attempts_remaining - 1,
       }),
       {
