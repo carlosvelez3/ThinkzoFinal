@@ -1,65 +1,38 @@
 import React from 'react';
 import { SmartForm } from './FormValidation/SmartForm';
-import toast from 'react-hot-toast';
+import { contactFormService } from '../services/api';
+import type { ContactFormSubmission } from '../types/database.types';
 
 interface ContactFormProps {
   onCloseModal: () => void;
 }
 
-
 export function ContactForm({ onCloseModal }: ContactFormProps) {
-  // Handle form submission
   const handleSubmit = async (formData: any) => {
+    const submissionData: ContactFormSubmission = {
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      company: formData.company,
+      projectType: formData.projectType,
+      projectDetails: formData.projectDetails
+    };
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+
     try {
-      // Get Supabase URL from environment
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-      // Validate environment variables
-      if (!supabaseUrl || !supabaseAnonKey) {
-        throw new Error('Unable to submit form. Please refresh the page and try again.');
-      }
-
-      const apiUrl = `${supabaseUrl}/functions/v1/submit-contact-form`;
-
-      // Submit to edge function with timeout
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000);
-
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabaseAnonKey}`,
-          'apikey': supabaseAnonKey,
-        },
-        body: JSON.stringify(formData),
+      const result = await contactFormService.submitContactForm(submissionData, {
+        timeout: 15000,
         signal: controller.signal,
+        retries: 2
       });
 
       clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        let errorMessage = 'Failed to submit form. Please try again.';
-        try {
-          const result = await response.json();
-          errorMessage = result.error || errorMessage;
-        } catch {
-          // Use default error message if JSON parsing fails
-        }
-        throw new Error(errorMessage);
-      }
-
-      const result = await response.json();
       return result;
     } catch (error) {
-      if (error instanceof Error) {
-        if (error.name === 'AbortError') {
-          throw new Error('Request timed out. Please check your connection and try again.');
-        }
-        throw error;
-      }
-      throw new Error('An unexpected error occurred. Please try again.');
+      clearTimeout(timeoutId);
+      throw error;
     }
   };
 
