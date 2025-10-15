@@ -35,6 +35,7 @@ async function verifyRecaptchaWithGoogle(
   const secretKey = Deno.env.get("RECAPTCHA_SECRET_KEY");
 
   if (!secretKey) {
+    console.error("RECAPTCHA_SECRET_KEY environment variable is not configured");
     throw new Error("RECAPTCHA_SECRET_KEY not configured");
   }
 
@@ -48,19 +49,38 @@ async function verifyRecaptchaWithGoogle(
     params.append("remoteip", remoteIp);
   }
 
-  const response = await fetch(verifyUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: params.toString(),
-  });
+  console.log("Verifying reCAPTCHA token with Google API...");
 
-  if (!response.ok) {
-    throw new Error(`Google reCAPTCHA API error: ${response.status}`);
+  try {
+    const response = await fetch(verifyUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: params.toString(),
+    });
+
+    if (!response.ok) {
+      console.error(`Google reCAPTCHA API returned status: ${response.status}`);
+      const errorText = await response.text();
+      console.error("Google API error response:", errorText);
+      throw new Error(`Google reCAPTCHA API error: ${response.status}`);
+    }
+
+    const result = await response.json();
+    console.log("Google reCAPTCHA verification result:", {
+      success: result.success,
+      score: result.score,
+      action: result.action,
+      hostname: result.hostname,
+      errorCodes: result["error-codes"]
+    });
+
+    return result;
+  } catch (error) {
+    console.error("Error calling Google reCAPTCHA API:", error);
+    throw error;
   }
-
-  return await response.json();
 }
 
 Deno.serve(async (req: Request) => {
@@ -125,17 +145,56 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const requestData: RecaptchaRequest = await req.json();
-
-    if (!requestData.token) {
+    let requestData: RecaptchaRequest;
+    try {
+      requestData = await req.json();
+    } catch (parseError) {
+      console.error("Failed to parse request body:", parseError);
       return new Response(
-        JSON.stringify({ error: "Missing reCAPTCHA token" }),
+        JSON.stringify({
+          error: "Invalid request format",
+          message: "Request body must be valid JSON"
+        }),
         {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         }
       );
     }
+
+    if (!requestData.token) {
+      console.error("Missing reCAPTCHA token in request");
+      return new Response(
+        JSON.stringify({
+          error: "Missing reCAPTCHA token",
+          message: "The reCAPTCHA token is required for verification"
+        }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    if (typeof requestData.token !== 'string' || requestData.token.trim() === '') {
+      console.error("Invalid reCAPTCHA token format:", typeof requestData.token);
+      return new Response(
+        JSON.stringify({
+          error: "Invalid token format",
+          message: "The reCAPTCHA token must be a non-empty string"
+        }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    console.log("Received verification request", {
+      ip: ipAddress,
+      tokenLength: requestData.token.length,
+      userAgent: userAgent.substring(0, 50)
+    });
 
     const googleResult = await verifyRecaptchaWithGoogle(
       requestData.token,

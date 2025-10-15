@@ -37,35 +37,72 @@ export function RecaptchaPopup() {
     return () => clearTimeout(timer);
   }, []);
 
+  const waitForRecaptcha = async (maxAttempts = 10, delayMs = 300): Promise<boolean> => {
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      if (window.grecaptcha && window.grecaptcha.ready) {
+        console.log(`reCAPTCHA loaded successfully after ${attempt} attempts`);
+        return true;
+      }
+      console.log(`Waiting for reCAPTCHA to load... attempt ${attempt + 1}/${maxAttempts}`);
+      await new Promise(resolve => setTimeout(resolve, delayMs));
+    }
+    return false;
+  };
+
   const executeRecaptcha = async () => {
     setIsVerifying(true);
     setError(null);
 
     try {
-      if (!window.grecaptcha || !window.grecaptcha.ready) {
-        setError('reCAPTCHA not loaded. Please refresh the page.');
+      const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
+
+      if (!siteKey || siteKey.trim() === '') {
+        console.error('VITE_RECAPTCHA_SITE_KEY is not configured');
+        setError('reCAPTCHA configuration missing. Please contact support.');
         setIsVerifying(false);
         return;
       }
 
+      console.log('Checking reCAPTCHA availability...');
+      const isRecaptchaAvailable = await waitForRecaptcha();
+
+      if (!isRecaptchaAvailable) {
+        console.error('reCAPTCHA failed to load after multiple attempts');
+        setError('reCAPTCHA failed to load. Please check your internet connection and refresh the page.');
+        setIsVerifying(false);
+        return;
+      }
+
+      console.log('Executing reCAPTCHA with site key:', siteKey.substring(0, 10) + '...');
+
       await window.grecaptcha.ready(async () => {
         try {
-          const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
-
+          console.log('reCAPTCHA ready, executing...');
           const token = await window.grecaptcha.execute(siteKey, {
             action: 'verify_identity'
           });
 
+          if (!token || token.trim() === '') {
+            console.error('reCAPTCHA returned empty token');
+            setError('Failed to generate verification token. Please try again.');
+            setIsVerifying(false);
+            return;
+          }
+
+          console.log('reCAPTCHA token generated successfully, length:', token.length);
           await verifyToken(token);
         } catch (err) {
           console.error('reCAPTCHA execution error:', err);
-          setError('Failed to generate verification token. Please try again.');
+          const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+          console.error('Error details:', errorMessage);
+          setError(`Failed to generate verification token: ${errorMessage}`);
           setIsVerifying(false);
         }
       });
     } catch (err) {
       console.error('reCAPTCHA error:', err);
-      setError('Verification service error. Please try again.');
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      setError(`Verification service error: ${errorMessage}`);
       setIsVerifying(false);
     }
   };
@@ -75,33 +112,61 @@ export function RecaptchaPopup() {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-      const response = await fetch(
-        `${supabaseUrl}/functions/v1/verify-recaptcha`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${supabaseAnonKey}`,
-          },
-          body: JSON.stringify({ token }),
-        }
-      );
+      if (!supabaseUrl || !supabaseAnonKey) {
+        console.error('Supabase configuration missing');
+        setError('Service configuration error. Please contact support.');
+        setIsVerifying(false);
+        return;
+      }
 
-      const data: VerificationResponse = await response.json();
+      console.log('Sending verification request to Edge Function...');
+      const verifyUrl = `${supabaseUrl}/functions/v1/verify-recaptcha`;
+
+      const response = await fetch(verifyUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${supabaseAnonKey}`,
+        },
+        body: JSON.stringify({ token }),
+      });
+
+      console.log('Verification response status:', response.status);
+
+      let data: VerificationResponse;
+      try {
+        data = await response.json();
+        console.log('Verification response data:', {
+          success: data.success,
+          score: data.score,
+          error: data.error,
+          message: data.message
+        });
+      } catch (jsonError) {
+        console.error('Failed to parse verification response:', jsonError);
+        setError('Invalid response from verification service.');
+        setIsVerifying(false);
+        return;
+      }
 
       if (!response.ok) {
         if (response.status === 429) {
-          setError(data.message || 'Too many attempts. Please try again later.');
+          const errorMsg = data.message || 'Too many attempts. Please try again later.';
+          console.error('Rate limit exceeded:', errorMsg);
+          setError(errorMsg);
           toast.error('Rate limit exceeded. Please try again later.');
         } else {
-          setError(data.message || 'Verification failed');
-          toast.error(data.message || 'Verification failed');
+          const errorMsg = data.message || data.error || 'Verification failed';
+          console.error('Verification failed:', errorMsg, 'Status:', response.status);
+          setError(errorMsg);
+          toast.error(errorMsg);
         }
         setIsVerifying(false);
         return;
       }
 
       if (data.success) {
+        console.log('Verification successful! Score:', data.score);
         setIsVerified(true);
         setVerificationScore(data.score || null);
         toast.success('Verification successful!');
@@ -110,13 +175,23 @@ export function RecaptchaPopup() {
           setIsVisible(false);
         }, 2500);
       } else {
-        setError(data.message || 'Verification failed');
-        toast.error(data.message || 'Verification failed');
+        const errorMsg = data.message || data.error || 'Verification failed';
+        console.error('Verification failed:', errorMsg);
+        setError(errorMsg);
+        toast.error(errorMsg);
       }
     } catch (err) {
       console.error('Verification error:', err);
-      setError('Network error. Please check your connection and try again.');
-      toast.error('Network error. Please try again.');
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      console.error('Error details:', errorMessage);
+
+      if (errorMessage.includes('fetch') || errorMessage.includes('network')) {
+        setError('Network error. Please check your connection and try again.');
+        toast.error('Network error. Please try again.');
+      } else {
+        setError(`Verification failed: ${errorMessage}`);
+        toast.error('Verification failed. Please try again.');
+      }
     } finally {
       setIsVerifying(false);
     }
