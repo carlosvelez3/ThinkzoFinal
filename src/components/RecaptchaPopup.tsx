@@ -6,10 +6,8 @@ import toast from 'react-hot-toast';
 declare global {
   interface Window {
     grecaptcha: {
-      enterprise: {
-        ready: (callback: () => void) => void;
-        execute: (siteKey: string, options: { action: string }) => Promise<string>;
-      };
+      ready: (callback: () => void) => void;
+      execute: (siteKey: string, options: { action: string }) => Promise<string>;
     };
   }
 }
@@ -44,17 +42,17 @@ export function RecaptchaPopup() {
     setError(null);
 
     try {
-      if (!window.grecaptcha || !window.grecaptcha.enterprise || !window.grecaptcha.enterprise.ready) {
-        setError('reCAPTCHA Enterprise not loaded. Please refresh the page.');
+      if (!window.grecaptcha || !window.grecaptcha.ready) {
+        setError('reCAPTCHA not loaded. Please refresh the page.');
         setIsVerifying(false);
         return;
       }
 
-      await window.grecaptcha.enterprise.ready(async () => {
+      await window.grecaptcha.ready(async () => {
         try {
           const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
 
-          const token = await window.grecaptcha.enterprise.execute(siteKey, {
+          const token = await window.grecaptcha.execute(siteKey, {
             action: 'verify_identity'
           });
 
