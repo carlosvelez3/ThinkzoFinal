@@ -1,11 +1,43 @@
-import { useEffect, useState } from 'react';
-import { Shield, X, CheckCircle2, Fingerprint } from 'lucide-react';
+import { useEffect, useState, useRef } from 'react';
+import { Shield, X, CheckCircle2, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import toast from 'react-hot-toast';
+
+declare global {
+  interface Window {
+    grecaptcha: {
+      ready: (callback: () => void) => void;
+      render: (container: string | HTMLElement, params: {
+        sitekey: string;
+        theme?: string;
+        callback?: (token: string) => void;
+        'expired-callback'?: () => void;
+        'error-callback'?: () => void;
+      }) => number;
+      reset: (widgetId?: number) => void;
+      getResponse: (widgetId?: number) => string;
+    };
+  }
+}
+
+interface VerificationResponse {
+  success: boolean;
+  error?: string;
+  message?: string;
+  verification_id?: string;
+  score?: number;
+  attempts_remaining?: number;
+  blocked_until?: string;
+}
 
 export function RecaptchaPopup() {
   const [isVisible, setIsVisible] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+  const recaptchaContainerRef = useRef<HTMLDivElement>(null);
+  const widgetIdRef = useRef<number | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -15,21 +47,144 @@ export function RecaptchaPopup() {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleVerify = () => {
+  useEffect(() => {
+    if (!isVisible || !recaptchaContainerRef.current) return;
+
+    const loadRecaptcha = () => {
+      if (window.grecaptcha && window.grecaptcha.ready) {
+        window.grecaptcha.ready(() => {
+          if (recaptchaContainerRef.current && widgetIdRef.current === null) {
+            try {
+              widgetIdRef.current = window.grecaptcha.render(recaptchaContainerRef.current, {
+                sitekey: import.meta.env.VITE_RECAPTCHA_SITE_KEY,
+                theme: 'dark',
+                callback: handleRecaptchaSuccess,
+                'expired-callback': handleRecaptchaExpired,
+                'error-callback': handleRecaptchaError,
+              });
+            } catch (err) {
+              console.error('Error rendering reCAPTCHA:', err);
+              setError('Failed to load verification widget');
+            }
+          }
+        });
+      }
+    };
+
+    const checkRecaptchaLoaded = setInterval(() => {
+      if (window.grecaptcha && window.grecaptcha.ready) {
+        clearInterval(checkRecaptchaLoaded);
+        loadRecaptcha();
+      }
+    }, 100);
+
+    setTimeout(() => clearInterval(checkRecaptchaLoaded), 10000);
+
+    return () => {
+      clearInterval(checkRecaptchaLoaded);
+    };
+  }, [isVisible]);
+
+  const handleRecaptchaSuccess = (token: string) => {
+    setRecaptchaToken(token);
+    setError(null);
+    verifyToken(token);
+  };
+
+  const handleRecaptchaExpired = () => {
+    setRecaptchaToken(null);
+    setError('Verification expired. Please try again.');
+    if (widgetIdRef.current !== null) {
+      window.grecaptcha.reset(widgetIdRef.current);
+    }
+  };
+
+  const handleRecaptchaError = () => {
+    setError('Verification error occurred. Please try again.');
+    if (widgetIdRef.current !== null) {
+      window.grecaptcha.reset(widgetIdRef.current);
+    }
+  };
+
+  const verifyToken = async (token: string) => {
     setIsVerifying(true);
+    setError(null);
 
-    setTimeout(() => {
+    try {
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+      const response = await fetch(
+        `${supabaseUrl}/functions/v1/verify-recaptcha`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${supabaseAnonKey}`,
+          },
+          body: JSON.stringify({ token }),
+        }
+      );
+
+      const data: VerificationResponse = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 429) {
+          setError(data.message || 'Too many attempts. Please try again later.');
+          toast.error('Rate limit exceeded. Please try again later.');
+        } else {
+          setError(data.message || 'Verification failed');
+          toast.error(data.message || 'Verification failed');
+        }
+
+        if (widgetIdRef.current !== null) {
+          window.grecaptcha.reset(widgetIdRef.current);
+        }
+        setRecaptchaToken(null);
+        setIsVerifying(false);
+        return;
+      }
+
+      if (data.success) {
+        setIsVerified(true);
+        toast.success('Verification successful!');
+
+        setTimeout(() => {
+          setIsVisible(false);
+        }, 2000);
+      } else {
+        setError(data.message || 'Verification failed');
+        toast.error(data.message || 'Verification failed');
+
+        if (widgetIdRef.current !== null) {
+          window.grecaptcha.reset(widgetIdRef.current);
+        }
+        setRecaptchaToken(null);
+      }
+    } catch (err) {
+      console.error('Verification error:', err);
+      setError('Network error. Please check your connection and try again.');
+      toast.error('Network error. Please try again.');
+
+      if (widgetIdRef.current !== null) {
+        window.grecaptcha.reset(widgetIdRef.current);
+      }
+      setRecaptchaToken(null);
+    } finally {
       setIsVerifying(false);
-      setIsVerified(true);
-
-      setTimeout(() => {
-        setIsVisible(false);
-      }, 1500);
-    }, 2000);
+    }
   };
 
   const handleClose = () => {
     setIsVisible(false);
+  };
+
+  const handleRetry = () => {
+    setError(null);
+    setRecaptchaToken(null);
+    if (widgetIdRef.current !== null) {
+      window.grecaptcha.reset(widgetIdRef.current);
+    }
   };
 
   return (
@@ -49,10 +204,8 @@ export function RecaptchaPopup() {
             transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
             className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl shadow-2xl p-10 max-w-lg w-full mx-4 border border-cyan-500/20 overflow-hidden"
           >
-            {/* Animated background glow */}
             <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-blue-500/5 animate-pulse" />
 
-            {/* Close button */}
             <motion.button
               onClick={handleClose}
               whileHover={{ scale: 1.1, rotate: 90 }}
@@ -64,7 +217,6 @@ export function RecaptchaPopup() {
             </motion.button>
 
             <div className="relative z-10">
-              {/* Header with icon */}
               <div className="flex flex-col items-center mb-10">
                 <motion.div
                   initial={{ scale: 0 }}
@@ -94,66 +246,54 @@ export function RecaptchaPopup() {
                 </motion.p>
               </div>
 
-              {/* Custom verification button */}
               <AnimatePresence mode="wait">
                 {!isVerified ? (
                   <motion.div
-                    key="verify-button"
+                    key="verify-widget"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.9 }}
                     transition={{ delay: 0.5 }}
-                    className="flex justify-center mb-8"
+                    className="flex flex-col items-center mb-8"
                   >
-                    <motion.button
-                      onClick={handleVerify}
-                      disabled={isVerifying}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`
-                        relative group px-12 py-6 rounded-2xl font-semibold text-lg
-                        transition-all duration-300 overflow-hidden
-                        ${isVerifying
-                          ? 'bg-slate-700/50 cursor-not-allowed'
-                          : 'bg-gradient-to-r from-cyan-500/20 to-blue-500/20 hover:from-cyan-500/30 hover:to-blue-500/30'
-                        }
-                        border-2 ${isVerifying ? 'border-slate-600' : 'border-cyan-500/50 hover:border-cyan-400'}
-                      `}
-                    >
-                      {/* Animated background on hover */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/0 to-blue-500/0 group-hover:from-cyan-500/10 group-hover:to-blue-500/10 transition-all duration-300" />
+                    <div
+                      ref={recaptchaContainerRef}
+                      className="mb-6 flex justify-center transform scale-95 hover:scale-100 transition-transform duration-300"
+                    />
 
-                      <div className="relative flex items-center gap-4">
-                        {isVerifying ? (
-                          <>
-                            <motion.div
-                              animate={{ rotate: 360 }}
-                              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                            >
-                              <Fingerprint className="w-7 h-7 text-cyan-400" />
-                            </motion.div>
-                            <span className="text-cyan-400">Verifying...</span>
-                          </>
-                        ) : (
-                          <>
-                            <Fingerprint className="w-7 h-7 text-cyan-400 group-hover:text-cyan-300 transition-colors" />
-                            <span className="text-white group-hover:text-cyan-100 transition-colors">
-                              Verify Identity
-                            </span>
-                          </>
-                        )}
-                      </div>
-
-                      {/* Shine effect */}
-                      {!isVerifying && (
+                    {isVerifying && (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="flex items-center gap-3 text-cyan-400 mb-4"
+                      >
                         <motion.div
-                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
-                          initial={{ x: '-100%' }}
-                          whileHover={{ x: '100%' }}
-                          transition={{ duration: 0.6 }}
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                          className="w-5 h-5 border-2 border-cyan-400 border-t-transparent rounded-full"
                         />
-                      )}
-                    </motion.button>
+                        <span className="text-sm font-medium">Verifying...</span>
+                      </motion.div>
+                    )}
+
+                    {error && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex items-start gap-3 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm mb-4 max-w-md"
+                      >
+                        <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                        <div className="flex-1">
+                          <p>{error}</p>
+                          <button
+                            onClick={handleRetry}
+                            className="mt-2 text-xs underline hover:text-red-300 transition-colors"
+                          >
+                            Try again
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
                   </motion.div>
                 ) : (
                   <motion.div
@@ -181,7 +321,6 @@ export function RecaptchaPopup() {
                 )}
               </AnimatePresence>
 
-              {/* Footer text */}
               {!isVerified && (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -190,7 +329,7 @@ export function RecaptchaPopup() {
                   className="text-center space-y-2"
                 >
                   <p className="text-xs text-slate-500">
-                    Protected by advanced security • <span className="text-cyan-500/70 font-semibold">Thinkzo.ai</span>
+                    Protected by Google reCAPTCHA • <span className="text-cyan-500/70 font-semibold">Thinkzo.ai</span>
                   </p>
                   <p className="text-xs text-slate-600">
                     This verification helps us protect against automated attacks
@@ -199,7 +338,6 @@ export function RecaptchaPopup() {
               )}
             </div>
 
-            {/* Decorative elements */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl -z-10" />
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -z-10" />
           </motion.div>

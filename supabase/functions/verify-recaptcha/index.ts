@@ -1,0 +1,226 @@
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "npm:@supabase/supabase-js@2.57.4";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
+};
+
+interface RecaptchaRequest {
+  token: string;
+}
+
+interface GoogleRecaptchaResponse {
+  success: boolean;
+  challenge_ts?: string;
+  hostname?: string;
+  score?: number;
+  action?: string;
+  "error-codes"?: string[];
+}
+
+interface RateLimitResult {
+  allowed: boolean;
+  reason?: string;
+  blocked_until?: string;
+  attempts_remaining: number;
+  reset_at?: string;
+}
+
+async function verifyRecaptchaWithGoogle(
+  token: string,
+  remoteIp?: string
+): Promise<GoogleRecaptchaResponse> {
+  const secretKey = Deno.env.get("RECAPTCHA_SECRET_KEY");
+
+  if (!secretKey) {
+    throw new Error("RECAPTCHA_SECRET_KEY not configured");
+  }
+
+  const verifyUrl = "https://www.google.com/recaptcha/api/siteverify";
+  const params = new URLSearchParams({
+    secret: secretKey,
+    response: token,
+  });
+
+  if (remoteIp) {
+    params.append("remoteip", remoteIp);
+  }
+
+  const response = await fetch(verifyUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: params.toString(),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Google reCAPTCHA API error: ${response.status}`);
+  }
+
+  return await response.json();
+}
+
+Deno.serve(async (req: Request) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, {
+      status: 200,
+      headers: corsHeaders,
+    });
+  }
+
+  try {
+    if (req.method !== "POST") {
+      return new Response(
+        JSON.stringify({ error: "Method not allowed" }),
+        {
+          status: 405,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const ipAddress =
+      req.headers.get("x-forwarded-for") ||
+      req.headers.get("x-real-ip") ||
+      "unknown";
+    const userAgent = req.headers.get("user-agent") || "unknown";
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const rateLimitResult = await supabase.rpc("check_captcha_rate_limit", {
+      p_ip_address: ipAddress,
+    });
+
+    if (rateLimitResult.error) {
+      console.error("Rate limit check error:", rateLimitResult.error);
+      return new Response(
+        JSON.stringify({ error: "Rate limit check failed" }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const rateLimitData = rateLimitResult.data as RateLimitResult;
+
+    if (!rateLimitData.allowed) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "rate_limit_exceeded",
+          message: "Too many verification attempts. Please try again later.",
+          blocked_until: rateLimitData.blocked_until,
+          attempts_remaining: 0,
+        }),
+        {
+          status: 429,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const requestData: RecaptchaRequest = await req.json();
+
+    if (!requestData.token) {
+      return new Response(
+        JSON.stringify({ error: "Missing reCAPTCHA token" }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const googleResult = await verifyRecaptchaWithGoogle(
+      requestData.token,
+      ipAddress
+    );
+
+    const verificationStatus = googleResult.success ? "verified" : "failed";
+
+    const { data: verification, error: dbError } = await supabase
+      .from("captcha_verifications")
+      .insert({
+        token: requestData.token,
+        ip_address: ipAddress,
+        user_agent: userAgent,
+        verification_status: verificationStatus,
+        score: googleResult.score || null,
+        challenge_ts: googleResult.challenge_ts || null,
+        hostname: googleResult.hostname || null,
+        error_codes: googleResult["error-codes"]
+          ? JSON.stringify(googleResult["error-codes"])
+          : null,
+        verified_at: googleResult.success ? new Date().toISOString() : null,
+      })
+      .select()
+      .single();
+
+    if (dbError) {
+      console.error("Database error:", dbError);
+    }
+
+    if (!googleResult.success) {
+      const errorMessage =
+        googleResult["error-codes"]?.join(", ") ||
+        "reCAPTCHA verification failed";
+
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "verification_failed",
+          message: `Verification failed: ${errorMessage}`,
+          error_codes: googleResult["error-codes"],
+          attempts_remaining: rateLimitData.attempts_remaining - 1,
+        }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    console.log("reCAPTCHA verification successful", {
+      ip: ipAddress,
+      hostname: googleResult.hostname,
+      score: googleResult.score,
+      verification_id: verification?.id,
+    });
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        message: "Verification successful",
+        verification_id: verification?.id,
+        score: googleResult.score,
+        hostname: googleResult.hostname,
+        attempts_remaining: rateLimitData.attempts_remaining - 1,
+      }),
+      {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    return new Response(
+      JSON.stringify({
+        error: "internal_server_error",
+        message:
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred",
+      }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
+  }
+});
