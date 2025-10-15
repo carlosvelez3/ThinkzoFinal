@@ -142,7 +142,9 @@ Deno.serve(async (req: Request) => {
       ipAddress
     );
 
-    const verificationStatus = googleResult.success ? "verified" : "failed";
+    const minimumScore = 0.5;
+    const isScoreAcceptable = googleResult.score !== undefined && googleResult.score >= minimumScore;
+    const verificationStatus = googleResult.success && isScoreAcceptable ? "verified" : "failed";
 
     const { data: verification, error: dbError } = await supabase
       .from("captcha_verifications")
@@ -157,7 +159,7 @@ Deno.serve(async (req: Request) => {
         error_codes: googleResult["error-codes"]
           ? JSON.stringify(googleResult["error-codes"])
           : null,
-        verified_at: googleResult.success ? new Date().toISOString() : null,
+        verified_at: googleResult.success && isScoreAcceptable ? new Date().toISOString() : null,
       })
       .select()
       .single();
@@ -177,6 +179,7 @@ Deno.serve(async (req: Request) => {
           error: "verification_failed",
           message: `Verification failed: ${errorMessage}`,
           error_codes: googleResult["error-codes"],
+          score: googleResult.score,
           attempts_remaining: rateLimitData.attempts_remaining - 1,
         }),
         {
@@ -186,10 +189,33 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    console.log("reCAPTCHA verification successful", {
+    if (!isScoreAcceptable) {
+      console.log("reCAPTCHA score too low", {
+        ip: ipAddress,
+        score: googleResult.score,
+        minimum_required: minimumScore,
+      });
+
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "score_too_low",
+          message: "Verification score is too low. This request appears suspicious.",
+          score: googleResult.score,
+          attempts_remaining: rateLimitData.attempts_remaining - 1,
+        }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    console.log("reCAPTCHA v3 verification successful", {
       ip: ipAddress,
       hostname: googleResult.hostname,
       score: googleResult.score,
+      action: googleResult.action,
       verification_id: verification?.id,
     });
 
@@ -200,6 +226,7 @@ Deno.serve(async (req: Request) => {
         verification_id: verification?.id,
         score: googleResult.score,
         hostname: googleResult.hostname,
+        action: googleResult.action,
         attempts_remaining: rateLimitData.attempts_remaining - 1,
       }),
       {

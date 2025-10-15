@@ -1,5 +1,5 @@
-import { useEffect, useState, useRef } from 'react';
-import { Shield, X, CheckCircle2, AlertCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Shield, X, CheckCircle2, AlertCircle, Fingerprint } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 
@@ -7,15 +7,7 @@ declare global {
   interface Window {
     grecaptcha: {
       ready: (callback: () => void) => void;
-      render: (container: string | HTMLElement, params: {
-        sitekey: string;
-        theme?: string;
-        callback?: (token: string) => void;
-        'expired-callback'?: () => void;
-        'error-callback'?: () => void;
-      }) => number;
-      reset: (widgetId?: number) => void;
-      getResponse: (widgetId?: number) => string;
+      execute: (siteKey: string, options: { action: string }) => Promise<string>;
     };
   }
 }
@@ -35,9 +27,7 @@ export function RecaptchaPopup() {
   const [isVerifying, setIsVerifying] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
-  const recaptchaContainerRef = useRef<HTMLDivElement>(null);
-  const widgetIdRef = useRef<number | null>(null);
+  const [verificationScore, setVerificationScore] = useState<number | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -47,69 +37,40 @@ export function RecaptchaPopup() {
     return () => clearTimeout(timer);
   }, []);
 
-  useEffect(() => {
-    if (!isVisible || !recaptchaContainerRef.current) return;
-
-    const loadRecaptcha = () => {
-      if (window.grecaptcha && window.grecaptcha.ready) {
-        window.grecaptcha.ready(() => {
-          if (recaptchaContainerRef.current && widgetIdRef.current === null) {
-            try {
-              widgetIdRef.current = window.grecaptcha.render(recaptchaContainerRef.current, {
-                sitekey: import.meta.env.VITE_RECAPTCHA_SITE_KEY,
-                theme: 'dark',
-                callback: handleRecaptchaSuccess,
-                'expired-callback': handleRecaptchaExpired,
-                'error-callback': handleRecaptchaError,
-              });
-            } catch (err) {
-              console.error('Error rendering reCAPTCHA:', err);
-              setError('Failed to load verification widget');
-            }
-          }
-        });
-      }
-    };
-
-    const checkRecaptchaLoaded = setInterval(() => {
-      if (window.grecaptcha && window.grecaptcha.ready) {
-        clearInterval(checkRecaptchaLoaded);
-        loadRecaptcha();
-      }
-    }, 100);
-
-    setTimeout(() => clearInterval(checkRecaptchaLoaded), 10000);
-
-    return () => {
-      clearInterval(checkRecaptchaLoaded);
-    };
-  }, [isVisible]);
-
-  const handleRecaptchaSuccess = (token: string) => {
-    setRecaptchaToken(token);
+  const executeRecaptcha = async () => {
+    setIsVerifying(true);
     setError(null);
-    verifyToken(token);
-  };
 
-  const handleRecaptchaExpired = () => {
-    setRecaptchaToken(null);
-    setError('Verification expired. Please try again.');
-    if (widgetIdRef.current !== null) {
-      window.grecaptcha.reset(widgetIdRef.current);
-    }
-  };
+    try {
+      if (!window.grecaptcha || !window.grecaptcha.ready) {
+        setError('reCAPTCHA not loaded. Please refresh the page.');
+        setIsVerifying(false);
+        return;
+      }
 
-  const handleRecaptchaError = () => {
-    setError('Verification error occurred. Please try again.');
-    if (widgetIdRef.current !== null) {
-      window.grecaptcha.reset(widgetIdRef.current);
+      await window.grecaptcha.ready(async () => {
+        try {
+          const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
+
+          const token = await window.grecaptcha.execute(siteKey, {
+            action: 'verify_identity'
+          });
+
+          await verifyToken(token);
+        } catch (err) {
+          console.error('reCAPTCHA execution error:', err);
+          setError('Failed to generate verification token. Please try again.');
+          setIsVerifying(false);
+        }
+      });
+    } catch (err) {
+      console.error('reCAPTCHA error:', err);
+      setError('Verification service error. Please try again.');
+      setIsVerifying(false);
     }
   };
 
   const verifyToken = async (token: string) => {
-    setIsVerifying(true);
-    setError(null);
-
     try {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -136,40 +97,26 @@ export function RecaptchaPopup() {
           setError(data.message || 'Verification failed');
           toast.error(data.message || 'Verification failed');
         }
-
-        if (widgetIdRef.current !== null) {
-          window.grecaptcha.reset(widgetIdRef.current);
-        }
-        setRecaptchaToken(null);
         setIsVerifying(false);
         return;
       }
 
       if (data.success) {
         setIsVerified(true);
+        setVerificationScore(data.score || null);
         toast.success('Verification successful!');
 
         setTimeout(() => {
           setIsVisible(false);
-        }, 2000);
+        }, 2500);
       } else {
         setError(data.message || 'Verification failed');
         toast.error(data.message || 'Verification failed');
-
-        if (widgetIdRef.current !== null) {
-          window.grecaptcha.reset(widgetIdRef.current);
-        }
-        setRecaptchaToken(null);
       }
     } catch (err) {
       console.error('Verification error:', err);
       setError('Network error. Please check your connection and try again.');
       toast.error('Network error. Please try again.');
-
-      if (widgetIdRef.current !== null) {
-        window.grecaptcha.reset(widgetIdRef.current);
-      }
-      setRecaptchaToken(null);
     } finally {
       setIsVerifying(false);
     }
@@ -181,10 +128,8 @@ export function RecaptchaPopup() {
 
   const handleRetry = () => {
     setError(null);
-    setRecaptchaToken(null);
-    if (widgetIdRef.current !== null) {
-      window.grecaptcha.reset(widgetIdRef.current);
-    }
+    setVerificationScore(null);
+    executeRecaptcha();
   };
 
   return (
@@ -249,30 +194,56 @@ export function RecaptchaPopup() {
               <AnimatePresence mode="wait">
                 {!isVerified ? (
                   <motion.div
-                    key="verify-widget"
+                    key="verify-button"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.9 }}
                     transition={{ delay: 0.5 }}
                     className="flex flex-col items-center mb-8"
                   >
-                    <div
-                      ref={recaptchaContainerRef}
-                      className="mb-6 flex justify-center transform scale-95 hover:scale-100 transition-transform duration-300"
-                    />
+                    {!isVerifying && !error && (
+                      <motion.button
+                        onClick={executeRecaptcha}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="relative group px-12 py-6 rounded-2xl font-semibold text-lg transition-all duration-300 overflow-hidden bg-gradient-to-r from-cyan-500/20 to-blue-500/20 hover:from-cyan-500/30 hover:to-blue-500/30 border-2 border-cyan-500/50 hover:border-cyan-400"
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/0 to-blue-500/0 group-hover:from-cyan-500/10 group-hover:to-blue-500/10 transition-all duration-300" />
+
+                        <div className="relative flex items-center gap-4">
+                          <Fingerprint className="w-7 h-7 text-cyan-400 group-hover:text-cyan-300 transition-colors" />
+                          <span className="text-white group-hover:text-cyan-100 transition-colors">
+                            Verify Identity
+                          </span>
+                        </div>
+
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                          initial={{ x: '-100%' }}
+                          whileHover={{ x: '100%' }}
+                          transition={{ duration: 0.6 }}
+                        />
+                      </motion.button>
+                    )}
 
                     {isVerifying && (
                       <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="flex items-center gap-3 text-cyan-400 mb-4"
+                        className="flex flex-col items-center gap-4 p-8"
                       >
                         <motion.div
                           animate={{ rotate: 360 }}
                           transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                          className="w-5 h-5 border-2 border-cyan-400 border-t-transparent rounded-full"
-                        />
-                        <span className="text-sm font-medium">Verifying...</span>
+                        >
+                          <Fingerprint className="w-12 h-12 text-cyan-400" />
+                        </motion.div>
+                        <div className="text-center">
+                          <p className="text-cyan-400 font-semibold text-lg mb-2">Verifying...</p>
+                          <p className="text-slate-500 text-sm">
+                            Analyzing security parameters
+                          </p>
+                        </div>
                       </motion.div>
                     )}
 
@@ -280,18 +251,22 @@ export function RecaptchaPopup() {
                       <motion.div
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="flex items-start gap-3 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm mb-4 max-w-md"
+                        className="flex flex-col items-center gap-4 w-full"
                       >
-                        <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                        <div className="flex-1">
-                          <p>{error}</p>
-                          <button
-                            onClick={handleRetry}
-                            className="mt-2 text-xs underline hover:text-red-300 transition-colors"
-                          >
-                            Try again
-                          </button>
+                        <div className="flex items-start gap-3 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm w-full">
+                          <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                          <div className="flex-1">
+                            <p>{error}</p>
+                          </div>
                         </div>
+                        <motion.button
+                          onClick={handleRetry}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="px-8 py-3 rounded-xl font-medium text-base bg-gradient-to-r from-cyan-500/20 to-blue-500/20 hover:from-cyan-500/30 hover:to-blue-500/30 border border-cyan-500/50 hover:border-cyan-400 text-white transition-all"
+                        >
+                          Try Again
+                        </motion.button>
                       </motion.div>
                     )}
                   </motion.div>
@@ -314,6 +289,11 @@ export function RecaptchaPopup() {
                     <span className="text-green-400 font-bold text-xl">
                       Verification Successful!
                     </span>
+                    {verificationScore !== null && (
+                      <span className="text-green-400/70 text-sm">
+                        Trust Score: {(verificationScore * 100).toFixed(0)}%
+                      </span>
+                    )}
                     <span className="text-green-400/70 text-sm">
                       Access granted
                     </span>
@@ -329,7 +309,7 @@ export function RecaptchaPopup() {
                   className="text-center space-y-2"
                 >
                   <p className="text-xs text-slate-500">
-                    Protected by Google reCAPTCHA • <span className="text-cyan-500/70 font-semibold">Thinkzo.ai</span>
+                    Protected by Google reCAPTCHA v3 • <span className="text-cyan-500/70 font-semibold">Thinkzo.ai</span>
                   </p>
                   <p className="text-xs text-slate-600">
                     This verification helps us protect against automated attacks
