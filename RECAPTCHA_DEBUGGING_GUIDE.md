@@ -49,7 +49,7 @@ This guide helps diagnose and resolve "Failed to generate verification token" er
 ```
 VITE_SUPABASE_URL=https://bxpcwhmllfvjzlqutklc.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-VITE_RECAPTCHA_SITE_KEY=6LfuiusrAAAAAGP_N0FgpNJdoCIT9y2cUdJT8pbp
+VITE_RECAPTCHA_SITE_KEY=6LdpmuwrAAAAAIpNHZnO2H8y365nCy2j8mfQ1YO5
 ```
 
 ### Backend (Supabase Secrets)
@@ -63,7 +63,7 @@ RECAPTCHA_SECRET_KEY=<your-recaptcha-secret-key>
 
 File: `index.html`
 ```html
-<script src="https://www.google.com/recaptcha/api.js?render=6LfuiusrAAAAAGP_N0FgpNJdoCIT9y2cUdJT8pbp" async defer></script>
+<script src="https://www.google.com/recaptcha/api.js?render=6LdpmuwrAAAAAIpNHZnO2H8y365nCy2j8mfQ1YO5" async defer></script>
 ```
 
 **Important:** The site key in the script tag must match the environment variable.
