@@ -37,15 +37,17 @@ export function RecaptchaPopup() {
     return () => clearTimeout(timer);
   }, []);
 
-  const waitForRecaptcha = async (maxAttempts = 10, delayMs = 300): Promise<boolean> => {
+  const waitForRecaptcha = async (maxAttempts = 20, delayMs = 500): Promise<boolean> => {
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
-      if (window.grecaptcha && window.grecaptcha.ready) {
-        console.log(`reCAPTCHA loaded successfully after ${attempt} attempts`);
+      if (typeof window.grecaptcha !== 'undefined' && window.grecaptcha && window.grecaptcha.ready) {
+        console.log(`✓ reCAPTCHA loaded successfully after ${attempt} attempts`);
+        console.log('grecaptcha object:', typeof window.grecaptcha);
         return true;
       }
-      console.log(`Waiting for reCAPTCHA to load... attempt ${attempt + 1}/${maxAttempts}`);
+      console.log(`⏳ Waiting for reCAPTCHA to load... attempt ${attempt + 1}/${maxAttempts}`);
       await new Promise(resolve => setTimeout(resolve, delayMs));
     }
+    console.error('✗ reCAPTCHA failed to load after', maxAttempts, 'attempts over', (maxAttempts * delayMs / 1000), 'seconds');
     return false;
   };
 
@@ -63,46 +65,73 @@ export function RecaptchaPopup() {
         return;
       }
 
-      console.log('Checking reCAPTCHA availability...');
+      console.log('🔍 Checking reCAPTCHA availability...');
+      console.log('Current location:', window.location.hostname);
+      console.log('Site key (first 20 chars):', siteKey.substring(0, 20) + '...');
+
       const isRecaptchaAvailable = await waitForRecaptcha();
 
       if (!isRecaptchaAvailable) {
-        console.error('reCAPTCHA failed to load after multiple attempts');
-        setError('reCAPTCHA failed to load. Please check your internet connection and refresh the page.');
+        console.error('✗ reCAPTCHA failed to load after multiple attempts');
+        console.error('Possible causes:');
+        console.error('1. Script blocked by ad blocker or privacy extension');
+        console.error('2. Network connectivity issues');
+        console.error('3. Incorrect site key in index.html');
+        console.error('4. Domain not registered with this site key');
+        setError('reCAPTCHA failed to load. Please disable ad blockers, check your connection, and refresh the page.');
         setIsVerifying(false);
         return;
       }
 
-      console.log('Executing reCAPTCHA with site key:', siteKey.substring(0, 10) + '...');
+      console.log('🚀 Executing reCAPTCHA with site key:', siteKey.substring(0, 20) + '...');
 
       await window.grecaptcha.ready(async () => {
         try {
-          console.log('reCAPTCHA ready, executing...');
+          console.log('✓ reCAPTCHA ready, executing with action: verify_identity');
           const token = await window.grecaptcha.execute(siteKey, {
             action: 'verify_identity'
           });
 
           if (!token || token.trim() === '') {
-            console.error('reCAPTCHA returned empty token');
+            console.error('✗ reCAPTCHA returned empty token');
             setError('Failed to generate verification token. Please try again.');
             setIsVerifying(false);
             return;
           }
 
-          console.log('reCAPTCHA token generated successfully, length:', token.length);
+          console.log('✓ reCAPTCHA token generated successfully, length:', token.length);
+          console.log('Token preview:', token.substring(0, 30) + '...');
           await verifyToken(token);
         } catch (err) {
-          console.error('reCAPTCHA execution error:', err);
+          console.error('✗ reCAPTCHA execution error:', err);
           const errorMessage = err instanceof Error ? err.message : 'Unknown error';
           console.error('Error details:', errorMessage);
-          setError(`Failed to generate verification token: ${errorMessage}`);
+          console.error('Error type:', typeof err);
+
+          if (errorMessage.includes('Invalid site key')) {
+            console.error('DIAGNOSIS: Invalid site key error detected');
+            console.error('Solutions:');
+            console.error('1. Verify site key in .env matches Google Console');
+            console.error('2. Ensure domain is registered in Google reCAPTCHA Console');
+            console.error('3. Check that domain is registered WITHOUT http:// or https://');
+            console.error('4. Try regenerating site key in Google Console');
+            setError('Invalid reCAPTCHA site key. Please verify the configuration in Google Console.');
+          } else {
+            setError(`Failed to generate verification token: ${errorMessage}`);
+          }
           setIsVerifying(false);
         }
       });
     } catch (err) {
       console.error('reCAPTCHA error:', err);
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      setError(`Verification service error: ${errorMessage}`);
+      console.error('Full error object:', err);
+
+      if (errorMessage.includes('Invalid site key') || errorMessage.includes('not loaded')) {
+        setError('reCAPTCHA configuration error. Please contact support or try refreshing the page.');
+      } else {
+        setError(`Verification service error: ${errorMessage}`);
+      }
       setIsVerifying(false);
     }
   };

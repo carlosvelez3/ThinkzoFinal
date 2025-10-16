@@ -57,9 +57,8 @@ export function HeroSection({ onOpenContactModal }: HeroSectionProps) {
     >
       {/* Main Content Grid */}
       <div className="relative z-10 pt-24 px-4">
-        <div className="max-w-7xl mx-auto w-full lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
-      <div className="max-w-7xl mx-auto w-full lg:grid lg:grid-cols-3 lg:gap-8 lg:items-start">
-          
+        <div className="max-w-7xl mx-auto w-full lg:grid lg:grid-cols-3 lg:gap-8 lg:items-start">
+
           {/* Main Text Content */}
           <div className="text-center lg:text-left text-white lg:col-span-1">
             <h1 
@@ -151,9 +150,6 @@ export function HeroSection({ onOpenContactModal }: HeroSectionProps) {
           </div>
         </div>
       </div>
-
     </section>
   );
-}
-  )
 }
