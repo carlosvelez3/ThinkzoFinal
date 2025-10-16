@@ -186,7 +186,6 @@ Deno.serve(async (req: Request) => {
       timestamp: new Date().toISOString(),
     });
 
-    // Send response immediately, then send emails asynchronously
     const responsePromise = new Response(
       JSON.stringify({
         success: true,
@@ -199,7 +198,6 @@ Deno.serve(async (req: Request) => {
       }
     );
 
-    // Send emails in background (non-blocking)
     Promise.resolve().then(async () => {
       try {
       const teamEmailHtml = `
