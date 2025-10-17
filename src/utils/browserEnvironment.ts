@@ -7,6 +7,8 @@ export interface BrowserEnvironmentCheck {
   userAgent: string;
   isPrivateMode: boolean;
   hasAdBlocker: boolean;
+  isRestrictedEnvironment: boolean;
+  environmentType: 'normal' | 'iframe' | 'sandboxed' | 'bolt' | 'unknown';
 }
 
 export interface BrowserEnvironmentResult {
@@ -30,15 +32,101 @@ async function checkThirdPartyCookies(): Promise<boolean> {
   }
 }
 
-function checkCookiesEnabled(): boolean {
+function detectEnvironmentType(): { type: 'normal' | 'iframe' | 'sandboxed' | 'bolt' | 'unknown'; isRestricted: boolean } {
   try {
-    document.cookie = 'cookietest=1; SameSite=Lax';
-    const cookiesEnabled = document.cookie.indexOf('cookietest=') !== -1;
-    document.cookie = 'cookietest=1; expires=Thu, 01 Jan 1970 00:00:01 GMT';
-    return cookiesEnabled;
-  } catch {
-    return false;
+    const isInIframe = window.self !== window.top;
+    const isSandboxed = window.location.protocol === 'null' ||
+                        (window.frameElement && (window.frameElement as HTMLIFrameElement).hasAttribute('sandbox'));
+
+    const isBoltEnvironment = window.location.hostname.includes('bolt.new') ||
+                              window.location.hostname.includes('stackblitz') ||
+                              window.location.hostname.includes('webcontainer') ||
+                              (window as any).__BOLT_ENV__ === true;
+
+    if (isBoltEnvironment) {
+      console.log('🔧 Detected Bolt/development environment');
+      return { type: 'bolt', isRestricted: true };
+    }
+
+    if (isSandboxed) {
+      console.log('🔒 Detected sandboxed iframe environment');
+      return { type: 'sandboxed', isRestricted: true };
+    }
+
+    if (isInIframe) {
+      console.log('🖼️ Detected iframe environment');
+      return { type: 'iframe', isRestricted: true };
+    }
+
+    return { type: 'normal', isRestricted: false };
+  } catch (error) {
+    console.warn('⚠️ Error detecting environment type:', error);
+    return { type: 'unknown', isRestricted: true };
   }
+}
+
+async function checkCookiesEnabledEnhanced(): Promise<boolean> {
+  console.log('🍪 Starting enhanced cookie detection...');
+
+  const testCookieName = 'cookietest';
+  const testValue = '1';
+
+  const attemptCookieTest = (sameSite: string, secure: boolean = false, delay: number = 0): Promise<boolean> => {
+    return new Promise((resolve) => {
+      try {
+        const secureFlag = secure ? '; Secure' : '';
+        const cookieString = `${testCookieName}=${testValue}; SameSite=${sameSite}${secureFlag}; path=/`;
+
+        document.cookie = cookieString;
+
+        setTimeout(() => {
+          const cookiesEnabled = document.cookie.indexOf(`${testCookieName}=`) !== -1;
+          document.cookie = `${testCookieName}=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/`;
+          resolve(cookiesEnabled);
+        }, delay);
+      } catch (error) {
+        console.warn(`⚠️ Cookie test failed (SameSite=${sameSite}, Secure=${secure}):`, error);
+        resolve(false);
+      }
+    });
+  };
+
+  console.log('🧪 Stage 1: Testing with SameSite=Lax and 50ms delay');
+  let cookiesEnabled = await attemptCookieTest('Lax', false, 50);
+
+  if (cookiesEnabled) {
+    console.log('✅ Stage 1: Cookies enabled (SameSite=Lax)');
+    return true;
+  }
+
+  console.log('🧪 Stage 2: Testing with SameSite=None and Secure flag');
+  if (window.location.protocol === 'https:') {
+    cookiesEnabled = await attemptCookieTest('None', true, 50);
+
+    if (cookiesEnabled) {
+      console.log('✅ Stage 2: Cookies enabled (SameSite=None; Secure)');
+      return true;
+    }
+  }
+
+  console.log('🧪 Stage 3: Testing with SameSite=Strict');
+  cookiesEnabled = await attemptCookieTest('Strict', false, 50);
+
+  if (cookiesEnabled) {
+    console.log('✅ Stage 3: Cookies enabled (SameSite=Strict)');
+    return true;
+  }
+
+  console.log('🧪 Stage 4: Testing with increased delay (200ms)');
+  cookiesEnabled = await attemptCookieTest('Lax', false, 200);
+
+  if (cookiesEnabled) {
+    console.log('✅ Stage 4: Cookies enabled (with increased delay)');
+    return true;
+  }
+
+  console.log('❌ All cookie detection stages failed');
+  return false;
 }
 
 function checkLocalStorageEnabled(): boolean {
@@ -107,7 +195,10 @@ export async function checkBrowserEnvironment(): Promise<BrowserEnvironmentResul
   const issues: string[] = [];
   const warnings: string[] = [];
 
-  const cookiesEnabled = checkCookiesEnabled();
+  console.log('🔍 Starting comprehensive browser environment check...');
+
+  const environment = detectEnvironmentType();
+  const cookiesEnabled = await checkCookiesEnabledEnhanced();
   const localStorageEnabled = checkLocalStorageEnabled();
   const sessionStorageEnabled = checkSessionStorageEnabled();
   const thirdPartyCookiesEnabled = await checkThirdPartyCookies();
@@ -123,10 +214,26 @@ export async function checkBrowserEnvironment(): Promise<BrowserEnvironmentResul
     userAgent: navigator.userAgent,
     isPrivateMode,
     hasAdBlocker,
+    isRestrictedEnvironment: environment.isRestricted,
+    environmentType: environment.type,
   };
 
   if (!cookiesEnabled) {
-    issues.push('Cookies are disabled. Please enable cookies in your browser settings.');
+    if (environment.isRestricted) {
+      if (environment.type === 'bolt') {
+        console.warn('⚠️ Cookie test failed in Bolt environment - this is expected and will not block functionality');
+        warnings.push('Cookie detection inconclusive in development environment. Functionality may still work correctly.');
+      } else if (environment.type === 'sandboxed' || environment.type === 'iframe') {
+        console.warn('⚠️ Cookie test failed in restricted environment (iframe/sandbox)');
+        warnings.push('Limited cookie access detected due to environment restrictions. Some features may have reduced functionality.');
+      } else {
+        console.warn('⚠️ Cookie test failed in unknown restricted environment');
+        warnings.push('Cookie access may be restricted. If you experience issues, please check your browser settings.');
+      }
+    } else {
+      console.error('❌ Cookies are disabled in normal environment');
+      issues.push('Cookies are disabled. Please enable cookies in your browser settings.');
+    }
   }
 
   if (!localStorageEnabled) {
@@ -150,6 +257,8 @@ export async function checkBrowserEnvironment(): Promise<BrowserEnvironmentResul
   }
 
   const compatible = issues.length === 0;
+
+  console.log(`✅ Browser environment check complete: ${compatible ? 'Compatible' : 'Issues detected'}`);
 
   return {
     compatible,
@@ -197,6 +306,8 @@ export function logBrowserEnvironment(result: BrowserEnvironmentResult) {
   console.log('Browser:', `${browserInfo.name} ${browserInfo.version}`);
   console.log('Platform:', browserInfo.platform);
   console.log('Language:', browserInfo.language);
+  console.log('Environment Type:', result.checks.environmentType);
+  console.log('Restricted Environment:', result.checks.isRestrictedEnvironment ? '⚠️ Yes' : '✅ No');
   console.log('Cookies Enabled:', result.checks.cookiesEnabled ? '✅' : '❌');
   console.log('Local Storage:', result.checks.localStorageEnabled ? '✅' : '⚠️');
   console.log('Session Storage:', result.checks.sessionStorageEnabled ? '✅' : '⚠️');

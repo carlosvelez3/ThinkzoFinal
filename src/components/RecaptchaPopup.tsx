@@ -104,11 +104,16 @@ export function RecaptchaPopup() {
 
       if (browserEnvResult && !browserEnvResult.compatible) {
         console.error('❌ Browser environment check failed:', browserEnvResult.issues);
-        const issuesText = browserEnvResult.issues.join(' ');
-        setError(issuesText);
-        setIsVerifying(false);
-        toast.error('Browser environment issue detected');
-        return;
+
+        if (browserEnvResult.checks.isRestrictedEnvironment && browserEnvResult.checks.environmentType === 'bolt') {
+          console.warn('⚠️ Running in Bolt environment - attempting verification anyway');
+        } else {
+          const issuesText = browserEnvResult.issues.join(' ');
+          setError(issuesText);
+          setIsVerifying(false);
+          toast.error('Browser environment issue detected');
+          return;
+        }
       }
 
       const browserInfo = getBrowserInfo();
