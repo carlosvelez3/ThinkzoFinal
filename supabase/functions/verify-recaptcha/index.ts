@@ -228,16 +228,29 @@ Deno.serve(async (req: Request) => {
     }
 
     if (!googleResult.success) {
-      const errorMessage =
-        googleResult["error-codes"]?.join(", ") ||
-        "reCAPTCHA verification failed";
+      const errorCodes = googleResult["error-codes"] || [];
+      let userMessage = "reCAPTCHA verification failed";
+
+      if (errorCodes.includes("browser-error")) {
+        userMessage = "Browser environment issue detected. Please ensure cookies are enabled, disable ad blockers or privacy extensions, and try a different browser if the issue persists.";
+      } else if (errorCodes.includes("timeout-or-duplicate")) {
+        userMessage = "Verification token expired or already used. Please try again.";
+      } else if (errorCodes.includes("invalid-input-response")) {
+        userMessage = "Invalid verification token. Please refresh the page and try again.";
+      } else if (errorCodes.includes("invalid-input-secret")) {
+        userMessage = "Server configuration error. Please contact support.";
+      } else if (errorCodes.includes("missing-input-response")) {
+        userMessage = "Verification token missing. Please try again.";
+      } else if (errorCodes.length > 0) {
+        userMessage = `Verification failed: ${errorCodes.join(", ")}`;
+      }
 
       return new Response(
         JSON.stringify({
           success: false,
           error: "verification_failed",
-          message: `Verification failed: ${errorMessage}`,
-          error_codes: googleResult["error-codes"],
+          message: userMessage,
+          error_codes: errorCodes,
           score: googleResult.score,
           attempts_remaining: rateLimitData.attempts_remaining - 1,
         }),

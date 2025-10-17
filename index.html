@@ -8,7 +8,18 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=OpenDyslexic:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://www.google.com/recaptcha/api.js?render=6LdpmuwrAAAAAAC48MOUqHwxMQaQB8pof-1LybIa" async defer onerror="console.error('Failed to load reCAPTCHA script from Google')"></script>
+    <script>
+      window.recaptchaLoadAttempts = 0;
+      window.recaptchaLoadError = null;
+      window.recaptchaScriptLoaded = false;
+    </script>
+    <script
+      src="https://www.google.com/recaptcha/api.js?render=6LdpmuwrAAAAAAC48MOUqHwxMQaQB8pof-1LybIa"
+      async
+      defer
+      onload="window.recaptchaScriptLoaded = true; console.log('reCAPTCHA script loaded successfully');"
+      onerror="window.recaptchaLoadError = 'Failed to load reCAPTCHA script. Please check your internet connection or disable ad blockers.'; console.error('reCAPTCHA script load error');"
+    ></script>
     <title>Thinkzo.ai – AI Website Building Consulting</title>
   </head>
   <body>
