@@ -107,6 +107,16 @@ Deno.serve(async (req: Request) => {
       req.headers.get("x-real-ip") ||
       "unknown";
     const userAgent = req.headers.get("user-agent") || "unknown";
+    const browserName = req.headers.get("x-browser-name") || "unknown";
+    const browserVersion = req.headers.get("x-browser-version") || "unknown";
+
+    console.log("Request details:", {
+      ip: ipAddress,
+      userAgent: userAgent.substring(0, 100),
+      browser: `${browserName} ${browserVersion}`,
+      method: req.method,
+      timestamp: new Date().toISOString()
+    });
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -230,20 +240,42 @@ Deno.serve(async (req: Request) => {
     if (!googleResult.success) {
       const errorCodes = googleResult["error-codes"] || [];
       let userMessage = "reCAPTCHA verification failed";
+      let detailedReason = "";
+
+      console.error("Google reCAPTCHA verification failed:", {
+        errorCodes,
+        ip: ipAddress,
+        browser: `${browserName} ${browserVersion}`,
+        userAgent: userAgent.substring(0, 100)
+      });
 
       if (errorCodes.includes("browser-error")) {
         userMessage = "Browser environment issue detected. Please ensure cookies are enabled, disable ad blockers or privacy extensions, and try a different browser if the issue persists.";
+        detailedReason = "Google detected browser environment restrictions or security features blocking verification. Common causes: strict privacy settings, third-party cookie blocking, ad blockers, or browser extensions interfering with reCAPTCHA.";
+        console.warn("browser-error detected - likely privacy/security software interference");
       } else if (errorCodes.includes("timeout-or-duplicate")) {
         userMessage = "Verification token expired or already used. Please try again.";
+        detailedReason = "Token was either used before or took too long to verify (tokens expire after 2 minutes).";
       } else if (errorCodes.includes("invalid-input-response")) {
         userMessage = "Invalid verification token. Please refresh the page and try again.";
+        detailedReason = "The token format was invalid or corrupted during transmission.";
       } else if (errorCodes.includes("invalid-input-secret")) {
         userMessage = "Server configuration error. Please contact support.";
+        detailedReason = "The reCAPTCHA secret key is misconfigured on the server.";
+        console.error("CRITICAL: Invalid reCAPTCHA secret key configured");
       } else if (errorCodes.includes("missing-input-response")) {
         userMessage = "Verification token missing. Please try again.";
+        detailedReason = "No token was provided in the request.";
+      } else if (errorCodes.includes("missing-input-secret")) {
+        userMessage = "Server configuration error. Please contact support.";
+        detailedReason = "The reCAPTCHA secret key is not configured on the server.";
+        console.error("CRITICAL: Missing reCAPTCHA secret key");
       } else if (errorCodes.length > 0) {
         userMessage = `Verification failed: ${errorCodes.join(", ")}`;
+        detailedReason = `Unknown error codes: ${errorCodes.join(", ")}`;
       }
+
+      console.log("Detailed failure reason:", detailedReason);
 
       return new Response(
         JSON.stringify({
@@ -251,8 +283,10 @@ Deno.serve(async (req: Request) => {
           error: "verification_failed",
           message: userMessage,
           error_codes: errorCodes,
+          detailed_reason: detailedReason,
           score: googleResult.score,
           attempts_remaining: rateLimitData.attempts_remaining - 1,
+          browser_info: `${browserName} ${browserVersion}`,
         }),
         {
           status: 400,

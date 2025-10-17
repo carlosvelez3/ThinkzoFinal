@@ -12,13 +12,15 @@
       window.recaptchaLoadAttempts = 0;
       window.recaptchaLoadError = null;
       window.recaptchaScriptLoaded = false;
+
+      console.log('🔐 Initializing reCAPTCHA script loader...');
     </script>
     <script
       src="https://www.google.com/recaptcha/api.js?render=6LdpmuwrAAAAAAC48MOUqHwxMQaQB8pof-1LybIa"
       async
       defer
-      onload="window.recaptchaScriptLoaded = true; console.log('reCAPTCHA script loaded successfully');"
-      onerror="window.recaptchaLoadError = 'Failed to load reCAPTCHA script. Please check your internet connection or disable ad blockers.'; console.error('reCAPTCHA script load error');"
+      onload="window.recaptchaScriptLoaded = true; console.log('✅ reCAPTCHA script loaded successfully at:', new Date().toISOString());"
+      onerror="window.recaptchaLoadError = 'Failed to load reCAPTCHA script. Please check your internet connection or disable ad blockers.'; console.error('❌ reCAPTCHA script failed to load. This may be due to: ad blockers, privacy extensions, network issues, or strict browser security settings.'); console.error('Timestamp:', new Date().toISOString());"
     ></script>
     <title>Thinkzo.ai – AI Website Building Consulting</title>
   </head>

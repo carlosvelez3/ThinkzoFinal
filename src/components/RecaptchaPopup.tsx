@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Shield, X, CheckCircle2, AlertCircle, Fingerprint } from 'lucide-react';
+import { Shield, X, CheckCircle2, AlertCircle, Fingerprint, AlertTriangle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
+import { checkBrowserEnvironment, logBrowserEnvironment, getBrowserInfo } from '../utils/browserEnvironment';
+import type { BrowserEnvironmentResult } from '../utils/browserEnvironment';
 
 declare global {
   interface Window {
@@ -30,8 +32,28 @@ export function RecaptchaPopup() {
   const [isVerified, setIsVerified] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [verificationScore, setVerificationScore] = useState<number | null>(null);
+  const [browserEnvResult, setBrowserEnvResult] = useState<BrowserEnvironmentResult | null>(null);
+  const [showBrowserWarnings, setShowBrowserWarnings] = useState(false);
 
   useEffect(() => {
+    const initializeBrowserCheck = async () => {
+      console.log('🚀 Initializing browser environment check...');
+      const envResult = await checkBrowserEnvironment();
+      setBrowserEnvResult(envResult);
+      logBrowserEnvironment(envResult);
+
+      if (!envResult.compatible) {
+        console.error('❌ Browser environment is not compatible:', envResult.issues);
+      }
+
+      if (envResult.warnings.length > 0) {
+        console.warn('⚠️ Browser environment warnings:', envResult.warnings);
+        setShowBrowserWarnings(true);
+      }
+    };
+
+    initializeBrowserCheck();
+
     const timer = setTimeout(() => {
       setIsVisible(true);
     }, 1000);
@@ -39,23 +61,33 @@ export function RecaptchaPopup() {
     return () => clearTimeout(timer);
   }, []);
 
-  const waitForRecaptcha = async (maxAttempts = 30, delayMs = 300): Promise<{ success: boolean; error?: string }> => {
+  const waitForRecaptcha = async (maxAttempts = 40, delayMs = 300): Promise<{ success: boolean; error?: string }> => {
+    console.log('⏳ Waiting for reCAPTCHA to load...');
+
     if (window.recaptchaLoadError) {
+      console.error('❌ reCAPTCHA load error detected:', window.recaptchaLoadError);
       return { success: false, error: window.recaptchaLoadError };
     }
 
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       if (window.recaptchaScriptLoaded && typeof window.grecaptcha !== 'undefined' && window.grecaptcha && window.grecaptcha.ready) {
+        console.log(`✅ reCAPTCHA loaded successfully after ${attempt + 1} attempts`);
         return { success: true };
       }
 
       if (window.recaptchaLoadError) {
+        console.error('❌ reCAPTCHA load error detected during wait:', window.recaptchaLoadError);
         return { success: false, error: window.recaptchaLoadError };
+      }
+
+      if (attempt % 5 === 0 && attempt > 0) {
+        console.log(`⏳ Still waiting for reCAPTCHA... (attempt ${attempt + 1}/${maxAttempts})`);
       }
 
       await new Promise(resolve => setTimeout(resolve, delayMs));
     }
 
+    console.error('❌ reCAPTCHA failed to load after maximum attempts');
     return {
       success: false,
       error: 'reCAPTCHA script failed to load. Please refresh the page, disable ad blockers, and try again.'
@@ -65,56 +97,98 @@ export function RecaptchaPopup() {
   const executeRecaptcha = async () => {
     setIsVerifying(true);
     setError(null);
+    setShowBrowserWarnings(false);
 
     try {
+      console.log('🔐 Starting reCAPTCHA verification process...');
+
+      if (browserEnvResult && !browserEnvResult.compatible) {
+        console.error('❌ Browser environment check failed:', browserEnvResult.issues);
+        const issuesText = browserEnvResult.issues.join(' ');
+        setError(issuesText);
+        setIsVerifying(false);
+        toast.error('Browser environment issue detected');
+        return;
+      }
+
+      const browserInfo = getBrowserInfo();
+      console.log('📊 Browser Info:', browserInfo);
+
       const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
 
       if (!siteKey || siteKey.trim() === '') {
-        console.error('VITE_RECAPTCHA_SITE_KEY is not configured');
+        console.error('❌ VITE_RECAPTCHA_SITE_KEY is not configured');
         setError('reCAPTCHA configuration missing. Please contact support.');
         setIsVerifying(false);
         return;
       }
 
+      console.log('🔑 Using site key:', siteKey.substring(0, 15) + '...');
+
       const recaptchaStatus = await waitForRecaptcha();
 
       if (!recaptchaStatus.success) {
+        console.error('❌ reCAPTCHA script not available:', recaptchaStatus.error);
         setError(recaptchaStatus.error || 'reCAPTCHA failed to load. Please refresh the page and try again.');
         setIsVerifying(false);
+        toast.error('reCAPTCHA failed to load');
         return;
       }
 
+      console.log('✅ reCAPTCHA script ready, preparing to execute...');
+
       await window.grecaptcha.ready(async () => {
         try {
+          console.log('🎯 Executing reCAPTCHA with action: verify_identity');
+          const startTime = Date.now();
+
           const token = await window.grecaptcha.execute(siteKey, {
             action: 'verify_identity'
           });
 
+          const executionTime = Date.now() - startTime;
+          console.log(`✅ reCAPTCHA token generated in ${executionTime}ms, length: ${token?.length || 0}`);
+
           if (!token || token.trim() === '') {
+            console.error('❌ Empty token received from reCAPTCHA');
             setError('Failed to generate verification token. Please try again.');
             setIsVerifying(false);
+            toast.error('Token generation failed');
             return;
           }
 
+          console.log('📤 Sending token to backend for verification...');
           await verifyToken(token);
         } catch (err) {
           const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+          console.error('❌ reCAPTCHA execution error:', errorMessage, err);
 
           if (errorMessage.includes('Invalid site key')) {
             setError('Invalid reCAPTCHA configuration. Please contact support or refresh the page.');
+            toast.error('Configuration error');
+          } else if (errorMessage.includes('timeout')) {
+            setError('Verification timed out. Please check your internet connection and try again.');
+            toast.error('Verification timeout');
           } else {
             setError('Browser verification failed. Please ensure cookies are enabled, disable ad blockers, and try again.');
+            toast.error('Verification failed');
           }
           setIsVerifying(false);
         }
       });
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      console.error('❌ Unexpected error in executeRecaptcha:', errorMessage, err);
 
       if (errorMessage.includes('Invalid site key') || errorMessage.includes('not loaded')) {
         setError('reCAPTCHA configuration error. Please refresh the page or contact support.');
+        toast.error('Configuration error');
+      } else if (errorMessage.includes('network') || errorMessage.includes('fetch')) {
+        setError('Network error. Please check your internet connection and try again.');
+        toast.error('Network error');
       } else {
         setError('Verification failed. Please ensure JavaScript is enabled and try again.');
+        toast.error('Verification failed');
       }
       setIsVerifying(false);
     }
@@ -122,37 +196,52 @@ export function RecaptchaPopup() {
 
   const verifyToken = async (token: string) => {
     try {
+      console.log('🔍 Verifying token with backend...');
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
       if (!supabaseUrl || !supabaseAnonKey) {
-        console.error('Supabase configuration missing');
+        console.error('❌ Supabase configuration missing');
         setError('Service configuration error. Please contact support.');
         setIsVerifying(false);
         return;
       }
 
       const verifyUrl = `${supabaseUrl}/functions/v1/verify-recaptcha`;
+      console.log('📡 Verification endpoint:', verifyUrl);
+
+      const browserInfo = getBrowserInfo();
+      const startTime = Date.now();
 
       const response = await fetch(verifyUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${supabaseAnonKey}`,
+          'X-Browser-Name': browserInfo.name,
+          'X-Browser-Version': browserInfo.version,
         },
         body: JSON.stringify({ token }),
       });
 
+      const responseTime = Date.now() - startTime;
+      console.log(`📥 Received response in ${responseTime}ms, status: ${response.status}`);
+
       let data: VerificationResponse;
       try {
         data = await response.json();
+        console.log('📦 Response data:', { success: data.success, score: data.score, error: data.error });
       } catch (jsonError) {
+        console.error('❌ Failed to parse response JSON:', jsonError);
         setError('Invalid response from verification service.');
         setIsVerifying(false);
+        toast.error('Invalid server response');
         return;
       }
 
       if (!response.ok) {
+        console.error(`❌ Verification failed with status ${response.status}:`, data);
+
         if (response.status === 429) {
           const errorMsg = data.message || 'Too many attempts. Please try again later.';
           setError(errorMsg);
@@ -161,12 +250,16 @@ export function RecaptchaPopup() {
           const errorMsg = data.message || data.error || 'Verification failed';
 
           if (errorMsg.includes('browser-error')) {
+            console.warn('⚠️ Browser error detected from backend');
             setError('Browser environment issue detected. Please ensure cookies are enabled, disable ad blockers or privacy extensions, and try a different browser if the issue persists.');
             toast.error('Browser verification failed. Please check your browser settings.');
+            setShowBrowserWarnings(true);
           } else if (errorMsg.includes('timeout-or-duplicate')) {
+            console.warn('⚠️ Token timeout or duplicate');
             setError('Verification token expired or already used. Please try again.');
             toast.error('Verification expired. Please try again.');
           } else if (errorMsg.includes('invalid-input-response')) {
+            console.warn('⚠️ Invalid input response');
             setError('Invalid verification token. Please refresh the page and try again.');
             toast.error('Verification token invalid. Please refresh.');
           } else {
@@ -179,6 +272,7 @@ export function RecaptchaPopup() {
       }
 
       if (data.success) {
+        console.log('✅ Verification successful!', { score: data.score, verificationId: data.verification_id });
         setIsVerified(true);
         setVerificationScore(data.score || null);
         toast.success('Verification successful!');
@@ -188,10 +282,13 @@ export function RecaptchaPopup() {
         }, 2500);
       } else {
         const errorMsg = data.message || data.error || 'Verification failed';
+        console.error('❌ Verification not successful:', errorMsg);
 
         if (errorMsg.includes('browser-error')) {
+          console.warn('⚠️ Browser error in success response');
           setError('Browser environment issue detected. Please ensure cookies are enabled, disable ad blockers, and try a different browser if the issue persists.');
           toast.error('Browser verification failed.');
+          setShowBrowserWarnings(true);
         } else {
           setError(errorMsg);
           toast.error(errorMsg);
@@ -199,10 +296,14 @@ export function RecaptchaPopup() {
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      console.error('❌ Error in verifyToken:', errorMessage, err);
 
       if (errorMessage.includes('fetch') || errorMessage.includes('network')) {
         setError('Network error. Please check your connection and try again.');
         toast.error('Network error. Please try again.');
+      } else if (errorMessage.includes('abort')) {
+        setError('Verification timed out. Please try again.');
+        toast.error('Request timed out. Please try again.');
       } else {
         setError('Verification failed. Please try again.');
         toast.error('Verification failed. Please try again.');
@@ -337,6 +438,26 @@ export function RecaptchaPopup() {
                       </motion.div>
                     )}
 
+                    {showBrowserWarnings && browserEnvResult && browserEnvResult.warnings.length > 0 && !error && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mb-4 w-full"
+                      >
+                        <div className="flex items-start gap-3 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl text-yellow-400 text-sm">
+                          <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                          <div className="flex-1">
+                            <p className="font-semibold mb-2">Browser Environment Warnings:</p>
+                            <ul className="space-y-1 text-xs">
+                              {browserEnvResult.warnings.map((warning, idx) => (
+                                <li key={idx}>• {warning}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+
                     {error && (
                       <motion.div
                         initial={{ opacity: 0, y: -10 }}
@@ -347,6 +468,16 @@ export function RecaptchaPopup() {
                           <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
                           <div className="flex-1">
                             <p>{error}</p>
+                            {browserEnvResult && browserEnvResult.warnings.length > 0 && (
+                              <div className="mt-3 pt-3 border-t border-red-500/20">
+                                <p className="font-semibold mb-1 text-xs">Possible Issues:</p>
+                                <ul className="space-y-1 text-xs opacity-80">
+                                  {browserEnvResult.warnings.map((warning, idx) => (
+                                    <li key={idx}>• {warning}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
                           </div>
                         </div>
                         <motion.button
