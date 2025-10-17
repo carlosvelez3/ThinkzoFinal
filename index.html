@@ -13,15 +13,43 @@
       window.recaptchaLoadError = null;
       window.recaptchaScriptLoaded = false;
 
-      console.log('🔐 Initializing reCAPTCHA script loader...');
+      console.log('🔐 Initializing dynamic reCAPTCHA script loader...');
+
+      (function() {
+        const script = document.createElement('script');
+        const siteKey = '%VITE_RECAPTCHA_SITE_KEY%';
+
+        if (!siteKey || siteKey === '' || siteKey.startsWith('%')) {
+          console.error('❌ reCAPTCHA site key not configured. Please set VITE_RECAPTCHA_SITE_KEY in your .env file.');
+          window.recaptchaLoadError = 'reCAPTCHA configuration missing. Please contact support.';
+          return;
+        }
+
+        script.src = 'https://www.google.com/recaptcha/api.js?render=' + siteKey;
+        script.async = true;
+        script.defer = true;
+
+        script.onload = function() {
+          window.recaptchaScriptLoaded = true;
+          console.log('✅ reCAPTCHA script loaded successfully at:', new Date().toISOString());
+          console.log('📍 Current domain:', window.location.hostname);
+        };
+
+        script.onerror = function() {
+          window.recaptchaLoadError = 'Failed to load reCAPTCHA script. This may be due to: invalid domain configuration, ad blockers, privacy extensions, or network issues.';
+          console.error('❌ reCAPTCHA script failed to load.');
+          console.error('📍 Current domain:', window.location.hostname);
+          console.error('💡 Possible causes:');
+          console.error('   1. Domain not authorized in Google reCAPTCHA Console');
+          console.error('   2. Ad blockers or privacy extensions blocking the script');
+          console.error('   3. Network connectivity issues');
+          console.error('   4. Invalid or expired site key');
+          console.error('Timestamp:', new Date().toISOString());
+        };
+
+        document.head.appendChild(script);
+      })();
     </script>
-    <script
-      src="https://www.google.com/recaptcha/api.js?render=6LdpmuwrAAAAAAC48MOUqHwxMQaQB8pof-1LybIa"
-      async
-      defer
-      onload="window.recaptchaScriptLoaded = true; console.log('✅ reCAPTCHA script loaded successfully at:', new Date().toISOString());"
-      onerror="window.recaptchaLoadError = 'Failed to load reCAPTCHA script. Please check your internet connection or disable ad blockers.'; console.error('❌ reCAPTCHA script failed to load. This may be due to: ad blockers, privacy extensions, network issues, or strict browser security settings.'); console.error('Timestamp:', new Date().toISOString());"
-    ></script>
     <title>Thinkzo.ai – AI Website Building Consulting</title>
   </head>
   <body>

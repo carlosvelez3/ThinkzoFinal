@@ -134,7 +134,16 @@ export function RecaptchaPopup() {
 
       if (!recaptchaStatus.success) {
         console.error('❌ reCAPTCHA script not available:', recaptchaStatus.error);
-        setError(recaptchaStatus.error || 'reCAPTCHA failed to load. Please refresh the page and try again.');
+        const currentDomain = window.location.hostname;
+        const errorMsg = recaptchaStatus.error || 'reCAPTCHA failed to load. Please refresh the page and try again.';
+
+        if (errorMsg.includes('domain') || errorMsg.includes('ad block')) {
+          console.error('🌐 Domain or blocking issue detected. Current domain:', currentDomain);
+          console.error('💡 Verify this domain is authorized in Google reCAPTCHA Console');
+          setError(`reCAPTCHA could not load on domain "${currentDomain}". This may be due to domain authorization or browser extensions blocking the script. Please check your Google reCAPTCHA Console settings.`);
+        } else {
+          setError(errorMsg);
+        }
         setIsVerifying(false);
         toast.error('reCAPTCHA failed to load');
         return;
@@ -168,9 +177,12 @@ export function RecaptchaPopup() {
           const errorMessage = err instanceof Error ? err.message : 'Unknown error';
           console.error('❌ reCAPTCHA execution error:', errorMessage, err);
 
-          if (errorMessage.includes('Invalid site key')) {
-            setError('Invalid reCAPTCHA configuration. Please contact support or refresh the page.');
-            toast.error('Configuration error');
+          if (errorMessage.includes('Invalid site key') || errorMessage.includes('Invalid domain')) {
+            const currentDomain = window.location.hostname;
+            console.error('🌐 Domain mismatch detected. Current domain:', currentDomain);
+            console.error('💡 Solution: Add this domain to your reCAPTCHA site key configuration at https://www.google.com/recaptcha/admin');
+            setError(`Domain authorization error. The current domain "${currentDomain}" is not authorized for this reCAPTCHA site key. Please add this domain in the Google reCAPTCHA Console or contact support.`);
+            toast.error('Domain not authorized');
           } else if (errorMessage.includes('timeout')) {
             setError('Verification timed out. Please check your internet connection and try again.');
             toast.error('Verification timeout');
@@ -185,8 +197,11 @@ export function RecaptchaPopup() {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       console.error('❌ Unexpected error in executeRecaptcha:', errorMessage, err);
 
-      if (errorMessage.includes('Invalid site key') || errorMessage.includes('not loaded')) {
-        setError('reCAPTCHA configuration error. Please refresh the page or contact support.');
+      if (errorMessage.includes('Invalid site key') || errorMessage.includes('Invalid domain') || errorMessage.includes('not loaded')) {
+        const currentDomain = window.location.hostname;
+        console.error('🌐 Configuration or domain error. Current domain:', currentDomain);
+        console.error('💡 Solution: Verify the reCAPTCHA site key is correct and this domain is authorized at https://www.google.com/recaptcha/admin');
+        setError(`reCAPTCHA configuration error on domain "${currentDomain}". Please verify your site key configuration or contact support.`);
         toast.error('Configuration error');
       } else if (errorMessage.includes('network') || errorMessage.includes('fetch')) {
         setError('Network error. Please check your internet connection and try again.');
