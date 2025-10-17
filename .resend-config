@@ -2,7 +2,7 @@
 # This file is for documentation only - DO NOT commit actual API keys
 
 # Required Environment Variables (Set in Supabase Dashboard)
-RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxxxx
+RESEND_API_KEY=re_YyHE1Kp7_MVntRFBcGwXELvYfgJGuBWnH
 FROM_EMAIL=team@thinkzo.ai
 FROM_NAME=Thinkzo.ai
 
