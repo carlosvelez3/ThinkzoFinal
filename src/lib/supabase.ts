@@ -39,32 +39,46 @@ export function getSupabaseClient(): SupabaseClient<Database> {
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-  supabaseInstance = createClient<Database>(supabaseUrl, supabaseAnonKey, {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true
-    },
-    global: {
-      headers: {
-        'X-Client-Info': 'thinkzo-web-app'
+  try {
+    supabaseInstance = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true
+      },
+      global: {
+        headers: {
+          'X-Client-Info': 'thinkzo-web-app'
+        }
+      },
+      db: {
+        schema: 'public'
+      },
+      realtime: {
+        params: {
+          eventsPerSecond: 10
+        }
       }
-    },
-    db: {
-      schema: 'public'
-    },
-    realtime: {
-      params: {
-        eventsPerSecond: 10
-      }
-    }
-  });
+    });
 
-  return supabaseInstance;
+    console.log('✅ Supabase client initialized successfully');
+    return supabaseInstance;
+  } catch (error) {
+    console.error('❌ Failed to create Supabase client:', error);
+    throw error;
+  }
 }
 
 export function resetSupabaseClient(): void {
   supabaseInstance = null;
 }
 
-export const supabase = getSupabaseClient();
+let supabase: SupabaseClient<Database>;
+try {
+  supabase = getSupabaseClient();
+} catch (error) {
+  console.warn('⚠️ Supabase client initialization failed, app will run with limited functionality');
+  supabase = null as any;
+}
+
+export { supabase };
