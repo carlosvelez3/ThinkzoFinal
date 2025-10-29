@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, AlertCircle, Eye, EyeOff, Info, X, CheckCircle, Clock, DollarSign, Zap, ChevronDown, ChevronUp } from 'lucide-react';
+import { Check, AlertCircle, Eye, EyeOff, Info, X, CheckCircle, Clock, DollarSign, Zap, ChevronDown, ChevronUp, Shield } from 'lucide-react';
 import { useErrorHandler } from '../../hooks/useErrorHandler';
 import { RetryButton } from '../RetryButton';
 import { AnimatedI } from '../AnimatedI';
 import { ProjectDetailsInput, ProjectDetails } from './ProjectDetailsInput';
+import { recaptchaService, RECAPTCHA_ACTIONS } from '../../services/recaptchaService';
 
 // Types for form validation
 interface ValidationRule {
@@ -82,10 +83,12 @@ export function SmartForm({
   const [errors, setErrors] = useState<FormErrors>({});
   const [fieldStatus, setFieldStatus] = useState<FieldStatus>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isVerifyingRecaptcha, setIsVerifyingRecaptcha] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState<{ [key: string]: boolean }>({});
   const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [recaptchaError, setRecaptchaError] = useState<string | null>(null);
   const [projectDetailsValid, setProjectDetailsValid] = useState(false);
   const validationTimeouts = useRef<{ [key: string]: NodeJS.Timeout }>({});
 
@@ -383,32 +386,51 @@ export function SmartForm({
       return;
     }
 
-    console.log('Form validation passed, submitting...');
-    
+    console.log('Form validation passed, executing reCAPTCHA...');
+
+    // Execute reCAPTCHA verification
+    setIsVerifyingRecaptcha(true);
+    setRecaptchaError(null);
+
+    const recaptchaResult = await recaptchaService.executeRecaptcha(RECAPTCHA_ACTIONS.SUBMIT_CONTACT_FORM);
+
+    if (!recaptchaResult.success || !recaptchaResult.token) {
+      console.error('reCAPTCHA verification failed:', recaptchaResult.error);
+      setRecaptchaError(recaptchaResult.error || 'Security verification failed. Please try again.');
+      setIsVerifyingRecaptcha(false);
+      return;
+    }
+
+    console.log('reCAPTCHA token obtained, submitting form...');
+    setIsVerifyingRecaptcha(false);
     setIsSubmitting(true);
-    
+
     const result = await handleAsyncError(async () => {
-      const submissionData = { ...formData };
+      const submissionData = {
+        ...formData,
+        recaptchaToken: recaptchaResult.token
+      };
 
       if (onSubmit) {
         await onSubmit(submissionData);
       } else {
         await submitFormData();
       }
-      
+
       setSubmitSuccess(true);
       setSubmitError(null);
-      
+      setRecaptchaError(null);
+
       // Call success callback
       if (onSuccess) {
         onSuccess(submissionData);
       }
     }, { formData, action: 'smart_form_submit' });
-    
+
     if (!result) {
       setSubmitError('Failed to submit form. Please try again.');
     }
-    
+
     setIsSubmitting(false);
   };
 
@@ -695,16 +717,26 @@ export function SmartForm({
         {/* Submit button */}
         <motion.button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || isVerifyingRecaptcha}
           className={`w-full py-4 px-6 rounded-lg font-semibold text-lg transition-all duration-300 ${
-            isSubmitting
+            isSubmitting || isVerifyingRecaptcha
               ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
               : 'bg-gradient-to-r from-cta-yellow to-cta-yellow-hover hover:from-amber-600 hover:to-orange-600 focus:from-amber-600 focus:to-orange-600 text-white hover:scale-105 focus:scale-105 shadow-lg hover:shadow-xl focus:shadow-xl'
           } focus:outline-none focus:ring-4 focus:ring-amber-500/30`}
-          whileHover={!isSubmitting ? { scale: 1.02 } : {}}
-          whileTap={!isSubmitting ? { scale: 0.98 } : {}}
+          whileHover={!isSubmitting && !isVerifyingRecaptcha ? { scale: 1.02 } : {}}
+          whileTap={!isSubmitting && !isVerifyingRecaptcha ? { scale: 0.98 } : {}}
         >
-          {isSubmitting ? (
+          {isVerifyingRecaptcha ? (
+            <div className="flex items-center justify-center space-x-3">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+              >
+                <Shield className="w-5 h-5 text-cyan-400" />
+              </motion.div>
+              <span>Verifying Security...</span>
+            </div>
+          ) : isSubmitting ? (
             <div className="flex items-center justify-center space-x-3">
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
               <span>Sending your request...</span>
@@ -717,7 +749,29 @@ export function SmartForm({
           )}
         </motion.button>
         
-        {/* Error state with retry */}
+        {/* reCAPTCHA Error state */}
+        {recaptchaError && (
+          <motion.div
+            className="mt-4 p-4 bg-orange-900/20 border border-orange-500/30 rounded-lg"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <div className="flex items-start space-x-3">
+              <Shield className="w-5 h-5 text-orange-400 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-orange-300 text-sm mb-3">{recaptchaError}</p>
+                <RetryButton
+                  onRetry={handleRetrySubmit}
+                  className="bg-orange-600 hover:bg-orange-700 text-white text-sm px-4 py-2 rounded-lg transition-colors"
+                >
+                  Retry Verification
+                </RetryButton>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Submit Error state with retry */}
         {submitError && (
           <motion.div
             className="mt-4 p-4 bg-red-900/20 border border-red-500/30 rounded-lg"

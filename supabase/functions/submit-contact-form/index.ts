@@ -24,6 +24,7 @@ interface ContactFormData {
   projectType: string;
   message?: string;
   projectDetails?: ProjectDetails;
+  recaptchaToken?: string;
 }
 
 async function sendEmailViaResend(
@@ -140,6 +141,42 @@ Deno.serve(async (req: Request) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    let verificationId: string | null = null;
+
+    if (formData.recaptchaToken) {
+      console.log('reCAPTCHA token provided, verifying...');
+      try {
+        const verifyUrl = `${supabaseUrl}/functions/v1/verify-recaptcha`;
+        const verifyResponse = await fetch(verifyUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${supabaseKey}`,
+          },
+          body: JSON.stringify({
+            token: formData.recaptchaToken,
+            action: 'submit_contact_form'
+          }),
+        });
+
+        if (verifyResponse.ok) {
+          const verifyData = await verifyResponse.json();
+          if (verifyData.success) {
+            verificationId = verifyData.verification_id;
+            console.log('reCAPTCHA verification successful:', { verificationId, score: verifyData.score });
+          } else {
+            console.warn('reCAPTCHA verification failed:', verifyData.error);
+          }
+        } else {
+          console.warn('reCAPTCHA verification request failed:', verifyResponse.status);
+        }
+      } catch (verifyError) {
+        console.error('reCAPTCHA verification error:', verifyError);
+      }
+    } else {
+      console.log('No reCAPTCHA token provided with submission');
+    }
+
     const projectDetails = formData.projectDetails;
     const legacyMessage = formData.message || (projectDetails ?
       `Goals: ${projectDetails.projectGoals}\n\nFeatures: ${projectDetails.selectedFeatures.join(', ')}\n\nTimeline: ${projectDetails.timeline}\n\nBudget: ${projectDetails.budgetRange}${projectDetails.targetAudience ? `\n\nTarget Audience: ${projectDetails.targetAudience}` : ''}${projectDetails.additionalNotes ? `\n\nAdditional Notes: ${projectDetails.additionalNotes}` : ''}`
@@ -164,6 +201,7 @@ Deno.serve(async (req: Request) => {
         status: 'new',
         ip_address: ipAddress,
         user_agent: userAgent,
+        verification_id: verificationId,
       })
       .select()
       .single();
