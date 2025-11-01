@@ -9,7 +9,7 @@ interface SuccessStateProps {
     name?: string;
     email?: string;
     projectType?: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
   onReset?: () => void;
   showNextSteps?: boolean;

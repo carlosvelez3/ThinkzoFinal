@@ -30,7 +30,7 @@ export class AppError extends Error {
   public readonly severity: ErrorSeverity;
   public readonly userMessage: string;
   public readonly originalError?: Error;
-  public readonly context?: Record<string, any>;
+  public readonly context?: Record<string, unknown>;
   public readonly timestamp: Date;
   public readonly retryable: boolean;
 
@@ -48,7 +48,7 @@ export class AppError extends Error {
     severity?: ErrorSeverity;
     userMessage?: string;
     originalError?: Error;
-    context?: Record<string, any>;
+    context?: Record<string, unknown>;
     retryable?: boolean;
   }) {
     super(message);
@@ -181,7 +181,7 @@ class ErrorLogger {
 export class ErrorHandler {
   private static logger = ErrorLogger.getInstance();
 
-  static handle(error: unknown, context?: Record<string, any>, options?: { showToast?: boolean }): AppError {
+  static handle(error: unknown, context?: Record<string, unknown>, options?: { showToast?: boolean }): AppError {
     let appError: AppError;
 
     if (error instanceof AppError) {
@@ -207,7 +207,7 @@ export class ErrorHandler {
     return appError;
   }
 
-  private static categorizeError(error: Error, context?: Record<string, any>): AppError {
+  private static categorizeError(error: Error, context?: Record<string, unknown>): AppError {
     const message = error.message.toLowerCase();
 
     // Network errors
@@ -292,7 +292,7 @@ export class ErrorHandler {
     }
   }
 
-  static createNetworkError(message: string, context?: Record<string, any>): AppError {
+  static createNetworkError(message: string, context?: Record<string, unknown>): AppError {
     return new AppError({
       message,
       type: ErrorType.NETWORK,
@@ -302,7 +302,7 @@ export class ErrorHandler {
     });
   }
 
-  static createValidationError(message: string, userMessage?: string, context?: Record<string, any>): AppError {
+  static createValidationError(message: string, userMessage?: string, context?: Record<string, unknown>): AppError {
     return new AppError({
       message,
       type: ErrorType.VALIDATION,
@@ -312,7 +312,7 @@ export class ErrorHandler {
     });
   }
 
-  static createAPIError(message: string, statusCode?: number, context?: Record<string, any>): AppError {
+  static createAPIError(message: string, statusCode?: number, context?: Record<string, unknown>): AppError {
     const severity = statusCode && statusCode >= 500 ? ErrorSeverity.HIGH : ErrorSeverity.MEDIUM;
     return new AppError({
       message,
@@ -327,7 +327,7 @@ export class ErrorHandler {
 // Utility functions
 export const handleAsyncError = async <T>(
   asyncFn: () => Promise<T>,
-  context?: Record<string, any>
+  context?: Record<string, unknown>
 ): Promise<T | null> => {
   try {
     return await asyncFn();
@@ -337,9 +337,9 @@ export const handleAsyncError = async <T>(
   }
 };
 
-export const withErrorBoundary = <T extends any[], R>(
+export const withErrorBoundary = <T extends unknown[], R>(
   fn: (...args: T) => R,
-  context?: Record<string, any>
+  context?: Record<string, unknown>
 ) => {
   return (...args: T): R | null => {
     try {

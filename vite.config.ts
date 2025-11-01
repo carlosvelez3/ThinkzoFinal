@@ -21,5 +21,20 @@ export default defineConfig(({ mode }) => {
     optimizeDeps: {
       exclude: ['lucide-react'],
     },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            // Vendor chunks for better caching
+            'react-vendor': ['react', 'react-dom'],
+            'animation-vendor': ['framer-motion'],
+            'three-vendor': ['three', '@react-three/fiber', '@react-three/drei'],
+            'form-vendor': ['react-hot-toast'],
+          },
+        },
+      },
+      // Increase chunk size warning limit since we're splitting properly
+      chunkSizeWarningLimit: 600,
+    },
   };
 });

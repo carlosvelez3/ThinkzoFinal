@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, lazy, Suspense } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { Header } from './components/Header';
 import { EnhancedHeroSection } from './components/EnhancedHeroSection';
@@ -8,7 +8,8 @@ import { PricingSection } from './components/PricingSection';
 import { Modal } from './components/Modal';
 import { ContactForm } from './components/ContactForm';
 import { Footer } from './components/Footer';
-import { ThreeDScene } from './components/ThreeDScene';
+// Lazy load heavy 3D component
+const ThreeDScene = lazy(() => import('./components/ThreeDScene').then(module => ({ default: module.ThreeDScene })));
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ReadingProgressIndicator } from './components/ReadingProgressIndicator';
 import { ScrollToTopButton } from './components/ScrollToTopButton';
@@ -45,7 +46,9 @@ function App() {
 
         {/* Global 3D Background */}
         <div className="fixed inset-0 z-0">
-          <ThreeDScene />
+          <Suspense fallback={<div className="w-full h-full bg-gradient-to-br from-deep-space to-cool-dark-1" />}>
+            <ThreeDScene />
+          </Suspense>
         </div>
 
         {/* Reading Progress Indicator */}

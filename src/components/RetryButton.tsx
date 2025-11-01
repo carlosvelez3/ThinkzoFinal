@@ -27,7 +27,7 @@ export function RetryButton({
     try {
       await onRetry();
       setRetryCount(0); // Reset on success
-    } catch (error) {
+    } catch (_error) {
       setRetryCount(prev => prev + 1);
     } finally {
       setIsRetrying(false);

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Check, Star, Zap, Crown, Layout } from 'lucide-react';
 

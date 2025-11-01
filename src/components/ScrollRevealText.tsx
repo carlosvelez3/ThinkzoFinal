@@ -7,10 +7,9 @@ interface ScrollRevealTextProps {
   staggerDelay?: number;
 }
 
-export function ScrollRevealText({ 
-  children, 
-  className = '',
-  staggerDelay = 0.05
+export function ScrollRevealText({
+  children,
+  className = ''
 }: ScrollRevealTextProps) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -27,7 +26,7 @@ export function ScrollRevealText({
         {words.map((word, index) => {
           const start = index / words.length;
           const end = start + (1 / words.length);
-          
+
           const opacity = useTransform(
             scrollYProgress,
             [start, end],
@@ -55,10 +54,9 @@ interface ScrollRevealLinesProps {
   lineDelay?: number;
 }
 
-export function ScrollRevealLines({ 
-  lines, 
-  className = '',
-  lineDelay = 0.1
+export function ScrollRevealLines({
+  lines,
+  className = ''
 }: ScrollRevealLinesProps) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({

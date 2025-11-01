@@ -116,7 +116,7 @@ export default function AICodeScreen({ children }: AICodeScreenProps) {
 
       return () => clearTimeout(timer);
     }
-  }, [currentLineIndex, currentCharIndex, codeLines]);
+  }, [currentLineIndex, currentCharIndex, codeLines, fileNames]);
 
   // Cursor blinking effect
   useEffect(() => {

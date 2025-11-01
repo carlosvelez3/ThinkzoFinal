@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, AlertCircle, Eye, EyeOff, Info, X, CheckCircle, Clock, DollarSign, Zap, ChevronDown, ChevronUp, Shield } from 'lucide-react';
+import { Check, AlertCircle, Eye, EyeOff, Info, Shield } from 'lucide-react';
 import { useErrorHandler } from '../../hooks/useErrorHandler';
 import { RetryButton } from '../RetryButton';
-import { AnimatedI } from '../AnimatedI';
 import { ProjectDetailsInput, ProjectDetails } from './ProjectDetailsInput';
 import { recaptchaService, RECAPTCHA_ACTIONS } from '../../services/recaptchaService';
 
@@ -68,7 +67,7 @@ export function SmartForm({
   description = "Tell us about your project and we'll get back to you with a custom proposal.",
   submitButtonText = "Submit Project Request",
   projectTypes,
-  showProgressSteps = false
+  showProgressSteps: _showProgressSteps = false
 }: SmartFormProps) {
   const [formData, setFormData] = useState<FormData>({
     projectDetails: {
@@ -89,7 +88,7 @@ export function SmartForm({
   const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [recaptchaError, setRecaptchaError] = useState<string | null>(null);
-  const [projectDetailsValid, setProjectDetailsValid] = useState(false);
+  const [_projectDetailsValid, setProjectDetailsValid] = useState(false);
   const validationTimeouts = useRef<{ [key: string]: NodeJS.Timeout }>({});
 
   const { handleAsyncError } = useErrorHandler();
@@ -155,7 +154,7 @@ export function SmartForm({
       placeholder: 'Enhanced project details with interactive components',
       validation: {
         required: true,
-        custom: (value) => {
+        custom: (_value) => {
           return null;
         }
       },
@@ -166,7 +165,7 @@ export function SmartForm({
   // Use custom form fields or default ones
   const formFields = customFormFields || defaultFormFields;
 
-  const activeProjectTypes = projectTypes || [];
+  const _activeProjectTypes = projectTypes || [];
 
   // Validation function
   const validateField = (fieldName: string, value: string | ProjectDetails, allData: FormData = formData): string | null => {
@@ -309,7 +308,7 @@ export function SmartForm({
   };
 
   // Handle project type selection for card-based UI
-  const handleProjectTypeSelect = (projectTypeId: string): void => {
+  const _handleProjectTypeSelect = (projectTypeId: string): void => {
     handleFieldChange('projectType', projectTypeId);
   };
 
@@ -352,9 +351,6 @@ export function SmartForm({
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
 
-    console.log('Form submission started');
-    console.log('Current form data:', formData);
-
     // Mark all fields as touched
     const allFieldNames = formFields.map(f => f.name);
     setTouchedFields(new Set(allFieldNames));
@@ -368,14 +364,12 @@ export function SmartForm({
       if (error) {
         newErrors[field.name] = error;
         hasErrors = true;
-        console.error(`Validation error for ${field.name}:`, error);
       }
     }
 
     setErrors(newErrors);
 
     if (hasErrors) {
-      console.error('Form validation failed:', newErrors);
       // Focus first error field
       const firstErrorField = formFields.find(f => newErrors[f.name]);
       if (firstErrorField) {
@@ -386,8 +380,6 @@ export function SmartForm({
       return;
     }
 
-    console.log('Form validation passed, executing reCAPTCHA...');
-
     // Execute reCAPTCHA verification
     setIsVerifyingRecaptcha(true);
     setRecaptchaError(null);
@@ -395,13 +387,11 @@ export function SmartForm({
     const recaptchaResult = await recaptchaService.executeRecaptcha(RECAPTCHA_ACTIONS.SUBMIT_CONTACT_FORM);
 
     if (!recaptchaResult.success || !recaptchaResult.token) {
-      console.error('reCAPTCHA verification failed:', recaptchaResult.error);
       setRecaptchaError(recaptchaResult.error || 'Security verification failed. Please try again.');
       setIsVerifyingRecaptcha(false);
       return;
     }
 
-    console.log('reCAPTCHA token obtained, submitting form...');
     setIsVerifyingRecaptcha(false);
     setIsSubmitting(true);
 
@@ -447,8 +437,9 @@ export function SmartForm({
 
   // Cleanup timeouts
   useEffect(() => {
+    const timeouts = validationTimeouts.current;
     return (): void => {
-      Object.values(validationTimeouts.current).forEach(timeout => {
+      Object.values(timeouts).forEach(timeout => {
         if (timeout) clearTimeout(timeout);
       });
     };

@@ -7,9 +7,6 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ onOpenContactModal }: HeroSectionProps) {
-  const [displayedNextGen, setDisplayedNextGen] = useState('');
-  const [displayedAISolutions, setDisplayedAISolutions] = useState('');
-  
   const fullNextGenText = 'Next-Generation';
   const fullAISolutionsText = 'AI Solutions';
 
@@ -22,18 +19,15 @@ export function HeroSection({ onOpenContactModal }: HeroSectionProps) {
 
     const typeNextGen = () => {
       if (nextGenIndex < fullNextGenText.length) {
-        setDisplayedNextGen(fullNextGenText.slice(0, nextGenIndex + 1));
         nextGenIndex++;
         nextGenTimer = setTimeout(typeNextGen, typingSpeed);
       } else {
-        // Start typing AI Solutions after a brief pause
         setTimeout(typeAISolutions, 200);
       }
     };
 
     const typeAISolutions = () => {
       if (aiSolutionsIndex < fullAISolutionsText.length) {
-        setDisplayedAISolutions(fullAISolutionsText.slice(0, aiSolutionsIndex + 1));
         aiSolutionsIndex++;
         aiSolutionsTimer = setTimeout(typeAISolutions, typingSpeed);
       }

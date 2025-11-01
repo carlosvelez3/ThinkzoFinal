@@ -9,12 +9,11 @@ interface ParallaxTextProps {
   direction?: 'up' | 'down';
 }
 
-export function ParallaxText({ 
-  children, 
-  speed = 0.5, 
+export function ParallaxText({
+  children,
+  speed = 0.5,
   className = '',
-  containerClassName = '',
-  direction = 'up'
+  containerClassName = ''
 }: ParallaxTextProps) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -27,7 +26,6 @@ export function ParallaxText({
     [0, 1],
     [50 * speed, -50 * speed]
   );
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1.1, 1, 1.1]);
 
   return (
     <div ref={ref} className={`relative h-full ${className}`}>
@@ -48,17 +46,16 @@ interface ParallaxImageProps {
   className?: string;
 }
 
-export function ParallaxImage({ 
-  src, 
-  alt, 
-  speed = 0.3,
-  className = ''
-}: ParallaxImageProps) {
+export function ParallaxImage({
+  speed = 0.3
+}: Omit<ParallaxImageProps, 'src' | 'alt' | 'className'>) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"]
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], [50 * speed, -50 * speed]);
+  useTransform(scrollYProgress, [0, 1], [50 * speed, -50 * speed]);
+
+  return null;
 }

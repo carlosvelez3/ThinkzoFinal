@@ -1,4 +1,3 @@
-import React from 'react';
 
 // Validation utility functions and types
 export interface ValidationRule {
@@ -6,7 +5,7 @@ export interface ValidationRule {
   minLength?: number;
   maxLength?: number;
   pattern?: RegExp;
-  custom?: (value: string, formData?: any) => string | null;
+  custom?: (value: string, formData?: Record<string, string>) => string | null;
   dependencies?: string[];
 }
 
@@ -18,11 +17,11 @@ export interface ValidationResult {
 // Common validation patterns
 export const ValidationPatterns = {
   email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-  phone: /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/,
+  phone: /^\(?([0-9]{3})\)?[\\-. ]?([0-9]{3})[\\-. ]?([0-9]{4})$/,
   strongPassword: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
   name: /^[a-zA-Z\s'-]+$/,
   zipCode: /^\d{5}(-\d{4})?$/,
-  url: /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/
+  url: /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/
 };
 
 // Validation error messages
@@ -44,7 +43,7 @@ export function validateField(
   value: string,
   rules: ValidationRule,
   fieldName: string,
-  formData?: any
+  formData?: Record<string, string>
 ): ValidationResult {
   // Required validation
   if (rules.required && (!value || value.trim() === '')) {
@@ -199,7 +198,7 @@ export function calculatePasswordStrength(password: string) {
 }
 
 // Debounce utility for validation
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {
@@ -279,7 +278,7 @@ export const CommonValidationRules = {
   confirmPassword: {
     required: true,
     dependencies: ['password'],
-    custom: (value: string, formData: any) => {
+    custom: (value: string, formData: Record<string, string>) => {
       if (!value) return ValidationMessages.required('Confirm password');
       if (formData && value !== formData.password) return ValidationMessages.passwordMatch;
       return null;

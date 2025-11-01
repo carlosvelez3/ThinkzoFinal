@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, AlertCircle, Eye, EyeOff, Info } from 'lucide-react';
-import { ValidationRule, validateField, FormatUtils, calculatePasswordStrength } from './ValidationUtils';
+import { ValidationRule, FormatUtils, calculatePasswordStrength } from './ValidationUtils';
 
 interface FormFieldProps {
   name: string;

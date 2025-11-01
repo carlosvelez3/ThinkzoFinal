@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 import AICodeScreen from './AICodeScreen';
@@ -56,7 +56,7 @@ function useTypingAnimation(texts: string[], speed: number = 80) {
 
 export function EnhancedHeroSection({ onOpenContactModal }: EnhancedHeroSectionProps) {
   const typingTexts = ['Next-Generation', 'AI Solutions'];
-  const { displayedTexts, isComplete } = useTypingAnimation(typingTexts);
+  useTypingAnimation(typingTexts);
 
   // Parallax effects for hero content
   const { scrollY } = useScroll();

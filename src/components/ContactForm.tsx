@@ -8,7 +8,7 @@ interface ContactFormProps {
 }
 
 export function ContactForm({ onCloseModal }: ContactFormProps) {
-  const handleSubmit = async (formData: any) => {
+  const handleSubmit = async (formData: Record<string, unknown>) => {
     const submissionData: ContactFormSubmission = {
       name: formData.name,
       email: formData.email,
@@ -37,7 +37,7 @@ export function ContactForm({ onCloseModal }: ContactFormProps) {
   };
 
   // Handle successful submission
-  const handleSuccess = (data: any) => {
+  const handleSuccess = (_data: unknown) => {
     // Close modal after a brief delay to show success state
     setTimeout(() => {
       onCloseModal();

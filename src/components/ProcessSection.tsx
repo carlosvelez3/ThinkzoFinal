@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
-import { Search, PenTool, Cog, Rocket, ArrowRight } from 'lucide-react';
+import { Search, PenTool, Cog, Rocket } from 'lucide-react';
 import { ProcessPhaseItem } from './ProcessPhaseItem';
 import { useTypingEffect } from '../hooks/useTypingEffect';
 import { AnimatedI } from './AnimatedI';
@@ -67,10 +67,10 @@ interface ProcessSectionProps {
 export function ProcessSection({ onOpenContactModal }: ProcessSectionProps) {
   const titleRef = useRef(null);
   const isInView = useInView(titleRef, { once: true, amount: 0.5 });
-  const displayedTitle = useTypingEffect({ 
-    text: 'Our Digital Agency Process', 
-    speed: 100, 
-    startTyping: isInView 
+  useTypingEffect({
+    text: 'Our Digital Agency Process',
+    speed: 100,
+    startTyping: isInView
   });
 
   return (
